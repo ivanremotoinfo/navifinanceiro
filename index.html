@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAVI — Clientes, Cheques e Financeiro</title>
+<style>
+:root{
+  --tinta:#14241D;          /* verde-tinta escuro (texto) */
+  --verde:#1E5C46;          /* verde-cédula (marca) */
+  --verde-claro:#2E7D5B;
+  --papel:#F2F4EF;          /* papel de cheque */
+  --branco:#FFFFFF;
+  --linha:#D8DED4;
+  --carimbo:#B3372B;        /* vermelho carimbo (devolvido/vencido) */
+  --ambar:#C28A1F;          /* a vencer */
+  --azul:#2C5F8A;           /* compensado */
+  --cinza:#6B7A70;
+  --sombra:0 1px 3px rgba(20,36,29,.10);
+  --raio:10px;
+  --mono:"Consolas","Menlo","Liberation Mono",monospace;
+}
+[data-tema="escuro"]{
+  --tinta:#E8ECE7;
+  --verde:#2E7D5B;
+  --verde-claro:#3C9670;
+  --papel:#15201B;
+  --branco:#1E2A24;
+  --linha:#33433C;
+  --carimbo:#E0726A;
+  --ambar:#E0B23F;
+  --azul:#5B9BD1;
+  --cinza:#9AAAA1;
+}
+[data-tema="escuro"] body{background:var(--papel)}
+[data-tema="escuro"] .campo input,[data-tema="escuro"] .campo select,[data-tema="escuro"] .campo textarea{background:var(--branco);color:var(--tinta)}
+[data-tema="escuro"] .faixa-aviso{background:#3A2F12;border-color:#5C4A1C;color:#F0D896}
+[data-tema="escuro"] .faixa-aviso.vermelha{background:#3A1815;border-color:#5C2A24;color:#F5C2BC}
+[data-tema="escuro"] .selo-risco.atencao{color:#15201B}
+[data-tema="escuro"] .carimbo.vencido{background:#3A1815}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:19px}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--papel);color:var(--tinta);min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:1rem}
+
+/* ===== Barra superior ===== */
+.topo{position:sticky;top:0;z-index:50;background:var(--verde);color:#fff;display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem;box-shadow:var(--sombra)}
+.topo .marca{font-weight:800;letter-spacing:.14em;font-size:1.15rem}
+.topo .marca small{display:block;font-weight:400;letter-spacing:.02em;font-size:.62rem;opacity:.85}
+.topo .busca{flex:1;max-width:520px;margin:0 auto;position:relative}
+.topo .busca input{width:100%;padding:.5rem .8rem;border:none;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;outline:none}
+.topo .busca input::placeholder{color:rgba(255,255,255,.75)}
+.topo .busca input:focus{background:#fff;color:var(--tinta)}
+.relogio{font-family:var(--mono);font-size:1.5rem;font-weight:700;white-space:nowrap;text-align:right;line-height:1.2}
+.relogio small{display:block;font-size:.85rem;opacity:.85;font-family:system-ui;font-weight:400}
+
+/* ===== Layout ===== */
+.app{display:flex;min-height:calc(100vh - 56px)}
+nav.lateral{width:200px;background:var(--branco);border-right:1px solid var(--linha);padding:.8rem .5rem;flex-shrink:0}
+nav.lateral button{display:flex;align-items:center;gap:.6rem;width:100%;padding:.7rem .8rem;border:none;background:none;border-radius:8px;font-size:1.08rem;color:var(--tinta);text-align:left;margin-bottom:.15rem}
+nav.lateral button .tecla{margin-left:auto;font-family:var(--mono);font-size:.65rem;color:var(--cinza);border:1px solid var(--linha);border-radius:4px;padding:0 .3rem}
+nav.lateral button:hover{background:var(--papel)}
+nav.lateral button.ativo{background:var(--verde);color:#fff}
+nav.lateral button.ativo .tecla{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.4)}
+main{flex:1;padding:1.2rem;max-width:1080px;margin:0 auto;width:100%}
+.tela{display:none}
+.tela.ativa{display:block;animation:surge .18s ease}
+@keyframes surge{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tela.ativa{animation:none}}
+h2.titulo{font-size:1.5rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+h2.titulo .acoes{margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* ===== Botões ===== */
+.bt{border:none;border-radius:8px;padding:.6rem 1.1rem;font-size:1rem;font-weight:600;background:var(--verde);color:#fff;display:inline-flex;align-items:center;gap:.4rem}
+.bt:hover{background:var(--verde-claro)}
+.bt.claro{background:var(--branco);color:var(--tinta);border:1px solid var(--linha)}
+.bt.claro:hover{background:var(--papel)}
+.bt.perigo{background:var(--carimbo)}
+.bt.mini{padding:.4rem .7rem;font-size:.92rem;border-radius:6px}
+
+/* ===== Cartões / painel ===== */
+.cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin-bottom:1.2rem}
+.cartao{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:.9rem 1rem;box-shadow:var(--sombra)}
+.cartao .rotulo{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:.3rem}
+.cartao .valor{font-family:var(--mono);font-size:1.5rem;font-weight:700}
+.cartao.vd .valor{color:var(--verde)}
+.cartao.vm .valor{color:var(--carimbo)}
+.cartao.am .valor{color:var(--ambar)}
+.cartao.az .valor{color:var(--azul)}
+
+.painel-bloco{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem;box-shadow:var(--sombra);margin-bottom:1.2rem}
+.painel-bloco h3{font-size:.95rem;margin-bottom:.8rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:.78rem}
+
+/* Gráfico de barras (CSS puro) */
+.grafico{display:flex;align-items:flex-end;gap:.6rem;height:150px;padding-top:.5rem}
+.grafico .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.3rem;height:100%}
+.grafico .barra{width:100%;max-width:54px;background:linear-gradient(180deg,var(--verde-claro),var(--verde));border-radius:5px 5px 0 0;min-height:3px}
+.grafico .mes{font-size:.68rem;color:var(--cinza);font-family:var(--mono)}
+.grafico .qt{font-size:.66rem;font-family:var(--mono);color:var(--verde);font-weight:700}
+
+/* ===== Tabelas ===== */
+.tabela-rolagem{overflow-x:auto;background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra)}
+table{width:100%;border-collapse:collapse;font-size:1.05rem}
+th{background:var(--papel);text-align:left;padding:.6rem .7rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza);border-bottom:1px solid var(--linha);white-space:nowrap}
+td{padding:.65rem .7rem;border-bottom:1px solid var(--linha);vertical-align:middle;font-size:1.05rem}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#FAFBF8}
+td.num{font-family:var(--mono);white-space:nowrap}
+td.acoes-td{white-space:nowrap;text-align:right}
+
+/* ===== Carimbos de status (assinatura visual) ===== */
+.carimbo{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;border:2px solid;border-radius:4px;padding:.1rem .4rem;transform:rotate(-2deg)}
+.carimbo.carteira{color:var(--verde);border-color:var(--verde)}
+.carimbo.compensado{color:var(--azul);border-color:var(--azul)}
+.carimbo.devolvido{color:var(--carimbo);border-color:var(--carimbo)}
+.carimbo.vencido{color:var(--carimbo);border-color:var(--carimbo);background:#FBEAE8}
+.carimbo.prorrogado{color:var(--ambar);border-color:var(--ambar)}
+.carimbo.reto{transform:none}
+
+.selo-risco{display:inline-block;font-size:.7rem;font-weight:700;border-radius:999px;padding:.12rem .55rem;color:#fff}
+.selo-risco.bom{background:var(--verde)}
+.selo-risco.atencao{background:var(--ambar)}
+.selo-risco.inadimplente{background:var(--carimbo)}
+.selo-risco.bloqueado{background:#4A4A4A}
+
+/* ===== Formulários ===== */
+.form-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem}
+.campo{display:flex;flex-direction:column;gap:.25rem}
+.campo label{font-size:.82rem;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.05em}
+.campo input,.campo select,.campo textarea{padding:.6rem .7rem;border:1px solid var(--linha);border-radius:8px;background:#fff;outline:none;width:100%;font-size:1.05rem}
+.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(30,92,70,.12)}
+.campo.cheio{grid-column:1/-1}
+.filtros{display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem}
+.filtros .campo{min-width:140px}
+
+/* ===== Modais ===== */
+.veu{display:none;position:fixed;inset:0;background:rgba(20,36,29,.45);z-index:100;padding:1rem;overflow-y:auto}
+.veu.aberto{display:flex;align-items:flex-start;justify-content:center}
+.modal{background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.25);width:100%;max-width:640px;margin:2rem auto;overflow:hidden}
+.modal.estreito{max-width:380px}
+.modal-cab{background:var(--verde);color:#fff;padding:.8rem 1.1rem;display:flex;align-items:center;gap:.6rem}
+.modal-cab h3{font-size:1rem;flex:1}
+.modal-cab .fechar{background:none;border:none;color:#fff;font-size:1.3rem;line-height:1}
+.modal-corpo{padding:1.1rem}
+.modal-pe{padding:.9rem 1.1rem;border-top:1px solid var(--linha);display:flex;justify-content:flex-end;gap:.6rem;flex-wrap:wrap}
+
+/* ===== Ficha do cliente / foto ===== */
+.foto-cli{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--linha);background:var(--papel)}
+.foto-mini{width:34px;height:34px;border-radius:7px;object-fit:cover;border:1px solid var(--linha);background:var(--papel)}
+.ficha-cab{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.ficha-cab .info{flex:1;min-width:200px}
+.ficha-cab .info b{font-size:1.1rem}
+.ficha-cab .info .doc{font-family:var(--mono);color:var(--cinza);font-size:.85rem}
+
+/* ===== Alertas / avisos ===== */
+.faixa-aviso{background:#FFF6E3;border:1px solid #EBD9A8;color:#7A5B12;border-radius:var(--raio);padding:.7rem 1rem;margin-bottom:1rem;font-size:.88rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.faixa-aviso.vermelha{background:#FBEAE8;border-color:#E5B5AF;color:#7C2C23}
+.aviso-flutuante{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.6rem 1.2rem;border-radius:999px;font-size:.85rem;z-index:300;box-shadow:var(--sombra);opacity:0;pointer-events:none;transition:opacity .25s}
+.aviso-flutuante.mostrar{opacity:1}
+.vazio{text-align:center;color:var(--cinza);padding:2rem 1rem;font-size:.9rem}
+
+/* ===== Calculadora / calendário ===== */
+.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+.calc .visor{grid-column:1/-1;font-family:var(--mono);font-size:1.4rem;text-align:right;background:var(--papel);border:1px solid var(--linha);border-radius:8px;padding:.6rem .8rem;overflow:hidden;white-space:nowrap}
+.calc button{padding:.7rem 0;font-size:1.05rem;border:1px solid var(--linha);border-radius:8px;background:#fff}
+.calc button.op{background:var(--papel);font-weight:700}
+.calc button.ig{background:var(--verde);color:#fff;border-color:var(--verde)}
+.cal-grade{display:grid;grid-template-columns:repeat(7,1fr);gap:.2rem;text-align:center;font-size:.85rem}
+.cal-grade .dia-sem{font-size:.66rem;font-weight:700;color:var(--cinza);text-transform:uppercase;padding:.3rem 0}
+.cal-grade .dia{padding:.45rem 0;border-radius:7px}
+.cal-grade .dia.hoje{background:var(--verde);color:#fff;font-weight:700}
+.cal-cab{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.cal-cab b{font-size:.95rem;text-transform:capitalize}
+
+/* ===== Navegação inferior (celular) ===== */
+nav.inferior{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--linha);z-index:60;padding:.3rem .2rem calc(.3rem + env(safe-area-inset-bottom))}
+nav.inferior .trilho{display:flex;justify-content:space-around}
+nav.inferior button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.1rem;font-size:.74rem;color:var(--cinza);padding:.3rem .5rem;border-radius:8px}
+nav.inferior button .ico{font-size:1.35rem}
+nav.inferior button.ativo{color:var(--verde);font-weight:700}
+
+/* ===== Impressão ===== */
+#areaImpressao{display:none}
+@media print{
+  body *{visibility:hidden}
+  #areaImpressao,#areaImpressao *{visibility:visible}
+  #areaImpressao{display:block;position:absolute;inset:0;padding:1.5cm;font-size:11pt;color:#000}
+  #areaImpressao h1{font-size:15pt;margin-bottom:.2cm}
+  #areaImpressao .sub{font-size:9pt;color:#444;margin-bottom:.6cm}
+  #areaImpressao table{width:100%;border-collapse:collapse;font-size:9.5pt}
+  #areaImpressao th,#areaImpressao td{border:1px solid #999;padding:4pt 6pt;text-align:left}
+  #areaImpressao .mono{font-family:var(--mono)}
+  #areaImpressao .recibo{border:2px solid #000;padding:.8cm;max-width:16cm}
+  #areaImpressao .linha-ass{margin-top:1.5cm;border-top:1px solid #000;width:8cm;text-align:center;padding-top:.15cm;font-size:9pt}
+}
+
+/* ===== Responsivo ===== */
+@media (max-width:760px){
+  nav.lateral{display:none}
+  nav.inferior{display:block}
+  main{padding:.9rem .8rem 5.5rem}
+  .topo{flex-wrap:wrap;padding:.5rem .8rem}
+  .topo .busca{order:3;width:100%;max-width:none;flex-basis:100%}
+  .relogio{margin-left:auto}
+  h2.titulo .acoes{margin-left:0;width:100%}
+  .grafico{height:120px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== BARRA SUPERIOR ===== -->
+<header class="topo">
+  <div class="marca">NAVI<small>Clientes · Cheques · Financeiro</small></div>
+  <div class="busca"><input id="buscaGlobal" type="search" placeholder="Pesquisar nome, CPF ou nº do cheque…  (atalho: /)"></div>
+  <div class="relogio"><span id="relogioHora">--:--:--</span><small id="relogioData"></small></div>
+  <button class="bt claro mini" id="botaoTema" onclick="alternarTema()" title="Alternar modo escuro">🌙</button>
+</header>
+
+<div class="app">
+  <!-- ===== MENU LATERAL ===== -->
+  <nav class="lateral" id="menuLateral">
+    <button data-tela="painel" class="ativo">📊 Painel <span class="tecla">Alt+1</span></button>
+    <button data-tela="clientes">👥 Clientes <span class="tecla">Alt+2</span></button>
+    <button data-tela="cheques">🏦 Cheques <span class="tecla">Alt+3</span></button>
+    <button data-tela="relatorios">📄 Relatórios <span class="tecla">Alt+4</span></button>
+    <button data-tela="backup">💾 Backup <span class="tecla">Alt+5</span></button>
+    <button onclick="abrirCalendario()">📅 Calendário <span class="tecla">F9</span></button>
+    <button onclick="abrirCalculadora()">🧮 Calculadora <span class="tecla">F10</span></button>
+  </nav>
+
+  <main>
+    <div id="faixaBackup"></div>
+
+    <!-- ===== TELA: PAINEL ===== -->
+    <section class="tela ativa" id="tela-painel">
+      <h2 class="titulo">📊 Painel
+        <span class="acoes"><button class="bt claro mini" onclick="renderPainel()">↻ Atualizar</button></span>
+      </h2>
+      <div id="avisosPainel"></div>
+      <div class="cartoes" id="cartoesPainel"></div>
+      <div class="painel-bloco">
+        <h3>Entradas por mês (cheques compensados — últimos 6 meses)</h3>
+        <div class="grafico" id="graficoMeses"></div>
+      </div>
+      <div class="painel-bloco">
+        <h3>Vencendo nos próximos 7 dias</h3>
+        <div class="tabela-rolagem" style="box-shadow:none;border:none"><table><thead>
+          <tr><th>Vencimento</th><th>Cliente</th><th>Cheque nº</th><th>Valor</th><th></th></tr>
+        </thead><tbody id="tbProximos"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ===== TELA: CLIENTES ===== -->
+    <section class="tela" id="tela-clientes">
+      <h2 class="titulo">👥 Clientes
+        <span class="acoes">
+          <button class="bt claro mini" onclick="exportarClientesCSV()">⬇ Excel</button>
+          <button class="bt mini" onclick="novoCliente()">＋ Novo cliente</button>
+        </span>
+      </h2>
+      <div class="filtros">
+        <div class="campo" style="flex:1;min-width:200px"><label>Pesquisar</label>
+          <input id="filtroCli" type="search" placeholder="Nome, código ou CPF/CNPJ" oninput="renderClientes()"></div>
+        <div class="campo"><label>Classificação</label>
+          <select id="filtroCliRisco" onchange="renderClientes()">
+            <option value="">Todas</option><option value="bom">Bom pagador</option>
+            <option value="atencao">Atenção</option><option value="inadimplente">Inadimplente</option>
+            <option value="bloqueado">Bloqueado</option>
+          </select></div>
+      </div>
+      <div class="tabela-rolagem"><table><thead>
+        <tr><th></th><th>Cód.</th><th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>Risco</th><th>Limite</th><th></th></tr>
+      </thead><tbody id="tbClientes"></tbody></table></div>
+    </section>
+
+    <!-- ===== TELA: CHEQUES ===== -->
+    <section class="tela" id="tela-cheques">
+      <h2 class="titulo">🏦 Cheques
+        <span class="acoes">
+          <button class="bt claro mini" onclick="exportarChequesCSV()">⬇ Excel</button>
+          <button class="bt mini" onclick="novoCheque()">＋ Novo cheque</button>
+        </span>
+      </h2>
+      <div class="filtros">
+        <div class="campo" style="flex:1;min-width:180px"><label>Pesquisar</label>
+          <input id="filtroChq" type="search" placeholder="Nº cheque, cliente ou CPF" oninput="renderCheques()"></div>
+        <div class="campo"><label>Situação</label>
+          <select id="filtroChqStatus" onchange="renderCheques()">
+            <option value="">Todas</option><option value="carteira">Em carteira</option>
+            <option value="vencido">Vencido</option><option value="prorrogado">Prorrogado</option>
+            <option value="compensado">Compensado</option><option value="devolvido">Devolvido</option>
+          </select></div>
+        <div class="campo"><label>Filtrar por</label>
+          <select id="filtroChqCampoData">
+            <option value="vencimento">Vencimento</option><option value="emissao">Emissão</option>
+          </select></div>
+        <div class="campo"><label>De</label><input type="date" id="filtroChqDe"></div>
+        <div class="campo"><label>Até</label><input type="date" id="filtroChqAte"></div>
+        <button class="bt mini" onclick="renderCheques()">Filtrar</button>
+        <button class="bt claro mini" onclick="limparFiltrosCheques()">Limpar</button>
+      </div>
+      <div class="tabela-rolagem"><table><thead>
+        <tr><th>Nº</th><th>Cliente</th><th>Valor</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th></th></tr>
+      </thead><tbody id="tbCheques"></tbody></table></div>
+    </section>
+
+    <!-- ===== TELA: RELATÓRIOS ===== -->
+    <section class="tela" id="tela-relatorios">
+      <h2 class="titulo">📄 Relatórios</h2>
+      <div class="cartoes" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+        <div class="cartao"><div class="rotulo">Clientes</div>
+          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Listagem completa do fichário de clientes.</p>
+          <button class="bt mini" onclick="relClientes()">🖨 Imprimir / PDF</button></div>
+        <div class="cartao"><div class="rotulo">Inadimplência</div>
+          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Ranking de devedores por valor vencido + devolvido.</p>
+          <button class="bt mini" onclick="relInadimplencia()">🖨 Imprimir / PDF</button></div>
+        <div class="cartao"><div class="rotulo">Extrato por cliente</div>
+          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Todos os cheques de um cliente, com totais.</p>
+          <select id="relCliSel" style="width:100%;margin-bottom:.5rem;padding:.45rem;border:1px solid var(--linha);border-radius:8px"></select>
+          <button class="bt mini" onclick="relExtratoCliente()">🖨 Imprimir / PDF</button></div>
+        <div class="cartao"><div class="rotulo">Cheques por período</div>
+          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Usa os filtros aplicados na tela Cheques.</p>
+          <button class="bt mini" onclick="relChequesPeriodo()">🖨 Imprimir / PDF</button></div>
+      </div>
+    </section>
+
+    <!-- ===== TELA: BACKUP / CONFIG ===== -->
+    <section class="tela" id="tela-backup">
+      <h2 class="titulo">💾 Backup e Configurações</h2>
+      <div class="painel-bloco">
+        <h3>Backup — 1 arquivo com tudo</h3>
+        <p style="font-size:.9rem;margin-bottom:.8rem">Todos os dados do NAVI (clientes, cheques, fotos e senha) cabem em <b>um único arquivo</b>. Guarde esse arquivo num pen drive ou nuvem. Para recuperar em qualquer computador, basta abrir o NAVI e restaurar o arquivo.</p>
+        <p style="font-size:.85rem;color:var(--cinza);margin-bottom:1rem">Último backup: <b id="txtUltimoBackup">nunca</b></p>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button class="bt" onclick="fazerBackup()">💾 Fazer backup agora</button>
+          <button class="bt claro" onclick="document.getElementById('arqRestaurar').click()">📂 Restaurar backup</button>
+          <input type="file" id="arqRestaurar" accept=".json" style="display:none" onchange="restaurarBackup(this)">
+        </div>
+      </div>
+      <div class="painel-bloco">
+        <h3>Senha de operações sensíveis</h3>
+        <p style="font-size:.9rem;margin-bottom:.8rem">Pedida ao alterar/excluir clientes e restaurar backup. Senha inicial: <b>1234</b>.</p>
+        <button class="bt claro" onclick="trocarSenha()">🔐 Trocar senha</button>
+      </div>
+      <div class="painel-bloco">
+        <h3>Zona de risco</h3>
+        <button class="bt perigo" onclick="apagarTudo()">🗑 Apagar todos os dados</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== NAVEGAÇÃO INFERIOR (celular) ===== -->
+<nav class="inferior"><div class="trilho" id="menuInferior">
+  <button data-tela="painel" class="ativo"><span class="ico">📊</span>Painel</button>
+  <button data-tela="clientes"><span class="ico">👥</span>Clientes</button>
+  <button data-tela="cheques"><span class="ico">🏦</span>Cheques</button>
+  <button data-tela="relatorios"><span class="ico">📄</span>Relat.</button>
+  <button data-tela="backup"><span class="ico">💾</span>Backup</button>
+</div></nav>
+
+<!-- ===== MODAIS (preenchidos pelo JavaScript) ===== -->
+<div class="veu" id="veu"><div class="modal" id="modalCaixa"></div></div>
+
+<div id="areaImpressao"></div>
+<div class="aviso-flutuante" id="avisoFlutuante"></div>
+<script>
+/* ============================================================
+   NAVI — núcleo: dados, utilidades, navegação, relógio, modais
+   ============================================================ */
+const CHAVE = 'NAVI_DADOS_V1';
+let dados = carregar();
+
+function carregar(){
+  try{
+    const bruto = localStorage.getItem(CHAVE);
+    if(bruto){ const d = JSON.parse(bruto); d.clientes ||= []; d.cheques ||= []; d.senha ||= '1234'; return d; }
+  }catch(e){}
+  return { senha:'1234', clientes:[], cheques:[], ultimoBackup:null, proxCodigo:1 };
+}
+function salvar(){ localStorage.setItem(CHAVE, JSON.stringify(dados)); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ---------- formatação ---------- */
+const fmtBRL = v => (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function fmtData(iso){ if(!iso) return '—'; const [a,m,d] = iso.split('-'); return d+'/'+m+'/'+a; }
+function hojeISO(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function somaDias(iso,n){ const d = new Date(iso+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function esc(t){ return String(t??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function moedaParaNumero(t){ if(typeof t==='number') return t; t=String(t).replace(/[R$\s.]/g,'').replace(',','.'); return parseFloat(t)||0; }
+
+/* ---------- situação do cheque ---------- */
+function situacao(c){
+  if(c.status==='compensado') return 'compensado';
+  if(c.status==='devolvido')  return 'devolvido';
+  if(c.vencimento < hojeISO()) return 'vencido';
+  if((c.prorrogacoes||[]).length) return 'prorrogado';
+  return 'carteira';
+}
+const ROTULO_SIT = {carteira:'Em carteira', vencido:'Vencido', prorrogado:'Prorrogado', compensado:'Compensado', devolvido:'Devolvido'};
+function carimbo(c){ const s = situacao(c); return '<span class="carimbo '+s+'">'+ROTULO_SIT[s]+'</span>'; }
+const ROTULO_RISCO = {bom:'Bom pagador', atencao:'Atenção', inadimplente:'Inadimplente', bloqueado:'Bloqueado'};
+function seloRisco(r){ r=r||'bom'; return '<span class="selo-risco '+r+'">'+ROTULO_RISCO[r]+'</span>'; }
+const ALINEAS = ['11 — Sem fundos (1ª apresentação)','12 — Sem fundos (2ª apresentação)','13 — Conta encerrada','14 — Prática espúria','20 — Folha cancelada','21 — Sustado pelo emitente','22 — Divergência de assinatura','28 — Sustado por roubo/furto','31 — Erro formal de preenchimento','35 — Cheque fraudado','44 — Cheque prescrito','48 — Sem registro no SCG'];
+
+function nomeCliente(id){ const c = dados.clientes.find(x=>x.id===id); return c ? c.nome : '(sem cliente)'; }
+function cliPorId(id){ return dados.clientes.find(x=>x.id===id); }
+
+/* ---------- navegação ---------- */
+function irPara(tela){
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+  document.getElementById('tela-'+tela).classList.add('ativa');
+  document.querySelectorAll('nav [data-tela]').forEach(b=>b.classList.toggle('ativo', b.dataset.tela===tela));
+  if(tela==='painel') renderPainel();
+  if(tela==='clientes') renderClientes();
+  if(tela==='cheques') renderCheques();
+  if(tela==='relatorios') prepararRelatorios();
+  if(tela==='backup') renderBackup();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('nav [data-tela]').forEach(b=>b.addEventListener('click',()=>irPara(b.dataset.tela)));
+
+/* ---------- tema claro/escuro ---------- */
+function alternarTema(){
+  const escuro = document.documentElement.getAttribute('data-tema')==='escuro';
+  if(escuro){ document.documentElement.removeAttribute('data-tema'); document.getElementById('botaoTema').textContent='🌙'; localStorage.setItem('NAVI_TEMA','claro'); }
+  else{ document.documentElement.setAttribute('data-tema','escuro'); document.getElementById('botaoTema').textContent='☀️'; localStorage.setItem('NAVI_TEMA','escuro'); }
+}
+if(localStorage.getItem('NAVI_TEMA')==='escuro'){ document.documentElement.setAttribute('data-tema','escuro'); }
+document.addEventListener('DOMContentLoaded', ()=>{ if(localStorage.getItem('NAVI_TEMA')==='escuro') document.getElementById('botaoTema').textContent='☀️'; });
+
+/* ---------- relógio em tempo real ---------- */
+function tique(){
+  const ag = new Date();
+  document.getElementById('relogioHora').textContent = ag.toLocaleTimeString('pt-BR');
+  document.getElementById('relogioData').textContent = ag.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+}
+setInterval(tique,1000); tique();
+
+/* ---------- modais ---------- */
+function abrirModal(html, estreito){
+  const cx = document.getElementById('modalCaixa');
+  cx.className = 'modal' + (estreito ? ' estreito' : '');
+  cx.innerHTML = html;
+  document.getElementById('veu').classList.add('aberto');
+  const foco = cx.querySelector('input,select,textarea'); if(foco) setTimeout(()=>foco.focus(),60);
+}
+function fecharModal(){ document.getElementById('veu').classList.remove('aberto'); }
+document.getElementById('veu').addEventListener('click', e=>{ if(e.target.id==='veu') fecharModal(); });
+function cabecalhoModal(titulo){ return '<div class="modal-cab"><h3>'+titulo+'</h3><button class="fechar" onclick="fecharModal()">×</button></div>'; }
+
+function avisar(msg){
+  const a = document.getElementById('avisoFlutuante');
+  a.textContent = msg; a.classList.add('mostrar');
+  clearTimeout(a._t); a._t = setTimeout(()=>a.classList.remove('mostrar'), 2600);
+}
+
+/* ---------- senha de operações sensíveis ---------- */
+function pedirSenha(aoConfirmar){
+  abrirModal(cabecalhoModal('🔐 Senha de acesso') +
+    '<div class="modal-corpo"><div class="campo"><label>Digite a senha</label>' +
+    '<input type="password" id="campoSenha" autocomplete="off"></div>' +
+    '<p id="erroSenha" style="color:var(--carimbo);font-size:.8rem;margin-top:.4rem"></p></div>' +
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
+    '<button class="bt" id="btOkSenha">Confirmar</button></div>', true);
+  const ok = ()=>{
+    if(document.getElementById('campoSenha').value === dados.senha){ fecharModal(); aoConfirmar(); }
+    else document.getElementById('erroSenha').textContent = 'Senha incorreta.';
+  };
+  document.getElementById('btOkSenha').onclick = ok;
+  document.getElementById('campoSenha').addEventListener('keydown', e=>{ if(e.key==='Enter') ok(); });
+}
+function trocarSenha(){
+  pedirSenha(()=>{
+    abrirModal(cabecalhoModal('🔐 Nova senha') +
+      '<div class="modal-corpo"><div class="campo"><label>Nova senha</label><input type="password" id="novaSenha"></div></div>' +
+      '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
+      '<button class="bt" onclick="confirmarNovaSenha()">Salvar</button></div>', true);
+  });
+}
+function confirmarNovaSenha(){
+  const n = document.getElementById('novaSenha').value.trim();
+  if(n.length < 3){ avisar('A senha precisa ter pelo menos 3 caracteres.'); return; }
+  dados.senha = n; salvar(); fecharModal(); avisar('Senha alterada ✔');
+}
+
+/* ============================================================
+   MÓDULO CLIENTES
+   ============================================================ */
+function renderClientes(){
+  const filtro = (document.getElementById('filtroCli').value||'').toLowerCase();
+  const risco = document.getElementById('filtroCliRisco').value;
+  const corpo = document.getElementById('tbClientes');
+  let lista = dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  if(filtro) lista = lista.filter(c => (c.nome+' '+c.doc+' '+c.codigo).toLowerCase().includes(filtro));
+  if(risco) lista = lista.filter(c => (c.risco||'bom')===risco);
+  if(!lista.length){ corpo.innerHTML = '<tr><td colspan="8" class="vazio">Nenhum cliente encontrado. Clique em “＋ Novo cliente”.</td></tr>'; return; }
+  corpo.innerHTML = lista.map(c=>{
+    const foto = c.foto ? '<img class="foto-mini" src="'+c.foto+'">' : '<div class="foto-mini" style="display:flex;align-items:center;justify-content:center;color:var(--cinza)">👤</div>';
+    return '<tr>' +
+      '<td>'+foto+'</td>' +
+      '<td class="num">'+String(c.codigo).padStart(4,'0')+'</td>' +
+      '<td><a href="javascript:fichaCliente(\''+c.id+'\')" style="color:var(--verde);font-weight:600;text-decoration:none">'+esc(c.nome)+'</a></td>' +
+      '<td class="num">'+esc(c.doc||'—')+'</td>' +
+      '<td class="num">'+esc(c.tel||'—')+'</td>' +
+      '<td>'+seloRisco(c.risco)+'</td>' +
+      '<td class="num">'+(c.limite ? fmtBRL(c.limite) : '—')+'</td>' +
+      '<td class="acoes-td">' +
+        '<button class="bt claro mini" onclick="fichaCliente(\''+c.id+'\')">Ficha</button> ' +
+        '<button class="bt claro mini" onclick="editarClienteProtegido(\''+c.id+'\')">✏</button> ' +
+        '<button class="bt claro mini" onclick="excluirCliente(\''+c.id+'\')">🗑</button></td></tr>';
+  }).join('');
+}
+
+function novoCliente(){ formCliente(null); }
+function editarClienteProtegido(id){ pedirSenha(()=>formCliente(id)); }
+
+function formCliente(id){
+  const c = id ? cliPorId(id) : {nome:'',doc:'',tel:'',email:'',endereco:'',limite:'',risco:'bom',obs:'',foto:''};
+  abrirModal(cabecalhoModal(id ? '✏ Alterar cliente' : '＋ Novo cliente') +
+    '<div class="modal-corpo"><div class="form-grade">' +
+    '<div class="campo cheio"><label>Nome *</label><input id="fNome" value="'+esc(c.nome)+'"></div>' +
+    '<div class="campo"><label>CPF / CNPJ</label><input id="fDoc" value="'+esc(c.doc)+'"></div>' +
+    '<div class="campo"><label>Telefone</label><input id="fTel" value="'+esc(c.tel)+'"></div>' +
+    '<div class="campo cheio"><label>Endereço</label><input id="fEnd" value="'+esc(c.endereco)+'"></div>' +
+    '<div class="campo"><label>E-mail</label><input id="fEmail" value="'+esc(c.email)+'"></div>' +
+    '<div class="campo"><label>Limite de crédito (R$)</label><input id="fLimite" inputmode="decimal" value="'+(c.limite||'')+'"></div>' +
+    '<div class="campo"><label>Classificação de risco</label><select id="fRisco">' +
+      Object.entries(ROTULO_RISCO).map(([v,r])=>'<option value="'+v+'"'+((c.risco||'bom')===v?' selected':'')+'>'+r+'</option>').join('') +
+    '</select></div>' +
+    '<div class="campo"><label>Foto</label><input type="file" id="fFoto" accept="image/*"></div>' +
+    '<div class="campo cheio"><label>Observações</label><textarea id="fObs" rows="2">'+esc(c.obs)+'</textarea></div>' +
+    '</div></div>' +
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
+    '<button class="bt" onclick="salvarCliente(\''+(id||'')+'\')">Salvar cliente</button></div>');
+  window._fotoTemp = c.foto || '';
+  document.getElementById('fFoto').addEventListener('change', function(){
+    const arq = this.files[0]; if(!arq) return;
+    const leitor = new FileReader();
+    leitor.onload = ev => redimensionarFoto(ev.target.result, b64 => { window._fotoTemp = b64; avisar('Foto carregada ✔'); });
+    leitor.readAsDataURL(arq);
+  });
+}
+function redimensionarFoto(srcB64, retorno){
+  const img = new Image();
+  img.onload = ()=>{
+    const MAX = 240, esc = Math.min(1, MAX/Math.max(img.width,img.height));
+    const cv = document.createElement('canvas');
+    cv.width = Math.round(img.width*esc); cv.height = Math.round(img.height*esc);
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    retorno(cv.toDataURL('image/jpeg',0.72));
+  };
+  img.src = srcB64;
+}
+function salvarCliente(id){
+  const nome = document.getElementById('fNome').value.trim();
+  if(!nome){ avisar('Informe o nome do cliente.'); return; }
+  const campos = {
+    nome, doc:document.getElementById('fDoc').value.trim(), tel:document.getElementById('fTel').value.trim(),
+    email:document.getElementById('fEmail').value.trim(), endereco:document.getElementById('fEnd').value.trim(),
+    limite:moedaParaNumero(document.getElementById('fLimite').value), risco:document.getElementById('fRisco').value,
+    obs:document.getElementById('fObs').value.trim(), foto:window._fotoTemp||''
+  };
+  if(id){ Object.assign(cliPorId(id), campos); }
+  else{ dados.proxCodigo ||= 1; dados.clientes.push(Object.assign({id:uid(), codigo:dados.proxCodigo++, criado:hojeISO()}, campos)); }
+  salvar(); fecharModal(); renderClientes(); avisar('Cliente salvo ✔');
+}
+function excluirCliente(id){
+  pedirSenha(()=>{
+    const c = cliPorId(id);
+    const qt = dados.cheques.filter(x=>x.clienteId===id).length;
+    if(!confirm('Excluir o cliente "'+c.nome+'"?'+(qt ? '\nOs '+qt+' cheque(s) dele continuarão no sistema, sem cliente vinculado.' : ''))) return;
+    dados.clientes = dados.clientes.filter(x=>x.id!==id);
+    salvar(); renderClientes(); avisar('Cliente excluído.');
+  });
+}
+
+/* ---- Ficha do cliente: histórico de cheques em 1 clique ---- */
+function fichaCliente(id){
+  const c = cliPorId(id); if(!c) return;
+  const chs = dados.cheques.filter(x=>x.clienteId===id).sort((a,b)=>b.vencimento.localeCompare(a.vencimento));
+  const total = chs.reduce((s,x)=>s+x.valor,0);
+  const aberto = chs.filter(x=>['carteira','vencido','prorrogado'].includes(situacao(x))).reduce((s,x)=>s+x.valor,0);
+  const limiteTxt = c.limite ? fmtBRL(c.limite) + (aberto>c.limite ? ' <span class="carimbo devolvido reto">limite estourado</span>' : '') : '—';
+  const foto = c.foto ? '<img class="foto-cli" src="'+c.foto+'">' : '<div class="foto-cli" style="display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--cinza)">👤</div>';
+  const linhas = chs.length ? chs.map(x =>
+    '<tr><td class="num">'+esc(x.numero)+'</td><td class="num">'+fmtBRL(x.valor)+'</td>' +
+    '<td class="num">'+fmtData(x.vencimento)+'</td><td>'+carimbo(x)+'</td></tr>').join('')
+    : '<tr><td colspan="4" class="vazio">Nenhum cheque deste cliente.</td></tr>';
+  abrirModal(cabecalhoModal('👤 Ficha do cliente') +
+    '<div class="modal-corpo">' +
+    '<div class="ficha-cab">'+foto+'<div class="info"><b>'+esc(c.nome)+'</b> '+seloRisco(c.risco)+
+    '<div class="doc">Cód. '+String(c.codigo).padStart(4,'0')+' · '+esc(c.doc||'sem CPF/CNPJ')+'</div>' +
+    '<div style="font-size:.85rem;margin-top:.2rem">'+esc(c.tel||'')+' '+esc(c.email||'')+'</div></div></div>' +
+    '<div class="cartoes" style="grid-template-columns:repeat(3,1fr);margin-bottom:.8rem">' +
+    '<div class="cartao"><div class="rotulo">Movimentado</div><div class="valor" style="font-size:1rem">'+fmtBRL(total)+'</div></div>' +
+    '<div class="cartao am"><div class="rotulo">Em aberto</div><div class="valor" style="font-size:1rem">'+fmtBRL(aberto)+'</div></div>' +
+    '<div class="cartao"><div class="rotulo">Limite</div><div class="valor" style="font-size:1rem">'+limiteTxt+'</div></div></div>' +
+    (c.obs ? '<p style="font-size:.85rem;color:var(--cinza);margin-bottom:.8rem">📝 '+esc(c.obs)+'</p>' : '') +
+    '<div class="tabela-rolagem" style="max-height:240px;overflow-y:auto"><table><thead><tr><th>Cheque</th><th>Valor</th><th>Venc.</th><th>Situação</th></tr></thead><tbody>'+linhas+'</tbody></table></div>' +
+    '</div><div class="modal-pe">' +
+    '<button class="bt claro" onclick="relExtratoClienteId(\''+id+'\')">🖨 Extrato em PDF</button>' +
+    '<button class="bt" onclick="fecharModal()">Fechar</button></div>');
+}
+
+/* ============================================================
+   MÓDULO CHEQUES
+   ============================================================ */
+function chequesFiltrados(){
+  const filtro = (document.getElementById('filtroChq').value||'').toLowerCase();
+  const st = document.getElementById('filtroChqStatus').value;
+  const campo = document.getElementById('filtroChqCampoData').value;
+  const de = document.getElementById('filtroChqDe').value, ate = document.getElementById('filtroChqAte').value;
+  let lista = dados.cheques.slice().sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+  if(filtro) lista = lista.filter(c => (c.numero+' '+nomeCliente(c.clienteId)+' '+(c.cpfEmitente||'')+' '+(c.emitente||'')).toLowerCase().includes(filtro));
+  if(st) lista = lista.filter(c => situacao(c)===st);
+  if(de) lista = lista.filter(c => (c[campo]||'') >= de);
+  if(ate) lista = lista.filter(c => (c[campo]||'') <= ate);
+  return lista;
+}
+function limparFiltrosCheques(){
+  ['filtroChq','filtroChqDe','filtroChqAte'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('filtroChqStatus').value=''; renderCheques();
+}
+function renderCheques(){
+  const corpo = document.getElementById('tbCheques');
+  const lista = chequesFiltrados();
+  if(!lista.length){ corpo.innerHTML = '<tr><td colspan="7" class="vazio">Nenhum cheque encontrado.</td></tr>'; return; }
+  corpo.innerHTML = lista.map(c =>
+    '<tr><td class="num">'+esc(c.numero)+'</td>' +
+    '<td>'+esc(nomeCliente(c.clienteId))+'</td>' +
+    '<td class="num"><b>'+fmtBRL(c.valor)+'</b></td>' +
+    '<td class="num">'+fmtData(c.emissao)+'</td>' +
+    '<td class="num">'+fmtData(c.vencimento)+'</td>' +
+    '<td>'+carimbo(c)+'</td>' +
+    '<td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('');
+}
+
+function novoCheque(){
+  if(!dados.clientes.length){ avisar('Cadastre um cliente antes de lançar cheques.'); irPara('clientes'); return; }
+  formCheque(null);
+}
+function formCheque(id){
+  const c = id ? dados.cheques.find(x=>x.id===id) : {clienteId:'',numero:'',banco:'',agencia:'',conta:'',emitente:'',cpfEmitente:'',valor:'',emissao:hojeISO(),vencimento:hojeISO(),obs:''};
+  const ops = dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))
+    .map(x=>'<option value="'+x.id+'"'+(x.id===c.clienteId?' selected':'')+'>'+esc(x.nome)+((x.risco==='bloqueado')?' 🚫':'')+'</option>').join('');
+  abrirModal(cabecalhoModal(id ? '✏ Alterar cheque' : '＋ Novo cheque') +
+    '<div class="modal-corpo"><div class="form-grade">' +
+    '<div class="campo cheio"><label>Cliente *</label><select id="qCli"><option value="">— selecione —</option>'+ops+'</select></div>' +
+    '<div class="campo"><label>Nº do cheque *</label><input id="qNum" value="'+esc(c.numero)+'"></div>' +
+    '<div class="campo"><label>Valor (R$) *</label><input id="qValor" inputmode="decimal" value="'+(c.valor||'')+'"></div>' +
+    '<div class="campo"><label>Banco</label><input id="qBanco" value="'+esc(c.banco)+'"></div>' +
+    '<div class="campo"><label>Agência</label><input id="qAg" value="'+esc(c.agencia)+'"></div>' +
+    '<div class="campo"><label>Conta</label><input id="qConta" value="'+esc(c.conta)+'"></div>' +
+    '<div class="campo"><label>Emitente</label><input id="qEmit" value="'+esc(c.emitente)+'"></div>' +
+    '<div class="campo"><label>CPF do emitente</label><input id="qCpf" value="'+esc(c.cpfEmitente)+'"></div>' +
+    '<div class="campo"><label>Emissão *</label><input type="date" id="qEmis" value="'+c.emissao+'"></div>' +
+    '<div class="campo"><label>Vencimento *</label><input type="date" id="qVenc" value="'+c.vencimento+'"></div>' +
+    '<div class="campo cheio"><label>Observações</label><textarea id="qObs" rows="2">'+esc(c.obs)+'</textarea></div>' +
+    '</div><p id="avisoLimite" style="color:var(--carimbo);font-size:.8rem;margin-top:.5rem"></p></div>' +
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
+    '<button class="bt" onclick="salvarCheque(\''+(id||'')+'\')">Salvar cheque</button></div>');
+}
+function salvarCheque(id){
+  const clienteId = document.getElementById('qCli').value;
+  const numero = document.getElementById('qNum').value.trim();
+  const valor = moedaParaNumero(document.getElementById('qValor').value);
+  const emissao = document.getElementById('qEmis').value, vencimento = document.getElementById('qVenc').value;
+  if(!clienteId || !numero || !valor || !emissao || !vencimento){ avisar('Preencha cliente, nº, valor e datas.'); return; }
+  const cli = cliPorId(clienteId);
+  if(cli && cli.risco==='bloqueado' && !confirm('⚠ Este cliente está BLOQUEADO. Lançar mesmo assim?')) return;
+  if(cli && cli.limite){
+    const aberto = dados.cheques.filter(x=>x.clienteId===clienteId && x.id!==id && ['carteira','vencido','prorrogado'].includes(situacao(x))).reduce((s,x)=>s+x.valor,0);
+    if(aberto + valor > cli.limite && !confirm('⚠ Limite de crédito ('+fmtBRL(cli.limite)+') será ultrapassado.\nEm aberto: '+fmtBRL(aberto)+' + este cheque: '+fmtBRL(valor)+'.\nLançar mesmo assim?')) return;
+  }
+  const campos = { clienteId, numero, valor, emissao, vencimento,
+    banco:document.getElementById('qBanco').value.trim(), agencia:document.getElementById('qAg').value.trim(),
+    conta:document.getElementById('qConta').value.trim(), emitente:document.getElementById('qEmit').value.trim(),
+    cpfEmitente:document.getElementById('qCpf').value.trim(), obs:document.getElementById('qObs').value.trim() };
+  if(id){ Object.assign(dados.cheques.find(x=>x.id===id), campos); }
+  else{ dados.cheques.push(Object.assign({id:uid(), status:'carteira', prorrogacoes:[], criado:hojeISO()}, campos)); }
+  salvar(); fecharModal(); renderCheques(); avisar('Cheque salvo ✔');
+}
+
+/* ---- detalhe do cheque: prorrogar, devolver, compensar, recibo ---- */
+function detalheCheque(id){
+  const c = dados.cheques.find(x=>x.id===id); if(!c) return;
+  const pr = (c.prorrogacoes||[]).map(p =>
+    '<tr><td class="num">'+fmtData(p.de)+'</td><td class="num">'+fmtData(p.para)+'</td><td>'+esc(p.motivo||'—')+'</td><td class="num">'+fmtData(p.data)+'</td></tr>').join('');
+  abrirModal(cabecalhoModal('🏦 Cheque nº '+esc(c.numero)) +
+    '<div class="modal-corpo">' +
+    '<p style="margin-bottom:.6rem"><b>'+esc(nomeCliente(c.clienteId))+'</b> · '+carimbo(c)+'</p>' +
+    '<p class="num" style="font-family:var(--mono);font-size:.85rem;color:var(--cinza);margin-bottom:.8rem">' +
+      'Banco '+esc(c.banco||'—')+' · Ag '+esc(c.agencia||'—')+' · CC '+esc(c.conta||'—')+'<br>' +
+      'Emitente: '+esc(c.emitente||'—')+' ('+esc(c.cpfEmitente||'sem CPF')+')</p>' +
+    '<div class="cartoes" style="grid-template-columns:repeat(3,1fr)">' +
+    '<div class="cartao vd"><div class="rotulo">Valor</div><div class="valor" style="font-size:1rem">'+fmtBRL(c.valor)+'</div></div>' +
+    '<div class="cartao"><div class="rotulo">Emissão</div><div class="valor" style="font-size:1rem">'+fmtData(c.emissao)+'</div></div>' +
+    '<div class="cartao"><div class="rotulo">Vencimento</div><div class="valor" style="font-size:1rem">'+fmtData(c.vencimento)+'</div></div></div>' +
+    (c.status==='devolvido' ? '<p class="faixa-aviso vermelha">Devolvido — alínea '+esc(c.alinea||'?')+'</p>' : '') +
+    (c.status==='compensado' ? '<p class="faixa-aviso" style="background:#E8F0F7;border-color:#B9CFE2;color:#1F4360">Compensado em '+fmtData(c.recebidoEm)+'</p>' : '') +
+    (pr ? '<h3 style="font-size:.78rem;text-transform:uppercase;color:var(--cinza);margin:.6rem 0 .4rem">Histórico de prorrogações</h3>' +
+      '<div class="tabela-rolagem"><table><thead><tr><th>De</th><th>Para</th><th>Motivo</th><th>Registrado em</th></tr></thead><tbody>'+pr+'</tbody></table></div>' : '') +
+    (c.obs ? '<p style="font-size:.85rem;color:var(--cinza);margin-top:.6rem">📝 '+esc(c.obs)+'</p>' : '') +
+    '</div><div class="modal-pe" style="justify-content:flex-start">' +
+    (c.status!=='compensado' && c.status!=='devolvido' ?
+      '<button class="bt mini" onclick="compensarCheque(\''+id+'\')">✔ Compensar</button>' +
+      '<button class="bt claro mini" onclick="prorrogarCheque(\''+id+'\')">📅 Prorrogar</button>' +
+      '<button class="bt perigo mini" onclick="devolverCheque(\''+id+'\')">↩ Devolver</button>' : '') +
+    '<button class="bt claro mini" onclick="reciboCheque(\''+id+'\')">🖨 Recibo</button>' +
+    '<button class="bt claro mini" onclick="formCheque(\''+id+'\')">✏ Editar</button>' +
+    '<button class="bt claro mini" onclick="excluirCheque(\''+id+'\')">🗑 Excluir</button>' +
+    '</div>');
+}
+function compensarCheque(id){
+  const c = dados.cheques.find(x=>x.id===id);
+  c.status='compensado'; c.recebidoEm=hojeISO(); salvar(); fecharModal(); renderCheques(); renderPainel(); avisar('Cheque compensado ✔');
+}
+function prorrogarCheque(id){
+  const c = dados.cheques.find(x=>x.id===id);
+  abrirModal(cabecalhoModal('📅 Prorrogar cheque nº '+esc(c.numero)) +
+    '<div class="modal-corpo"><div class="form-grade">' +
+    '<div class="campo"><label>Vencimento atual</label><input value="'+fmtData(c.vencimento)+'" disabled></div>' +
+    '<div class="campo"><label>Novo vencimento *</label><input type="date" id="pNovo" value="'+somaDias(c.vencimento,30)+'"></div>' +
+    '<div class="campo cheio"><label>Motivo</label><input id="pMotivo" placeholder="Ex.: acordo com o cliente"></div>' +
+    '</div></div><div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button>' +
+    '<button class="bt" onclick="confirmarProrrogacao(\''+id+'\')">Prorrogar</button></div>', true);
+}
+function confirmarProrrogacao(id){
+  const c = dados.cheques.find(x=>x.id===id);
+  const novo = document.getElementById('pNovo').value;
+  if(!novo || novo <= c.vencimento){ avisar('Informe uma data posterior ao vencimento atual.'); return; }
+  c.prorrogacoes ||= [];
+  c.prorrogacoes.push({de:c.vencimento, para:novo, motivo:document.getElementById('pMotivo').value.trim(), data:hojeISO()});
+  c.vencimento = novo; c.status='carteira';
+  salvar(); renderCheques(); renderPainel(); detalheCheque(id); avisar('Cheque prorrogado ✔');
+}
+function devolverCheque(id){
+  const c = dados.cheques.find(x=>x.id===id);
+  abrirModal(cabecalhoModal('↩ Devolução do cheque nº '+esc(c.numero)) +
+    '<div class="modal-corpo"><div class="campo"><label>Motivo (alínea do Banco Central)</label>' +
+    '<select id="dAlinea">'+ALINEAS.map(a=>'<option>'+a+'</option>').join('')+'</select></div></div>' +
+    '<div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button>' +
+    '<button class="bt perigo" onclick="confirmarDevolucao(\''+id+'\')">Registrar devolução</button></div>', true);
+}
+function confirmarDevolucao(id){
+  const c = dados.cheques.find(x=>x.id===id);
+  c.status='devolvido'; c.alinea=document.getElementById('dAlinea').value;
+  salvar(); renderCheques(); renderPainel(); fecharModal(); avisar('Devolução registrada.');
+}
+function excluirCheque(id){
+  pedirSenha(()=>{
+    if(!confirm('Excluir este cheque definitivamente?')) return;
+    dados.cheques = dados.cheques.filter(x=>x.id!==id);
+    salvar(); fecharModal(); renderCheques(); renderPainel(); avisar('Cheque excluído.');
+  });
+}
+function reciboCheque(id){
+  const c = dados.cheques.find(x=>x.id===id);
+  const cli = cliPorId(c.clienteId);
+  imprimir('<div class="recibo"><h1>RECIBO DE CHEQUE RECEBIDO</h1>' +
+    '<div class="sub">NAVI · emitido em '+new Date().toLocaleString('pt-BR')+'</div>' +
+    '<p>Recebemos de <b>'+esc(cli?cli.nome:'—')+'</b>'+(cli&&cli.doc?' (CPF/CNPJ '+esc(cli.doc)+')':'')+
+    ' o cheque abaixo descrito:</p><br><table>' +
+    '<tr><th>Cheque nº</th><td class="mono">'+esc(c.numero)+'</td><th>Valor</th><td class="mono"><b>'+fmtBRL(c.valor)+'</b></td></tr>' +
+    '<tr><th>Banco</th><td>'+esc(c.banco||'—')+'</td><th>Agência / Conta</th><td class="mono">'+esc(c.agencia||'—')+' / '+esc(c.conta||'—')+'</td></tr>' +
+    '<tr><th>Emitente</th><td>'+esc(c.emitente||'—')+'</td><th>CPF emitente</th><td class="mono">'+esc(c.cpfEmitente||'—')+'</td></tr>' +
+    '<tr><th>Emissão</th><td class="mono">'+fmtData(c.emissao)+'</td><th>Bom para (vencimento)</th><td class="mono">'+fmtData(c.vencimento)+'</td></tr></table>' +
+    '<div class="linha-ass">Assinatura do recebedor</div></div>');
+}
+
+/* ============================================================
+   PAINEL (dashboard), ALERTA DE VENCIMENTOS, GRÁFICO
+   ============================================================ */
+function renderPainel(){
+  const hoje = hojeISO(), em7 = somaDias(hoje,7);
+  const abertos = dados.cheques.filter(c=>!['compensado','devolvido'].includes(c.status));
+  const soma = l => l.reduce((s,c)=>s+c.valor,0);
+  const aReceber = soma(abertos);
+  const vencidos = abertos.filter(c=>c.vencimento<hoje);
+  const aVencer7 = abertos.filter(c=>c.vencimento>=hoje && c.vencimento<=em7);
+  const recebidoTot = soma(dados.cheques.filter(c=>c.status==='compensado'));
+  const devolvidoTot = soma(dados.cheques.filter(c=>c.status==='devolvido'));
+
+  document.getElementById('cartoesPainel').innerHTML =
+    '<div class="cartao vd"><div class="rotulo">A receber (em carteira)</div><div class="valor">'+fmtBRL(aReceber)+'</div></div>' +
+    '<div class="cartao vm"><div class="rotulo">Vencido ('+vencidos.length+')</div><div class="valor">'+fmtBRL(soma(vencidos))+'</div></div>' +
+    '<div class="cartao am"><div class="rotulo">A vencer em 7 dias ('+aVencer7.length+')</div><div class="valor">'+fmtBRL(soma(aVencer7))+'</div></div>' +
+    '<div class="cartao az"><div class="rotulo">Recebido (total)</div><div class="valor">'+fmtBRL(recebidoTot)+'</div></div>' +
+    '<div class="cartao vm"><div class="rotulo">Devolvidos (total)</div><div class="valor">'+fmtBRL(devolvidoTot)+'</div></div>';
+
+  const avisos = [];
+  if(vencidos.length) avisos.push('<div class="faixa-aviso vermelha">⚠ <b>'+vencidos.length+' cheque(s) vencido(s)</b> somando '+fmtBRL(soma(vencidos))+'. <button class="bt perigo mini" onclick="verVencidos()">Ver agora</button></div>');
+  if(aVencer7.length) avisos.push('<div class="faixa-aviso">📅 <b>'+aVencer7.length+' cheque(s)</b> vencem nos próximos 7 dias ('+fmtBRL(soma(aVencer7))+').</div>');
+  document.getElementById('avisosPainel').innerHTML = avisos.join('');
+
+  document.getElementById('tbProximos').innerHTML = aVencer7.length
+    ? aVencer7.sort((a,b)=>a.vencimento.localeCompare(b.vencimento)).map(c =>
+      '<tr><td class="num">'+fmtData(c.vencimento)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td>' +
+      '<td class="num">'+esc(c.numero)+'</td><td class="num"><b>'+fmtBRL(c.valor)+'</b></td>' +
+      '<td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('')
+    : '<tr><td colspan="5" class="vazio">Nada vencendo nos próximos 7 dias. 👍</td></tr>';
+
+  // gráfico de barras: compensados por mês (últimos 6 meses)
+  const meses = [], rotMes = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const ag = new Date();
+  for(let i=5;i>=0;i--){
+    const d = new Date(ag.getFullYear(), ag.getMonth()-i, 1);
+    meses.push({chave: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), rot: rotMes[d.getMonth()]+'/'+String(d.getFullYear()).slice(2), total:0});
+  }
+  dados.cheques.forEach(c=>{
+    if(c.status==='compensado' && c.recebidoEm){
+      const m = meses.find(x=>c.recebidoEm.startsWith(x.chave)); if(m) m.total += c.valor;
+    }
+  });
+  const maior = Math.max(...meses.map(m=>m.total), 1);
+  document.getElementById('graficoMeses').innerHTML = meses.map(m =>
+    '<div class="col"><span class="qt">'+(m.total ? fmtBRL(m.total).replace(/\u00a0/,' ') : '')+'</span>' +
+    '<div class="barra" style="height:'+Math.round(m.total/maior*100)+'%"></div>' +
+    '<span class="mes">'+m.rot+'</span></div>').join('');
+}
+function verVencidos(){ irPara('cheques'); document.getElementById('filtroChqStatus').value='vencido'; renderCheques(); }
+
+function alertaAbertura(){
+  const hoje = hojeISO(), em7 = somaDias(hoje,7);
+  const abertos = dados.cheques.filter(c=>!['compensado','devolvido'].includes(c.status));
+  const vencidos = abertos.filter(c=>c.vencimento<hoje);
+  const aVencer = abertos.filter(c=>c.vencimento>=hoje && c.vencimento<=em7);
+  if(!vencidos.length && !aVencer.length) return;
+  const linha = c => '<tr><td class="num">'+fmtData(c.vencimento)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="num">'+esc(c.numero)+'</td><td class="num">'+fmtBRL(c.valor)+'</td></tr>';
+  abrirModal(cabecalhoModal('🔔 Avisos de vencimento') + '<div class="modal-corpo">' +
+    (vencidos.length ? '<p class="faixa-aviso vermelha"><b>'+vencidos.length+' cheque(s) já vencido(s)!</b></p>' +
+      '<div class="tabela-rolagem" style="margin-bottom:1rem"><table><thead><tr><th>Venc.</th><th>Cliente</th><th>Nº</th><th>Valor</th></tr></thead><tbody>'+vencidos.map(linha).join('')+'</tbody></table></div>' : '') +
+    (aVencer.length ? '<p class="faixa-aviso"><b>'+aVencer.length+' cheque(s)</b> vencem nos próximos 7 dias:</p>' +
+      '<div class="tabela-rolagem"><table><thead><tr><th>Venc.</th><th>Cliente</th><th>Nº</th><th>Valor</th></tr></thead><tbody>'+aVencer.map(linha).join('')+'</tbody></table></div>' : '') +
+    '</div><div class="modal-pe"><button class="bt" onclick="fecharModal()">Entendi</button></div>');
+}
+
+/* ============================================================
+   RELATÓRIOS (impressão → PDF pelo próprio navegador)
+   ============================================================ */
+function imprimir(html){
+  document.getElementById('areaImpressao').innerHTML = html;
+  setTimeout(()=>window.print(), 80);
+}
+function cabecalhoRel(titulo, sub){
+  return '<h1>'+titulo+'</h1><div class="sub">NAVI · '+new Date().toLocaleString('pt-BR')+(sub?' · '+sub:'')+'</div>';
+}
+function prepararRelatorios(){
+  document.getElementById('relCliSel').innerHTML = '<option value="">— escolha o cliente —</option>' +
+    dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(c=>'<option value="'+c.id+'">'+esc(c.nome)+'</option>').join('');
+}
+function relClientes(){
+  if(!dados.clientes.length){ avisar('Nenhum cliente cadastrado.'); return; }
+  imprimir(cabecalhoRel('Relatório de Clientes','total: '+dados.clientes.length) +
+    '<table><thead><tr><th>Cód.</th><th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>Risco</th><th>Limite</th></tr></thead><tbody>' +
+    dados.clientes.slice().sort((a,b)=>a.codigo-b.codigo).map(c =>
+      '<tr><td class="mono">'+String(c.codigo).padStart(4,'0')+'</td><td>'+esc(c.nome)+'</td><td class="mono">'+esc(c.doc||'—')+'</td>' +
+      '<td class="mono">'+esc(c.tel||'—')+'</td><td>'+ROTULO_RISCO[c.risco||'bom']+'</td><td class="mono">'+(c.limite?fmtBRL(c.limite):'—')+'</td></tr>').join('') +
+    '</tbody></table>');
+}
+function relInadimplencia(){
+  const hoje = hojeISO(), porCliente = {};
+  dados.cheques.forEach(c=>{
+    const s = situacao(c);
+    if(s==='vencido' || s==='devolvido'){
+      porCliente[c.clienteId] ||= {vencido:0, devolvido:0, qt:0};
+      porCliente[c.clienteId][s==='vencido'?'vencido':'devolvido'] += c.valor;
+      porCliente[c.clienteId].qt++;
+    }
+  });
+  const ranking = Object.entries(porCliente).map(([id,v])=>({nome:nomeCliente(id), ...v, total:v.vencido+v.devolvido}))
+    .sort((a,b)=>b.total-a.total);
+  if(!ranking.length){ avisar('Nenhuma pendência: sem vencidos nem devolvidos. 🎉'); return; }
+  imprimir(cabecalhoRel('Relatório de Inadimplência','ranking de devedores') +
+    '<table><thead><tr><th>#</th><th>Cliente</th><th>Qt. cheques</th><th>Vencido</th><th>Devolvido</th><th>Total devido</th></tr></thead><tbody>' +
+    ranking.map((r,i)=>'<tr><td class="mono">'+(i+1)+'º</td><td>'+esc(r.nome)+'</td><td class="mono">'+r.qt+'</td>' +
+      '<td class="mono">'+fmtBRL(r.vencido)+'</td><td class="mono">'+fmtBRL(r.devolvido)+'</td><td class="mono"><b>'+fmtBRL(r.total)+'</b></td></tr>').join('') +
+    '</tbody></table>');
+}
+function relExtratoCliente(){
+  const id = document.getElementById('relCliSel').value;
+  if(!id){ avisar('Escolha um cliente na lista.'); return; }
+  relExtratoClienteId(id);
+}
+function relExtratoClienteId(id){
+  const cli = cliPorId(id);
+  const chs = dados.cheques.filter(x=>x.clienteId===id).sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+  const total = chs.reduce((s,x)=>s+x.valor,0);
+  imprimir(cabecalhoRel('Extrato — '+esc(cli.nome), (cli.doc||'') ) +
+    '<table><thead><tr><th>Cheque nº</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th>Valor</th></tr></thead><tbody>' +
+    chs.map(c=>'<tr><td class="mono">'+esc(c.numero)+'</td><td class="mono">'+fmtData(c.emissao)+'</td><td class="mono">'+fmtData(c.vencimento)+'</td>' +
+      '<td>'+ROTULO_SIT[situacao(c)]+(c.alinea?' ('+esc(c.alinea.split(' ')[0])+')':'')+'</td><td class="mono">'+fmtBRL(c.valor)+'</td></tr>').join('') +
+    '<tr><td colspan="4"><b>TOTAL MOVIMENTADO</b></td><td class="mono"><b>'+fmtBRL(total)+'</b></td></tr></tbody></table>' +
+    '<p style="margin-top:.5cm;font-size:9pt">💡 Para gerar PDF: na janela de impressão, escolha “Salvar como PDF”.</p>');
+}
+function relChequesPeriodo(){
+  const lista = chequesFiltrados();
+  if(!lista.length){ avisar('Nenhum cheque com os filtros atuais (ajuste na tela Cheques).'); return; }
+  const total = lista.reduce((s,c)=>s+c.valor,0);
+  imprimir(cabecalhoRel('Cheques por período', lista.length+' cheque(s) · total '+fmtBRL(total)) +
+    '<table><thead><tr><th>Nº</th><th>Cliente</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th>Valor</th></tr></thead><tbody>' +
+    lista.map(c=>'<tr><td class="mono">'+esc(c.numero)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="mono">'+fmtData(c.emissao)+'</td>' +
+      '<td class="mono">'+fmtData(c.vencimento)+'</td><td>'+ROTULO_SIT[situacao(c)]+'</td><td class="mono">'+fmtBRL(c.valor)+'</td></tr>').join('') +
+    '</tbody></table>');
+}
+
+/* ============================================================
+   EXPORTAÇÃO EXCEL (CSV pt-BR, abre direto no Excel)
+   ============================================================ */
+function baixarArquivo(nome, conteudo, tipo){
+  const blob = new Blob([conteudo], {type:tipo});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+function csv(linhas){ return '\ufeff' + linhas.map(l => l.map(c => '"'+String(c??'').replace(/"/g,'""')+'"').join(';')).join('\r\n'); }
+function exportarClientesCSV(){
+  if(!dados.clientes.length){ avisar('Nenhum cliente para exportar.'); return; }
+  const linhas = [['Código','Nome','CPF/CNPJ','Telefone','E-mail','Endereço','Risco','Limite','Observações']];
+  dados.clientes.forEach(c=>linhas.push([c.codigo, c.nome, c.doc, c.tel, c.email, c.endereco, ROTULO_RISCO[c.risco||'bom'], String(c.limite||0).replace('.',','), c.obs]));
+  baixarArquivo('navi-clientes.csv', csv(linhas), 'text/csv;charset=utf-8'); avisar('Planilha de clientes baixada ✔');
+}
+function exportarChequesCSV(){
+  if(!dados.cheques.length){ avisar('Nenhum cheque para exportar.'); return; }
+  const linhas = [['Nº','Cliente','Valor','Emissão','Vencimento','Situação','Alínea','Banco','Agência','Conta','Emitente','CPF emitente','Prorrogações','Observações']];
+  chequesFiltrados().forEach(c=>linhas.push([c.numero, nomeCliente(c.clienteId), String(c.valor).replace('.',','), fmtData(c.emissao), fmtData(c.vencimento),
+    ROTULO_SIT[situacao(c)], c.alinea||'', c.banco, c.agencia, c.conta, c.emitente, c.cpfEmitente, (c.prorrogacoes||[]).length, c.obs]));
+  baixarArquivo('navi-cheques.csv', csv(linhas), 'text/csv;charset=utf-8'); avisar('Planilha de cheques baixada ✔');
+}
+
+/* ============================================================
+   BACKUP — 1 arquivo único (navi-backup-AAAA-MM-DD.json)
+   ============================================================ */
+function fazerBackup(){
+  dados.ultimoBackup = new Date().toISOString();
+  salvar();
+  baixarArquivo('navi-backup-'+hojeISO()+'.json', JSON.stringify(dados, null, 1), 'application/json');
+  renderBackup(); faixaLembreteBackup(); avisar('Backup baixado: guarde o arquivo em local seguro ✔');
+}
+function restaurarBackup(input){
+  const arq = input.files[0]; input.value=''; if(!arq) return;
+  pedirSenha(()=>{
+    const leitor = new FileReader();
+    leitor.onload = ev => {
+      try{
+        const d = JSON.parse(ev.target.result);
+        if(!Array.isArray(d.clientes) || !Array.isArray(d.cheques)) throw 0;
+        if(!confirm('Restaurar este backup?\nClientes: '+d.clientes.length+' · Cheques: '+d.cheques.length+'\n\n⚠ Os dados atuais serão SUBSTITUÍDOS.')) return;
+        d.senha ||= '1234'; dados = d; salvar();
+        renderBackup(); renderPainel(); irPara('painel'); avisar('Backup restaurado ✔');
+      }catch(e){ avisar('Arquivo inválido. Use um backup gerado pelo NAVI (.json).'); }
+    };
+    leitor.readAsText(arq);
+  });
+}
+function renderBackup(){
+  const u = dados.ultimoBackup;
+  document.getElementById('txtUltimoBackup').textContent = u ? new Date(u).toLocaleString('pt-BR') : 'nunca';
+}
+function faixaLembreteBackup(){
+  const f = document.getElementById('faixaBackup');
+  const u = dados.ultimoBackup;
+  const dias = u ? Math.floor((Date.now()-new Date(u).getTime())/86400000) : null;
+  const temDados = dados.clientes.length || dados.cheques.length;
+  if(temDados && (dias===null || dias>=7)){
+    f.innerHTML = '<div class="faixa-aviso">💾 '+(dias===null?'Você ainda não fez nenhum backup.':'Seu último backup foi há '+dias+' dia(s).') +
+      ' <button class="bt mini" onclick="fazerBackup()">Fazer backup agora</button></div>';
+  } else f.innerHTML = '';
+}
+function apagarTudo(){
+  pedirSenha(()=>{
+    if(!confirm('APAGAR TODOS os clientes e cheques? Esta ação não tem volta.')) return;
+    if(!confirm('Tem certeza absoluta? Faça um backup antes, se ainda não fez.')) return;
+    dados = {senha:dados.senha, clientes:[], cheques:[], ultimoBackup:null, proxCodigo:1};
+    salvar(); renderPainel(); renderBackup(); irPara('painel'); avisar('Dados apagados.');
+  });
+}
+
+/* ============================================================
+   F9 CALENDÁRIO · F10 CALCULADORA · ATALHOS · BUSCA GLOBAL
+   ============================================================ */
+let calRef = new Date();
+function abrirCalendario(ref){
+  calRef = ref || new Date();
+  const ano = calRef.getFullYear(), mes = calRef.getMonth();
+  const nomeMes = calRef.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const primeiro = new Date(ano,mes,1).getDay(), qtDias = new Date(ano,mes+1,0).getDate();
+  const hj = new Date();
+  let dias = '';
+  for(let i=0;i<primeiro;i++) dias += '<div></div>';
+  for(let d=1;d<=qtDias;d++){
+    const ehHoje = d===hj.getDate() && mes===hj.getMonth() && ano===hj.getFullYear();
+    dias += '<div class="dia'+(ehHoje?' hoje':'')+'">'+d+'</div>';
+  }
+  abrirModal(cabecalhoModal('📅 Calendário') + '<div class="modal-corpo">' +
+    '<div class="cal-cab"><button class="bt claro mini" onclick="mudarMes(-1)">‹</button><b>'+nomeMes+'</b><button class="bt claro mini" onclick="mudarMes(1)">›</button></div>' +
+    '<div class="cal-grade">'+['D','S','T','Q','Q','S','S'].map(x=>'<div class="dia-sem">'+x+'</div>').join('')+dias+'</div></div>', true);
+}
+function mudarMes(n){ calRef.setMonth(calRef.getMonth()+n); abrirCalendario(calRef); }
+
+let calcExp = '';
+function abrirCalculadora(){
+  calcExp = '';
+  const teclas = ['7','8','9','÷','4','5','6','×','1','2','3','−','0',',','C','+'];
+  abrirModal(cabecalhoModal('🧮 Calculadora') + '<div class="modal-corpo"><div class="calc">' +
+    '<div class="visor" id="calcVisor">0</div>' +
+    teclas.map(t=>'<button class="'+('÷×−+'.includes(t)||t==='C'?'op':'')+'" onclick="calcTecla(\''+t+'\')">'+t+'</button>').join('') +
+    '<button class="ig" style="grid-column:1/-1" onclick="calcIgual()">=</button>' +
+    '</div></div>', true);
+}
+function calcTecla(t){
+  if(t==='C') calcExp = '';
+  else calcExp += t;
+  document.getElementById('calcVisor').textContent = calcExp || '0';
+}
+function calcIgual(){
+  try{
+    const exp = calcExp.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/,/g,'.');
+    if(!/^[0-9+\-*/. ()]+$/.test(exp)) throw 0;
+    const r = Function('"use strict";return ('+exp+')')();
+    calcExp = String(Math.round(r*100)/100).replace('.',',');
+    document.getElementById('calcVisor').textContent = calcExp;
+  }catch(e){ document.getElementById('calcVisor').textContent = 'Erro'; calcExp=''; }
+}
+
+/* ---------- busca global (nome, CPF ou nº de cheque) ---------- */
+document.getElementById('buscaGlobal').addEventListener('keydown', function(e){
+  if(e.key!=='Enter') return;
+  const termo = this.value.trim().toLowerCase(); if(!termo) return;
+  const cli = dados.clientes.find(c => (c.nome+' '+(c.doc||'')).toLowerCase().includes(termo));
+  const chq = dados.cheques.find(c => (c.numero+' '+(c.cpfEmitente||'')).toLowerCase().includes(termo));
+  if(chq && !cli){ irPara('cheques'); document.getElementById('filtroChq').value=this.value.trim(); renderCheques(); }
+  else if(cli){ irPara('clientes'); document.getElementById('filtroCli').value=this.value.trim(); renderClientes(); if(!chq) fichaCliente(cli.id); }
+  else { irPara('cheques'); document.getElementById('filtroChq').value=this.value.trim(); renderCheques(); avisar('Nada encontrado com esse termo.'); }
+});
+
+/* ---------- atalhos de teclado ---------- */
+document.addEventListener('keydown', e=>{
+  if(e.key==='F9'){ e.preventDefault(); abrirCalendario(); }
+  if(e.key==='F10'){ e.preventDefault(); abrirCalculadora(); }
+  if(e.key==='Escape') fecharModal();
+  if(e.altKey && '12345'.includes(e.key)){
+    e.preventDefault();
+    irPara(['painel','clientes','cheques','relatorios','backup'][Number(e.key)-1]);
+  }
+  if(e.ctrlKey && (e.key==='b'||e.key==='B')){ e.preventDefault(); fazerBackup(); }
+  if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+    e.preventDefault(); document.getElementById('buscaGlobal').focus();
+  }
+});
+
+/* ---------- inicialização ---------- */
+renderPainel();
+faixaLembreteBackup();
+setTimeout(alertaAbertura, 400);
+</script>
+</body>
+</html>
