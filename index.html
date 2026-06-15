@@ -5,112 +5,144 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NAVI — Clientes, Cheques e Financeiro</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 :root{
-  --tinta:#14241D;          /* verde-tinta escuro (texto) */
-  --verde:#1E5C46;          /* verde-cédula (marca) */
+  --tinta:#14241D;
+  --verde:#1E5C46;
   --verde-claro:#2E7D5B;
-  --papel:#F2F4EF;          /* papel de cheque */
+  --verde-glass:rgba(30,92,70,.13);
+  --papel:#F2F4EF;
   --branco:#FFFFFF;
   --linha:#D8DED4;
-  --carimbo:#B3372B;        /* vermelho carimbo (devolvido/vencido) */
-  --ambar:#C28A1F;          /* a vencer */
-  --azul:#2C5F8A;           /* compensado */
+  --carimbo:#B3372B;
+  --ambar:#C28A1F;
+  --azul:#2C5F8A;
   --cinza:#6B7A70;
-  --sombra:0 1px 3px rgba(20,36,29,.10);
-  --raio:10px;
-  --mono:"Consolas","Menlo","Liberation Mono",monospace;
+  --sombra:0 1px 4px rgba(20,36,29,.10);
+  --sombra-md:0 4px 20px rgba(20,36,29,.13);
+  --raio:12px;
+  --mono:'JetBrains Mono','Consolas',monospace;
+  --sem:'Inter',system-ui,sans-serif;
 }
 [data-tema="escuro"]{
   --tinta:#E8ECE7;
   --verde:#2E7D5B;
   --verde-claro:#3C9670;
-  --papel:#15201B;
-  --branco:#1E2A24;
-  --linha:#33433C;
+  --papel:#12191500;
+  --branco:#1A2620;
+  --linha:#2A3A32;
   --carimbo:#E0726A;
   --ambar:#E0B23F;
   --azul:#5B9BD1;
-  --cinza:#9AAAA1;
+  --cinza:#7A9A8A;
 }
-[data-tema="escuro"] body{background:var(--papel)}
-[data-tema="escuro"] .campo input,[data-tema="escuro"] .campo select,[data-tema="escuro"] .campo textarea{background:var(--branco);color:var(--tinta)}
+[data-tema="escuro"] body{background:#0E1712}
+[data-tema="escuro"] .campo input,[data-tema="escuro"] .campo select,[data-tema="escuro"] .campo textarea{background:#1A2620;color:var(--tinta);border-color:var(--linha)}
 [data-tema="escuro"] .faixa-aviso{background:#3A2F12;border-color:#5C4A1C;color:#F0D896}
 [data-tema="escuro"] .faixa-aviso.vermelha{background:#3A1815;border-color:#5C2A24;color:#F5C2BC}
-[data-tema="escuro"] .selo-risco.atencao{color:#15201B}
-[data-tema="escuro"] .carimbo.vencido{background:#3A1815}
+[data-tema="escuro"] .topo{background:linear-gradient(135deg,#1A3A28,#0E2418)}
+[data-tema="escuro"] nav.lateral{background:#1A2620;border-color:var(--linha)}
+[data-tema="escuro"] tbody tr:hover{background:rgba(255,255,255,.03)}
+[data-tema="escuro"] .cartao{background:#1A2620}
+[data-tema="escuro"] .painel-bloco{background:#1A2620}
+[data-tema="escuro"] .tabela-rolagem{background:#1A2620}
+[data-tema="escuro"] th{background:#141E18}
+[data-tema="escuro"] .modal{background:#1A2620}
+[data-tema="escuro"] .modal-pe{border-color:var(--linha)}
+[data-tema="escuro"] nav.inferior{background:#1A2620;border-color:var(--linha)}
+[data-tema="escuro"] .calc button{background:#1A2620;color:var(--tinta)}
+[data-tema="escuro"] .calc .visor{background:#141E18}
+[data-tema="escuro"] .lembrete-item{background:#1A2620;border-color:var(--linha)}
+[data-tema="escuro"] .agenda-dia{background:#1A2620}
+[data-tema="escuro"] .cal-grade .dia{color:var(--tinta)}
+[data-tema="escuro"] .cal-grade .dia:hover{background:rgba(46,125,91,.25)}
+[data-tema="escuro"] .feriado-label{background:#2A3A32;color:#7ABA98}
+
 *{margin:0;padding:0;box-sizing:border-box}
-html{font-size:19px}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--papel);color:var(--tinta);min-height:100vh}
+html{font-size:16px}
+body{font-family:var(--sem);background:var(--papel);color:var(--tinta);min-height:100vh}
 button{font-family:inherit;cursor:pointer}
 input,select,textarea{font-family:inherit;font-size:1rem}
 
 /* ===== Barra superior ===== */
-.topo{position:sticky;top:0;z-index:50;background:var(--verde);color:#fff;display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem;box-shadow:var(--sombra)}
-.topo .marca{font-weight:800;letter-spacing:.14em;font-size:1.15rem}
-.topo .marca small{display:block;font-weight:400;letter-spacing:.02em;font-size:.62rem;opacity:.85}
-.topo .busca{flex:1;max-width:520px;margin:0 auto;position:relative}
-.topo .busca input{width:100%;padding:.5rem .8rem;border:none;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;outline:none}
-.topo .busca input::placeholder{color:rgba(255,255,255,.75)}
+.topo{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#1E5C46,#14402E);color:#fff;display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;box-shadow:0 2px 12px rgba(20,36,29,.25)}
+.topo .marca{font-weight:800;letter-spacing:.12em;font-size:1.1rem;line-height:1.2}
+.topo .marca small{display:block;font-weight:400;letter-spacing:.02em;font-size:.6rem;opacity:.8}
+.topo .busca{flex:1;max-width:480px;margin:0 auto;position:relative}
+.topo .busca input{width:100%;padding:.48rem .9rem;border:none;border-radius:999px;background:rgba(255,255,255,.15);color:#fff;outline:none;font-size:.9rem;backdrop-filter:blur(4px)}
+.topo .busca input::placeholder{color:rgba(255,255,255,.65)}
 .topo .busca input:focus{background:#fff;color:var(--tinta)}
-.relogio{font-family:var(--mono);font-size:1.5rem;font-weight:700;white-space:nowrap;text-align:right;line-height:1.2}
-.relogio small{display:block;font-size:.85rem;opacity:.85;font-family:system-ui;font-weight:400}
+.relogio{font-family:var(--mono);font-size:1.3rem;font-weight:700;white-space:nowrap;text-align:right;line-height:1.2}
+.relogio small{display:block;font-size:.7rem;opacity:.8;font-family:var(--sem);font-weight:400}
+.topo-acoes{display:flex;gap:.4rem;align-items:center}
+
+/* ===== Botão ferramentas destaque ===== */
+.bt-ferramentas{background:linear-gradient(135deg,#F0C040,#D4A017);color:#1A1000;border:none;border-radius:20px;padding:.4rem .85rem;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:.35rem;letter-spacing:.02em;box-shadow:0 2px 8px rgba(212,160,23,.4);transition:.2s}
+.bt-ferramentas:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(212,160,23,.5)}
+.bt-ferramentas .ico-f{font-size:.95rem}
 
 /* ===== Layout ===== */
 .app{display:flex;min-height:calc(100vh - 56px)}
-nav.lateral{width:200px;background:var(--branco);border-right:1px solid var(--linha);padding:.8rem .5rem;flex-shrink:0}
-nav.lateral button{display:flex;align-items:center;gap:.6rem;width:100%;padding:.7rem .8rem;border:none;background:none;border-radius:8px;font-size:1.08rem;color:var(--tinta);text-align:left;margin-bottom:.15rem}
-nav.lateral button .tecla{margin-left:auto;font-family:var(--mono);font-size:.65rem;color:var(--cinza);border:1px solid var(--linha);border-radius:4px;padding:0 .3rem}
-nav.lateral button:hover{background:var(--papel)}
-nav.lateral button.ativo{background:var(--verde);color:#fff}
-nav.lateral button.ativo .tecla{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.4)}
-main{flex:1;padding:1.2rem;max-width:1080px;margin:0 auto;width:100%}
+nav.lateral{width:195px;background:var(--branco);border-right:1px solid var(--linha);padding:.7rem .45rem;flex-shrink:0}
+nav.lateral button{display:flex;align-items:center;gap:.55rem;width:100%;padding:.65rem .75rem;border:none;background:none;border-radius:10px;font-size:.95rem;color:var(--tinta);text-align:left;margin-bottom:.1rem;transition:.15s}
+nav.lateral button .tecla{margin-left:auto;font-family:var(--mono);font-size:.6rem;color:var(--cinza);border:1px solid var(--linha);border-radius:4px;padding:0 .28rem}
+nav.lateral button:hover{background:var(--verde-glass)}
+nav.lateral button.ativo{background:var(--verde);color:#fff;box-shadow:0 2px 8px rgba(30,92,70,.3)}
+nav.lateral button.ativo .tecla{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.35)}
+nav.lateral .sep{height:1px;background:var(--linha);margin:.4rem .5rem}
+nav.lateral .sec-titulo{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);padding:.3rem .75rem .1rem;font-weight:700}
+
+main{flex:1;padding:1.1rem;max-width:1080px;margin:0 auto;width:100%}
 .tela{display:none}
 .tela.ativa{display:block;animation:surge .18s ease}
-@keyframes surge{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes surge{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.tela.ativa{animation:none}}
-h2.titulo{font-size:1.5rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+h2.titulo{font-size:1.4rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-weight:800}
 h2.titulo .acoes{margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap}
 
 /* ===== Botões ===== */
-.bt{border:none;border-radius:8px;padding:.6rem 1.1rem;font-size:1rem;font-weight:600;background:var(--verde);color:#fff;display:inline-flex;align-items:center;gap:.4rem}
-.bt:hover{background:var(--verde-claro)}
+.bt{border:none;border-radius:9px;padding:.58rem 1rem;font-size:.95rem;font-weight:600;background:var(--verde);color:#fff;display:inline-flex;align-items:center;gap:.4rem;transition:.15s}
+.bt:hover{background:var(--verde-claro);transform:translateY(-1px)}
 .bt.claro{background:var(--branco);color:var(--tinta);border:1px solid var(--linha)}
 .bt.claro:hover{background:var(--papel)}
 .bt.perigo{background:var(--carimbo)}
-.bt.mini{padding:.4rem .7rem;font-size:.92rem;border-radius:6px}
+.bt.perigo:hover{background:#c94035}
+.bt.mini{padding:.38rem .7rem;font-size:.85rem;border-radius:7px}
+.bt.ambar{background:var(--ambar);color:#fff}
 
 /* ===== Cartões / painel ===== */
-.cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin-bottom:1.2rem}
-.cartao{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:.9rem 1rem;box-shadow:var(--sombra)}
-.cartao .rotulo{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:.3rem}
-.cartao .valor{font-family:var(--mono);font-size:1.5rem;font-weight:700}
+.cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.75rem;margin-bottom:1.1rem}
+.cartao{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:.85rem .95rem;box-shadow:var(--sombra);transition:.2s}
+.cartao:hover{box-shadow:var(--sombra-md);transform:translateY(-1px)}
+.cartao .rotulo{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:.28rem;font-weight:600}
+.cartao .valor{font-family:var(--mono);font-size:1.35rem;font-weight:700}
 .cartao.vd .valor{color:var(--verde)}
 .cartao.vm .valor{color:var(--carimbo)}
 .cartao.am .valor{color:var(--ambar)}
 .cartao.az .valor{color:var(--azul)}
 
-.painel-bloco{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem;box-shadow:var(--sombra);margin-bottom:1.2rem}
-.painel-bloco h3{font-size:.95rem;margin-bottom:.8rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:.78rem}
+.painel-bloco{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem;box-shadow:var(--sombra);margin-bottom:1.1rem}
+.painel-bloco h3{font-size:.72rem;margin-bottom:.8rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
 
-/* Gráfico de barras (CSS puro) */
-.grafico{display:flex;align-items:flex-end;gap:.6rem;height:150px;padding-top:.5rem}
-.grafico .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.3rem;height:100%}
-.grafico .barra{width:100%;max-width:54px;background:linear-gradient(180deg,var(--verde-claro),var(--verde));border-radius:5px 5px 0 0;min-height:3px}
-.grafico .mes{font-size:.68rem;color:var(--cinza);font-family:var(--mono)}
-.grafico .qt{font-size:.66rem;font-family:var(--mono);color:var(--verde);font-weight:700}
+/* Gráfico de barras */
+.grafico{display:flex;align-items:flex-end;gap:.5rem;height:130px;padding-top:.5rem}
+.grafico .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.25rem;height:100%}
+.grafico .barra{width:100%;max-width:50px;background:linear-gradient(180deg,#3C9670,#1E5C46);border-radius:5px 5px 0 0;min-height:3px;transition:.4s}
+.grafico .mes{font-size:.63rem;color:var(--cinza);font-family:var(--mono)}
+.grafico .qt{font-size:.62rem;font-family:var(--mono);color:var(--verde);font-weight:700}
 
 /* ===== Tabelas ===== */
 .tabela-rolagem{overflow-x:auto;background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra)}
-table{width:100%;border-collapse:collapse;font-size:1.05rem}
-th{background:var(--papel);text-align:left;padding:.6rem .7rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza);border-bottom:1px solid var(--linha);white-space:nowrap}
-td{padding:.65rem .7rem;border-bottom:1px solid var(--linha);vertical-align:middle;font-size:1.05rem}
+table{width:100%;border-collapse:collapse}
+th{background:var(--papel);text-align:left;padding:.55rem .7rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza);border-bottom:1px solid var(--linha);white-space:nowrap;font-weight:700}
+td{padding:.6rem .7rem;border-bottom:1px solid var(--linha);vertical-align:middle;font-size:.95rem}
 tr:last-child td{border-bottom:none}
-tbody tr:hover{background:#FAFBF8}
+tbody tr:hover{background:#FAFBF8;transition:.1s}
 td.num{font-family:var(--mono);white-space:nowrap}
 td.acoes-td{white-space:nowrap;text-align:right}
 
-/* ===== Carimbos de status (assinatura visual) ===== */
-.carimbo{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;border:2px solid;border-radius:4px;padding:.1rem .4rem;transform:rotate(-2deg)}
+/* ===== Carimbos de status ===== */
+.carimbo{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;border:2px solid;border-radius:4px;padding:.1rem .4rem;transform:rotate(-1.5deg)}
 .carimbo.carteira{color:var(--verde);border-color:var(--verde)}
 .carimbo.compensado{color:var(--azul);border-color:var(--azul)}
 .carimbo.devolvido{color:var(--carimbo);border-color:var(--carimbo)}
@@ -118,67 +150,160 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .carimbo.prorrogado{color:var(--ambar);border-color:var(--ambar)}
 .carimbo.reto{transform:none}
 
-.selo-risco{display:inline-block;font-size:.7rem;font-weight:700;border-radius:999px;padding:.12rem .55rem;color:#fff}
+.selo-risco{display:inline-block;font-size:.68rem;font-weight:700;border-radius:999px;padding:.1rem .5rem;color:#fff}
 .selo-risco.bom{background:var(--verde)}
 .selo-risco.atencao{background:var(--ambar)}
 .selo-risco.inadimplente{background:var(--carimbo)}
 .selo-risco.bloqueado{background:#4A4A4A}
 
 /* ===== Formulários ===== */
-.form-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem}
-.campo{display:flex;flex-direction:column;gap:.25rem}
-.campo label{font-size:.82rem;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.05em}
-.campo input,.campo select,.campo textarea{padding:.6rem .7rem;border:1px solid var(--linha);border-radius:8px;background:#fff;outline:none;width:100%;font-size:1.05rem}
+.form-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem}
+.campo{display:flex;flex-direction:column;gap:.22rem}
+.campo label{font-size:.75rem;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.05em}
+.campo input,.campo select,.campo textarea{padding:.58rem .7rem;border:1px solid var(--linha);border-radius:9px;background:#fff;outline:none;width:100%;transition:.15s}
 .campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(30,92,70,.12)}
 .campo.cheio{grid-column:1/-1}
-.filtros{display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem}
+.filtros{display:flex;gap:.55rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem}
 .filtros .campo{min-width:140px}
 
 /* ===== Modais ===== */
-.veu{display:none;position:fixed;inset:0;background:rgba(20,36,29,.45);z-index:100;padding:1rem;overflow-y:auto}
+.veu{display:none;position:fixed;inset:0;background:rgba(20,36,29,.5);z-index:100;padding:1rem;overflow-y:auto;backdrop-filter:blur(2px)}
 .veu.aberto{display:flex;align-items:flex-start;justify-content:center}
-.modal{background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.25);width:100%;max-width:640px;margin:2rem auto;overflow:hidden}
-.modal.estreito{max-width:380px}
-.modal-cab{background:var(--verde);color:#fff;padding:.8rem 1.1rem;display:flex;align-items:center;gap:.6rem}
-.modal-cab h3{font-size:1rem;flex:1}
-.modal-cab .fechar{background:none;border:none;color:#fff;font-size:1.3rem;line-height:1}
+.modal{background:#fff;border-radius:16px;box-shadow:0 16px 50px rgba(0,0,0,.25);width:100%;max-width:640px;margin:2rem auto;overflow:hidden}
+.modal.estreito{max-width:400px}
+.modal.largo{max-width:820px}
+.modal-cab{background:linear-gradient(135deg,var(--verde),var(--verde-claro));color:#fff;padding:.8rem 1.1rem;display:flex;align-items:center;gap:.6rem}
+.modal-cab h3{font-size:.98rem;flex:1;font-weight:700}
+.modal-cab .fechar{background:none;border:none;color:#fff;font-size:1.3rem;line-height:1;opacity:.8;transition:.15s}
+.modal-cab .fechar:hover{opacity:1;transform:scale(1.15)}
 .modal-corpo{padding:1.1rem}
-.modal-pe{padding:.9rem 1.1rem;border-top:1px solid var(--linha);display:flex;justify-content:flex-end;gap:.6rem;flex-wrap:wrap}
+.modal-pe{padding:.85rem 1.1rem;border-top:1px solid var(--linha);display:flex;justify-content:flex-end;gap:.55rem;flex-wrap:wrap}
 
 /* ===== Ficha do cliente / foto ===== */
-.foto-cli{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--linha);background:var(--papel)}
-.foto-mini{width:34px;height:34px;border-radius:7px;object-fit:cover;border:1px solid var(--linha);background:var(--papel)}
+.foto-cli{width:68px;height:68px;border-radius:10px;object-fit:cover;border:2px solid var(--linha);background:var(--papel)}
+.foto-mini{width:32px;height:32px;border-radius:7px;object-fit:cover;border:1px solid var(--linha);background:var(--papel);display:flex;align-items:center;justify-content:center;font-size:1rem}
 .ficha-cab{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
 .ficha-cab .info{flex:1;min-width:200px}
-.ficha-cab .info b{font-size:1.1rem}
-.ficha-cab .info .doc{font-family:var(--mono);color:var(--cinza);font-size:.85rem}
+.ficha-cab .info b{font-size:1.05rem}
+.ficha-cab .info .doc{font-family:var(--mono);color:var(--cinza);font-size:.82rem}
 
 /* ===== Alertas / avisos ===== */
-.faixa-aviso{background:#FFF6E3;border:1px solid #EBD9A8;color:#7A5B12;border-radius:var(--raio);padding:.7rem 1rem;margin-bottom:1rem;font-size:.88rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.faixa-aviso{background:#FFF6E3;border:1px solid #EBD9A8;color:#7A5B12;border-radius:var(--raio);padding:.65rem 1rem;margin-bottom:.9rem;font-size:.85rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
 .faixa-aviso.vermelha{background:#FBEAE8;border-color:#E5B5AF;color:#7C2C23}
-.aviso-flutuante{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.6rem 1.2rem;border-radius:999px;font-size:.85rem;z-index:300;box-shadow:var(--sombra);opacity:0;pointer-events:none;transition:opacity .25s}
+.aviso-flutuante{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.58rem 1.1rem;border-radius:999px;font-size:.83rem;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
 .aviso-flutuante.mostrar{opacity:1}
 .vazio{text-align:center;color:var(--cinza);padding:2rem 1rem;font-size:.9rem}
 
-/* ===== Calculadora / calendário ===== */
+/* ===== LEMBRETES ===== */
+.lembrete-lista{display:flex;flex-direction:column;gap:.6rem;max-height:420px;overflow-y:auto;padding-right:.2rem}
+.lembrete-item{background:var(--branco);border:1px solid var(--linha);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;transition:.15s}
+.lembrete-item:hover{box-shadow:var(--sombra-md)}
+.lembrete-item.urgente{border-left:4px solid var(--carimbo)}
+.lembrete-item.hoje{border-left:4px solid var(--ambar)}
+.lembrete-item.futuro{border-left:4px solid var(--verde)}
+.lembrete-item.concluido{opacity:.5;text-decoration:line-through}
+.lembrete-ico{font-size:1.4rem;flex-shrink:0}
+.lembrete-info{flex:1}
+.lembrete-titulo{font-weight:700;font-size:.95rem;margin-bottom:.1rem}
+.lembrete-meta{font-size:.77rem;color:var(--cinza);font-family:var(--mono);display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.lembrete-meta .badge-hora{background:var(--verde-glass);color:var(--verde);border-radius:5px;padding:.05rem .35rem;font-weight:700}
+.lembrete-acoes{display:flex;gap:.3rem}
+
+/* Badge contador lembretes */
+.badge-lembrete{position:relative;display:inline-flex;align-items:center}
+.badge-lembrete .cnt{position:absolute;top:-6px;right:-8px;background:var(--carimbo);color:#fff;border-radius:999px;font-size:.6rem;font-weight:800;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--verde)}
+
+/* Alerta sonoro de lembrete */
+@keyframes pulseAlerta{0%{box-shadow:0 0 0 0 rgba(179,55,43,.7)}70%{box-shadow:0 0 0 16px rgba(179,55,43,0)}100%{box-shadow:0 0 0 0 rgba(179,55,43,0)}}
+.alerta-lembrete{position:fixed;top:70px;right:1rem;z-index:500;background:#fff;border:2px solid var(--carimbo);border-radius:14px;padding:1rem 1.2rem;box-shadow:0 8px 32px rgba(0,0,0,.25);max-width:340px;animation:pulseAlerta 1s ease-out 3}
+.alerta-lembrete h4{font-size:1rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.alerta-lembrete p{font-size:.88rem;color:var(--cinza);margin-bottom:.7rem}
+.alerta-lembrete .acoes{display:flex;gap:.4rem}
+
+/* ===== CALENDÁRIO GRANDE ===== */
+.cal-grande{background:var(--branco);border-radius:var(--raio);overflow:hidden}
+.cal-cab-grande{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;background:linear-gradient(135deg,var(--verde),var(--verde-claro));color:#fff}
+.cal-cab-grande b{font-size:1.3rem;text-transform:capitalize;font-weight:800}
+.cal-grade-grande{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:.5rem;background:var(--linha)}
+.cal-grade-grande .dia-sem{background:var(--papel);text-align:center;font-size:.72rem;font-weight:700;color:var(--cinza);text-transform:uppercase;padding:.5rem 0}
+.cal-grade-grande .dia{background:var(--branco);text-align:center;padding:.65rem .2rem;font-size:1.05rem;font-weight:500;cursor:pointer;transition:.12s;min-height:62px;display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.cal-grade-grande .dia:hover{background:var(--verde-glass)}
+.cal-grade-grande .dia.hoje{background:var(--verde);color:#fff;font-weight:800}
+.cal-grade-grande .dia.tem-lembrete{position:relative}
+.cal-grade-grande .dia.tem-lembrete::after{content:'';display:block;width:6px;height:6px;border-radius:50%;background:var(--ambar)}
+.cal-grade-grande .dia.feriado{background:#FFF6E3}
+.cal-grade-grande .dia.dom{color:var(--carimbo)}
+.cal-grade-grande .dia.hoje.dom{color:#fff}
+.feriado-label{font-size:.58rem;background:#FFF6E3;color:#7A5B12;border-radius:4px;padding:.08rem .3rem;font-weight:700;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
+.cal-legenda{display:flex;gap:1rem;flex-wrap:wrap;padding:.7rem 1rem;border-top:1px solid var(--linha);font-size:.78rem;color:var(--cinza)}
+.cal-legenda span{display:flex;align-items:center;gap:.35rem}
+.cal-legenda .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* Calculadora */
 .calc{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
-.calc .visor{grid-column:1/-1;font-family:var(--mono);font-size:1.4rem;text-align:right;background:var(--papel);border:1px solid var(--linha);border-radius:8px;padding:.6rem .8rem;overflow:hidden;white-space:nowrap}
-.calc button{padding:.7rem 0;font-size:1.05rem;border:1px solid var(--linha);border-radius:8px;background:#fff}
+.calc .visor{grid-column:1/-1;font-family:var(--mono);font-size:1.4rem;text-align:right;background:var(--papel);border:1px solid var(--linha);border-radius:9px;padding:.6rem .8rem;overflow:hidden;white-space:nowrap}
+.calc button{padding:.7rem 0;font-size:1rem;border:1px solid var(--linha);border-radius:8px;background:#fff;transition:.1s}
+.calc button:hover{background:var(--verde-glass)}
 .calc button.op{background:var(--papel);font-weight:700}
 .calc button.ig{background:var(--verde);color:#fff;border-color:var(--verde)}
-.cal-grade{display:grid;grid-template-columns:repeat(7,1fr);gap:.2rem;text-align:center;font-size:.85rem}
-.cal-grade .dia-sem{font-size:.66rem;font-weight:700;color:var(--cinza);text-transform:uppercase;padding:.3rem 0}
-.cal-grade .dia{padding:.45rem 0;border-radius:7px}
-.cal-grade .dia.hoje{background:var(--verde);color:#fff;font-weight:700}
-.cal-cab{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
-.cal-cab b{font-size:.95rem;text-transform:capitalize}
 
-/* ===== Navegação inferior (celular) ===== */
-nav.inferior{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--linha);z-index:60;padding:.3rem .2rem calc(.3rem + env(safe-area-inset-bottom))}
-nav.inferior .trilho{display:flex;justify-content:space-around}
-nav.inferior button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.1rem;font-size:.74rem;color:var(--cinza);padding:.3rem .5rem;border-radius:8px}
-nav.inferior button .ico{font-size:1.35rem}
-nav.inferior button.ativo{color:var(--verde);font-weight:700}
+/* ===== Tela Sobre ===== */
+.sobre-hero{background:linear-gradient(135deg,#1E5C46,#0E3328);border-radius:var(--raio);padding:2rem;color:#fff;margin-bottom:1.1rem;position:relative;overflow:hidden}
+.sobre-hero::before{content:'NAVI';position:absolute;right:-10px;top:-20px;font-size:9rem;font-weight:900;opacity:.06;letter-spacing:-.05em;line-height:1;pointer-events:none}
+.sobre-hero h1{font-size:2rem;font-weight:900;letter-spacing:.1em;margin-bottom:.2rem}
+.sobre-hero .versao{font-size:.75rem;opacity:.7;font-family:var(--mono);margin-bottom:.8rem}
+.sobre-hero p{font-size:.95rem;opacity:.9;line-height:1.6;max-width:560px}
+.funcionalidades-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.75rem;margin-bottom:1.1rem}
+.func-card{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem;box-shadow:var(--sombra);display:flex;gap:.75rem;align-items:flex-start}
+.func-card .func-ico{font-size:1.8rem;flex-shrink:0;line-height:1}
+.func-card .func-info h4{font-size:.92rem;font-weight:700;margin-bottom:.2rem}
+.func-card .func-info p{font-size:.8rem;color:var(--cinza);line-height:1.5}
+.aviso-cache{background:linear-gradient(135deg,#FFF0E0,#FFE4CC);border:1.5px solid #F4A050;border-radius:var(--raio);padding:.9rem 1.1rem;margin-bottom:1rem;display:flex;gap:.75rem;align-items:flex-start}
+.aviso-cache .ico{font-size:1.5rem;flex-shrink:0}
+.aviso-cache .txt h4{font-size:.9rem;font-weight:700;color:#8B4A0A;margin-bottom:.2rem}
+.aviso-cache .txt p{font-size:.8rem;color:#7A4208;line-height:1.5}
+[data-tema="escuro"] .aviso-cache{background:linear-gradient(135deg,#3A2010,#2A1A08);border-color:#8B5020}
+[data-tema="escuro"] .aviso-cache .txt h4{color:#F4A050}
+[data-tema="escuro"] .aviso-cache .txt p{color:#D4905A}
+
+/* ===== Aviso backup 12h ===== */
+.aviso-backup-urgente{background:linear-gradient(135deg,#FFF6E0,#FFF0CC);border:2px solid var(--ambar);border-radius:var(--raio);padding:.85rem 1.1rem;margin-bottom:1rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;animation:pulseBorder 2.5s ease-in-out infinite}
+@keyframes pulseBorder{0%,100%{border-color:var(--ambar)}50%{border-color:#E0A010}}
+.aviso-backup-urgente .icob{font-size:1.4rem;flex-shrink:0}
+.aviso-backup-urgente .txtb{flex:1;min-width:160px}
+.aviso-backup-urgente .txtb strong{display:block;font-size:.88rem;color:#7A5000;margin-bottom:.1rem}
+.aviso-backup-urgente .txtb span{font-size:.8rem;color:#9A6800}
+[data-tema="escuro"] .aviso-backup-urgente{background:linear-gradient(135deg,#3A2E10,#2A2008);border-color:#C28A1F}
+[data-tema="escuro"] .aviso-backup-urgente .txtb strong{color:#F0C060}
+[data-tema="escuro"] .aviso-backup-urgente .txtb span{color:#C8A040}
+
+/* ===== Manual ===== */
+.manual-sumario{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem;margin-bottom:1.1rem;box-shadow:var(--sombra)}
+.manual-sumario h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cinza);margin-bottom:.6rem;font-weight:700}
+.manual-sumario ul{list-style:none;display:flex;flex-wrap:wrap;gap:.35rem}
+.manual-sumario ul li a{color:var(--verde);font-size:.85rem;font-weight:600;text-decoration:none;padding:.2rem .5rem;border-radius:6px;background:var(--verde-glass);display:inline-block}
+.manual-sumario ul li a:hover{background:var(--verde);color:#fff}
+.manual-secao{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1.2rem;margin-bottom:.85rem;box-shadow:var(--sombra)}
+.manual-secao h3{font-size:1.05rem;font-weight:800;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;padding-bottom:.6rem;border-bottom:2px solid var(--verde-glass)}
+.manual-secao h4{font-size:.9rem;font-weight:700;margin:.8rem 0 .3rem;color:var(--verde-claro)}
+.manual-secao p,.manual-secao li{font-size:.88rem;line-height:1.65;color:var(--tinta)}
+.manual-secao ul,.manual-secao ol{padding-left:1.3rem;margin:.3rem 0 .6rem}
+.manual-secao li{margin-bottom:.25rem}
+.manual-secao .dica{background:var(--verde-glass);border-left:3px solid var(--verde);border-radius:0 8px 8px 0;padding:.6rem .9rem;margin:.6rem 0;font-size:.84rem}
+.manual-secao .dica strong{color:var(--verde);display:block;margin-bottom:.15rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+.manual-secao .atencao{background:#FFF6E3;border-left:3px solid var(--ambar);border-radius:0 8px 8px 0;padding:.6rem .9rem;margin:.6rem 0;font-size:.84rem}
+.manual-secao .atencao strong{color:var(--ambar);display:block;margin-bottom:.15rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+.manual-secao .perigo{background:#FBE8E8;border-left:3px solid var(--carimbo);border-radius:0 8px 8px 0;padding:.6rem .9rem;margin:.6rem 0;font-size:.84rem}
+.manual-secao .perigo strong{color:var(--carimbo);display:block;margin-bottom:.15rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+.atalhos-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.5rem;margin:.6rem 0}
+.atalho-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:var(--papel);border-radius:8px}
+.atalho-item kbd{font-family:var(--mono);font-size:.75rem;background:var(--branco);border:1px solid var(--linha);border-radius:5px;padding:.1rem .4rem;box-shadow:0 1px 0 var(--linha);white-space:nowrap;flex-shrink:0}
+.atalho-item span{font-size:.82rem;color:var(--cinza)}
+[data-tema="escuro"] .manual-secao .dica{background:rgba(46,125,91,.15)}
+[data-tema="escuro"] .manual-secao .atencao{background:rgba(194,138,31,.1)}
+[data-tema="escuro"] .manual-secao .perigo{background:rgba(179,55,43,.1)}
+[data-tema="escuro"] .atalho-item{background:#141E18}
+[data-tema="escuro"] .atalho-item kbd{background:#1A2620;border-color:var(--linha)}
 
 /* ===== Impressão ===== */
 #areaImpressao{display:none}
@@ -190,21 +315,29 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
   #areaImpressao .sub{font-size:9pt;color:#444;margin-bottom:.6cm}
   #areaImpressao table{width:100%;border-collapse:collapse;font-size:9.5pt}
   #areaImpressao th,#areaImpressao td{border:1px solid #999;padding:4pt 6pt;text-align:left}
-  #areaImpressao .mono{font-family:var(--mono)}
+  #areaImpressao .mono{font-family:monospace}
   #areaImpressao .recibo{border:2px solid #000;padding:.8cm;max-width:16cm}
   #areaImpressao .linha-ass{margin-top:1.5cm;border-top:1px solid #000;width:8cm;text-align:center;padding-top:.15cm;font-size:9pt}
 }
 
 /* ===== Responsivo ===== */
+nav.inferior{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--linha);z-index:60;padding:.25rem .2rem calc(.25rem + env(safe-area-inset-bottom))}
+nav.inferior .trilho{display:flex;justify-content:space-around}
+nav.inferior button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.08rem;font-size:.68rem;color:var(--cinza);padding:.3rem .4rem;border-radius:8px}
+nav.inferior button .ico{font-size:1.25rem}
+nav.inferior button.ativo{color:var(--verde);font-weight:700}
+
 @media (max-width:760px){
   nav.lateral{display:none}
   nav.inferior{display:block}
-  main{padding:.9rem .8rem 5.5rem}
-  .topo{flex-wrap:wrap;padding:.5rem .8rem}
+  main{padding:.8rem .75rem 5.5rem}
+  .topo{flex-wrap:wrap;padding:.5rem .8rem;gap:.5rem}
   .topo .busca{order:3;width:100%;max-width:none;flex-basis:100%}
   .relogio{margin-left:auto}
   h2.titulo .acoes{margin-left:0;width:100%}
-  .grafico{height:120px}
+  .grafico{height:110px}
+  .bt-ferramentas{font-size:.7rem;padding:.35rem .7rem}
+  .alerta-lembrete{right:.5rem;left:.5rem;max-width:none}
 }
 </style>
 </head>
@@ -213,27 +346,58 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
 <!-- ===== BARRA SUPERIOR ===== -->
 <header class="topo">
   <div class="marca">NAVI<small>Clientes · Cheques · Financeiro</small></div>
-  <div class="busca"><input id="buscaGlobal" type="search" placeholder="Pesquisar nome, CPF ou nº do cheque…  (atalho: /)"></div>
-  <div class="relogio"><span id="relogioHora">--:--:--</span><small id="relogioData"></small></div>
-  <button class="bt claro mini" id="botaoTema" onclick="alternarTema()" title="Alternar modo escuro">🌙</button>
+  <div class="busca"><input id="buscaGlobal" type="search" placeholder="Pesquisar cliente, CPF ou cheque… (atalho: /)"></div>
+  <div class="topo-acoes">
+    <div class="relogio"><span id="relogioHora">--:--</span><small id="relogioData"></small></div>
+    <button class="bt-ferramentas" onclick="window.open('https://www.suporte.adv.br/ferramentas','_blank')" title="Abrir ferramentas jurídicas">
+      <span class="ico-f">⚖️</span> Ferramentas
+    </button>
+    <button class="bt claro mini badge-lembrete" id="btLembretes" onclick="irPara('lembretes')" title="Lembretes e Agenda (Alt+6)">
+      🔔 <span class="cnt" id="cntLembretes" style="display:none">0</span>
+    </button>
+    <button class="bt claro mini" id="botaoTema" onclick="alternarTema()" title="Alternar modo escuro">🌙</button>
+    <button class="bt claro mini" onclick="irPara('sobre')" title="Sobre o sistema">ℹ️</button>
+    <button class="bt claro mini" onclick="irPara('manual')" title="Manual de instruções">📖</button>
+  </div>
 </header>
+
+<div id="alertaLembrete" style="display:none" class="alerta-lembrete"></div>
 
 <div class="app">
   <!-- ===== MENU LATERAL ===== -->
   <nav class="lateral" id="menuLateral">
+    <div class="sec-titulo">Principal</div>
     <button data-tela="painel" class="ativo">📊 Painel <span class="tecla">Alt+1</span></button>
     <button data-tela="clientes">👥 Clientes <span class="tecla">Alt+2</span></button>
     <button data-tela="cheques">🏦 Cheques <span class="tecla">Alt+3</span></button>
+    <div class="sep"></div>
+    <div class="sec-titulo">Agenda</div>
+    <button data-tela="lembretes" id="navLembretes">🔔 Lembretes <span class="tecla">Alt+6</span></button>
+    <button onclick="abrirCalendarioGrande()">📅 Calendário <span class="tecla">F9</span></button>
+    <div class="sep"></div>
+    <div class="sec-titulo">Sistema</div>
     <button data-tela="relatorios">📄 Relatórios <span class="tecla">Alt+4</span></button>
     <button data-tela="backup">💾 Backup <span class="tecla">Alt+5</span></button>
-    <button onclick="abrirCalendario()">📅 Calendário <span class="tecla">F9</span></button>
     <button onclick="abrirCalculadora()">🧮 Calculadora <span class="tecla">F10</span></button>
+    <button data-tela="sobre">ℹ️ Sobre o NAVI</button>
+    <button data-tela="manual">📖 Manual</button>
+    <div class="sep"></div>
+    <button class="bt-ferramentas" style="border-radius:10px;font-size:.82rem;padding:.6rem .75rem;justify-content:center;width:100%;margin-top:.2rem" onclick="window.open('https://www.suporte.adv.br/ferramentas','_blank')">
+      <span>⚖️</span> Ferramentas ADV
+    </button>
   </nav>
 
   <main>
     <div id="faixaBackup"></div>
+    <div id="avisoCache" class="aviso-cache" style="display:none">
+      <div class="ico">⚠️</div>
+      <div class="txt">
+        <h4>🗑️ Limpeza de cache apaga seus dados!</h4>
+        <p>O NAVI armazena todos os dados no armazenamento local do navegador (<b>localStorage</b>). Se você limpar o cache, histórico ou dados do navegador, <b>tudo será perdido permanentemente</b> — clientes, cheques e lembretes. Faça backup regularmente e guarde o arquivo .json em um pen drive ou nuvem (Google Drive, OneDrive, etc).</p>
+      </div>
+    </div>
 
-    <!-- ===== TELA: PAINEL ===== -->
+    <!-- ===== PAINEL ===== -->
     <section class="tela ativa" id="tela-painel">
       <h2 class="titulo">📊 Painel
         <span class="acoes"><button class="bt claro mini" onclick="renderPainel()">↻ Atualizar</button></span>
@@ -241,7 +405,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       <div id="avisosPainel"></div>
       <div class="cartoes" id="cartoesPainel"></div>
       <div class="painel-bloco">
-        <h3>Entradas por mês (cheques compensados — últimos 6 meses)</h3>
+        <h3>Entradas por mês — compensados (últimos 6 meses)</h3>
         <div class="grafico" id="graficoMeses"></div>
       </div>
       <div class="painel-bloco">
@@ -252,7 +416,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       </div>
     </section>
 
-    <!-- ===== TELA: CLIENTES ===== -->
+    <!-- ===== CLIENTES ===== -->
     <section class="tela" id="tela-clientes">
       <h2 class="titulo">👥 Clientes
         <span class="acoes">
@@ -275,7 +439,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       </thead><tbody id="tbClientes"></tbody></table></div>
     </section>
 
-    <!-- ===== TELA: CHEQUES ===== -->
+    <!-- ===== CHEQUES ===== -->
     <section class="tela" id="tela-cheques">
       <h2 class="titulo">🏦 Cheques
         <span class="acoes">
@@ -306,33 +470,51 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       </thead><tbody id="tbCheques"></tbody></table></div>
     </section>
 
-    <!-- ===== TELA: RELATÓRIOS ===== -->
+    <!-- ===== LEMBRETES ===== -->
+    <section class="tela" id="tela-lembretes">
+      <h2 class="titulo">🔔 Lembretes & Agenda
+        <span class="acoes">
+          <button class="bt claro mini" onclick="abrirCalendarioGrande()">📅 Ver calendário</button>
+          <button class="bt mini" onclick="novoLembrete()">＋ Novo lembrete</button>
+        </span>
+      </h2>
+      <div id="lembretesFiltroBar" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="bt claro mini" onclick="filtrarLembretes('todos')" id="filtLem_todos">Todos</button>
+        <button class="bt claro mini" onclick="filtrarLembretes('hoje')" id="filtLem_hoje">📅 Hoje</button>
+        <button class="bt claro mini" onclick="filtrarLembretes('urgente')" id="filtLem_urgente">🔴 Vencidos</button>
+        <button class="bt claro mini" onclick="filtrarLembretes('futuro')" id="filtLem_futuro">🟢 Futuros</button>
+        <button class="bt claro mini" onclick="filtrarLembretes('concluido')" id="filtLem_concluido">✔ Concluídos</button>
+      </div>
+      <div class="lembrete-lista" id="lembreteListaEl"></div>
+    </section>
+
+    <!-- ===== RELATÓRIOS ===== -->
     <section class="tela" id="tela-relatorios">
       <h2 class="titulo">📄 Relatórios</h2>
-      <div class="cartoes" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+      <div class="cartoes" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
         <div class="cartao"><div class="rotulo">Clientes</div>
-          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Listagem completa do fichário de clientes.</p>
+          <p style="font-size:.83rem;color:var(--cinza);margin:.3rem 0 .8rem">Listagem completa do fichário de clientes.</p>
           <button class="bt mini" onclick="relClientes()">🖨 Imprimir / PDF</button></div>
         <div class="cartao"><div class="rotulo">Inadimplência</div>
-          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Ranking de devedores por valor vencido + devolvido.</p>
+          <p style="font-size:.83rem;color:var(--cinza);margin:.3rem 0 .8rem">Ranking de devedores por valor vencido + devolvido.</p>
           <button class="bt mini" onclick="relInadimplencia()">🖨 Imprimir / PDF</button></div>
         <div class="cartao"><div class="rotulo">Extrato por cliente</div>
-          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Todos os cheques de um cliente, com totais.</p>
+          <p style="font-size:.83rem;color:var(--cinza);margin:.3rem 0 .8rem">Todos os cheques de um cliente, com totais.</p>
           <select id="relCliSel" style="width:100%;margin-bottom:.5rem;padding:.45rem;border:1px solid var(--linha);border-radius:8px"></select>
           <button class="bt mini" onclick="relExtratoCliente()">🖨 Imprimir / PDF</button></div>
         <div class="cartao"><div class="rotulo">Cheques por período</div>
-          <p style="font-size:.85rem;color:var(--cinza);margin:.3rem 0 .8rem">Usa os filtros aplicados na tela Cheques.</p>
+          <p style="font-size:.83rem;color:var(--cinza);margin:.3rem 0 .8rem">Usa os filtros aplicados na tela Cheques.</p>
           <button class="bt mini" onclick="relChequesPeriodo()">🖨 Imprimir / PDF</button></div>
       </div>
     </section>
 
-    <!-- ===== TELA: BACKUP / CONFIG ===== -->
+    <!-- ===== BACKUP ===== -->
     <section class="tela" id="tela-backup">
       <h2 class="titulo">💾 Backup e Configurações</h2>
       <div class="painel-bloco">
         <h3>Backup — 1 arquivo com tudo</h3>
-        <p style="font-size:.9rem;margin-bottom:.8rem">Todos os dados do NAVI (clientes, cheques, fotos e senha) cabem em <b>um único arquivo</b>. Guarde esse arquivo num pen drive ou nuvem. Para recuperar em qualquer computador, basta abrir o NAVI e restaurar o arquivo.</p>
-        <p style="font-size:.85rem;color:var(--cinza);margin-bottom:1rem">Último backup: <b id="txtUltimoBackup">nunca</b></p>
+        <p style="font-size:.88rem;margin-bottom:.8rem">Todos os dados do NAVI (clientes, cheques, lembretes e senha) cabem em <b>um único arquivo</b>. Guarde num pen drive ou nuvem.</p>
+        <p style="font-size:.83rem;color:var(--cinza);margin-bottom:1rem">Último backup: <b id="txtUltimoBackup">nunca</b></p>
         <div style="display:flex;gap:.6rem;flex-wrap:wrap">
           <button class="bt" onclick="fazerBackup()">💾 Fazer backup agora</button>
           <button class="bt claro" onclick="document.getElementById('arqRestaurar').click()">📂 Restaurar backup</button>
@@ -341,7 +523,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       </div>
       <div class="painel-bloco">
         <h3>Senha de operações sensíveis</h3>
-        <p style="font-size:.9rem;margin-bottom:.8rem">Pedida ao alterar/excluir clientes e restaurar backup. Senha inicial: <b>1234</b>.</p>
+        <p style="font-size:.88rem;margin-bottom:.8rem">Pedida ao alterar/excluir clientes e restaurar backup. Senha inicial: <b>1234</b>.</p>
         <button class="bt claro" onclick="trocarSenha()">🔐 Trocar senha</button>
       </div>
       <div class="painel-bloco">
@@ -349,714 +531,1100 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <button class="bt perigo" onclick="apagarTudo()">🗑 Apagar todos os dados</button>
       </div>
     </section>
+    <!-- ===== SOBRE ===== -->
+    <section class="tela" id="tela-sobre">
+      <h2 class="titulo">ℹ️ Sobre o NAVI</h2>
+
+      <div class="sobre-hero">
+        <h1>NAVI</h1>
+        <div class="versao">Versão 2.0 · Sistema de Gestão Financeira</div>
+        <p>Sistema profissional para controle de clientes, cheques e financeiro. Desenvolvido especialmente para escritórios, prestadores de serviços e profissionais autônomos que precisam de uma ferramenta simples, segura e eficiente — sem internet, sem mensalidade, sem complicação.</p>
+      </div>
+
+      <div class="aviso-cache">
+        <div class="ico">⚠️</div>
+        <div class="txt">
+          <h4>Atenção: limpar o cache apaga seus dados!</h4>
+          <p>O NAVI guarda tudo no armazenamento local do seu navegador. Limpar o cache ou os dados do navegador <b>apaga permanentemente</b> todos os clientes, cheques e lembretes cadastrados. Faça backup frequente e guarde o arquivo em local seguro fora do computador (pen drive, Google Drive, WhatsApp para você mesmo, etc).</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cinza);margin-bottom:.75rem;font-weight:700">Funcionalidades do sistema</h3>
+      <div class="funcionalidades-grid">
+        <div class="func-card">
+          <div class="func-ico">📊</div>
+          <div class="func-info">
+            <h4>Painel de controle</h4>
+            <p>Visão geral do financeiro em tempo real: valores a receber, cheques vencidos, previsão dos próximos 7 dias e gráfico de entradas mensais.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">👥</div>
+          <div class="func-info">
+            <h4>Cadastro de clientes</h4>
+            <p>Fichário completo com foto, CPF/CNPJ, contato, endereço, limite de crédito, classificação de risco e histórico de cheques.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">🏦</div>
+          <div class="func-info">
+            <h4>Controle de cheques</h4>
+            <p>Lançamento, acompanhamento e histórico completo de cheques: compensar, prorrogar, devolver com alínea do Banco Central e gerar recibos.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">🔔</div>
+          <div class="func-info">
+            <h4>Lembretes & Agenda</h4>
+            <p>Agenda de compromissos com alertas visuais e sonoros automáticos. Tipos: audiência, prazo processual, reunião, pagamento, ligação.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">📅</div>
+          <div class="func-info">
+            <h4>Calendário com feriados</h4>
+            <p>Calendário visual de tamanho grande com todos os feriados nacionais calculados automaticamente, incluindo datas móveis como Páscoa e Carnaval.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">📄</div>
+          <div class="func-info">
+            <h4>Relatórios e impressão</h4>
+            <p>Gere relatórios de clientes, inadimplência, extrato por cliente e cheques por período — todos imprimíveis ou exportáveis em PDF.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">📊</div>
+          <div class="func-info">
+            <h4>Exportação para Excel</h4>
+            <p>Exporte a lista de clientes ou cheques para planilha CSV compatível com Excel, LibreOffice e Google Sheets com um clique.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">💾</div>
+          <div class="func-info">
+            <h4>Backup em 1 arquivo</h4>
+            <p>Todo o sistema — clientes, cheques, lembretes, fotos e senha — em um único arquivo .json. Restaure em qualquer computador em segundos.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">⚖️</div>
+          <div class="func-info">
+            <h4>Ferramentas jurídicas</h4>
+            <p>Acesso direto às 72 ferramentas do suporte.adv.br: calculadoras judiciais, trabalhistas, previdenciárias, gerador de documentos e muito mais.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">🌙</div>
+          <div class="func-info">
+            <h4>Modo escuro</h4>
+            <p>Interface com tema claro e escuro para uso confortável em qualquer horário. Preferência salva automaticamente.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">🔐</div>
+          <div class="func-info">
+            <h4>Proteção por senha</h4>
+            <p>Operações sensíveis como editar clientes, excluir registros e restaurar backup exigem senha de confirmação.</p>
+          </div>
+        </div>
+        <div class="func-card">
+          <div class="func-ico">🧮</div>
+          <div class="func-info">
+            <h4>Calculadora integrada</h4>
+            <p>Calculadora sempre disponível via menu lateral ou atalho F10, sem precisar sair do sistema.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="painel-bloco">
+        <h3>Desenvolvido por</h3>
+        <p style="font-size:.9rem;line-height:1.65">Sistema desenvolvido para uso no <b>suporte.adv.br</b> — Suporte Remoto de TI especializado para advogados, peritos e contadores em Salvador, Bahia.<br>
+        Para suporte técnico, acesse: <a href="https://www.suporte.adv.br" target="_blank" style="color:var(--verde);font-weight:600">suporte.adv.br</a></p>
+      </div>
+    </section>
+
+    <!-- ===== MANUAL ===== -->
+    <section class="tela" id="tela-manual">
+      <h2 class="titulo">📖 Manual de Instruções
+        <span class="acoes"><button class="bt claro mini" onclick="window.print()">🖨 Imprimir manual</button></span>
+      </h2>
+
+      <div class="aviso-cache">
+        <div class="ico">🔴</div>
+        <div class="txt">
+          <h4>Leia antes de começar: seus dados ficam no navegador!</h4>
+          <p>O NAVI usa o armazenamento local do seu navegador. Isso significa que <b>limpar o cache, reinstalar o navegador ou formatar o computador apaga tudo</b>. Sempre faça backup (Menu Backup → Fazer backup agora) e guarde o arquivo em local seguro. Recomendamos backup diário.</p>
+        </div>
+      </div>
+
+      <div class="manual-sumario">
+        <h3>Ir para seção</h3>
+        <ul>
+          <li><a href="#man-inicio">🚀 Primeiros passos</a></li>
+          <li><a href="#man-clientes">👥 Clientes</a></li>
+          <li><a href="#man-cheques">🏦 Cheques</a></li>
+          <li><a href="#man-lembretes">🔔 Lembretes</a></li>
+          <li><a href="#man-relatorios">📄 Relatórios</a></li>
+          <li><a href="#man-backup">💾 Backup</a></li>
+          <li><a href="#man-atalhos">⌨️ Atalhos</a></li>
+          <li><a href="#man-faq">❓ Perguntas frequentes</a></li>
+        </ul>
+      </div>
+
+      <div class="manual-secao" id="man-inicio">
+        <h3>🚀 Primeiros passos</h3>
+        <p>Bem-vindo ao NAVI! Siga esta ordem para começar:</p>
+        <ol>
+          <li><b>Cadastre seus clientes</b> primeiro (menu Clientes → ＋ Novo cliente). Sem clientes cadastrados, não é possível lançar cheques.</li>
+          <li><b>Lance os cheques</b> vinculados a cada cliente (menu Cheques → ＋ Novo cheque).</li>
+          <li><b>Acompanhe no Painel</b> os valores a receber, vencidos e a vencer.</li>
+          <li><b>Faça o primeiro backup</b> imediatamente após cadastrar os dados (menu Backup → Fazer backup agora).</li>
+        </ol>
+        <div class="dica"><strong>💡 Dica</strong>O sistema funciona 100% offline, sem necessidade de internet. Você pode abrir este arquivo HTML em qualquer computador com navegador.</div>
+        <div class="atencao"><strong>⚠️ Atenção</strong>Use sempre o mesmo navegador no mesmo computador para garantir que os dados estejam disponíveis. Cada navegador tem seu próprio armazenamento separado.</div>
+      </div>
+
+      <div class="manual-secao" id="man-clientes">
+        <h3>👥 Gerenciando Clientes</h3>
+        <h4>Cadastrar um novo cliente</h4>
+        <ol>
+          <li>Acesse o menu <b>Clientes</b> (Alt+2).</li>
+          <li>Clique em <b>＋ Novo cliente</b>.</li>
+          <li>Preencha o nome (obrigatório), CPF/CNPJ, telefone, e-mail, endereço e demais campos.</li>
+          <li>Defina a <b>classificação de risco</b>: Bom pagador, Atenção, Inadimplente ou Bloqueado.</li>
+          <li>Opcionalmente adicione uma foto e limite de crédito.</li>
+          <li>Clique em <b>Salvar cliente</b>.</li>
+        </ol>
+        <h4>Ficha do cliente</h4>
+        <p>Clique no nome do cliente na tabela para abrir a ficha completa com todo o histórico de cheques, totais movimentados e situação do limite de crédito.</p>
+        <h4>Classificação de risco</h4>
+        <ul>
+          <li><b>Bom pagador (verde):</b> cliente sem pendências.</li>
+          <li><b>Atenção (amarelo):</b> cliente que já atrasou mas está em dia.</li>
+          <li><b>Inadimplente (vermelho):</b> possui cheques vencidos ou devolvidos.</li>
+          <li><b>Bloqueado (cinza):</b> o sistema exige confirmação adicional ao lançar cheque para este cliente.</li>
+        </ul>
+        <div class="dica"><strong>💡 Dica</strong>Use o campo de busca para encontrar clientes por nome, código ou CPF/CNPJ rapidamente. O atalho <b>/</b> posiciona o cursor na busca global.</div>
+        <h4>Editar ou excluir clientes</h4>
+        <p>Use os botões ✏ e 🗑 na linha do cliente. Editar e excluir pedem a senha de segurança. Ao excluir um cliente, os cheques cadastrados dele permanecem no sistema sem vínculo.</p>
+      </div>
+
+      <div class="manual-secao" id="man-cheques">
+        <h3>🏦 Controle de Cheques</h3>
+        <h4>Lançar um novo cheque</h4>
+        <ol>
+          <li>Acesse o menu <b>Cheques</b> (Alt+3).</li>
+          <li>Clique em <b>＋ Novo cheque</b>.</li>
+          <li>Selecione o cliente, informe o número do cheque, valor, banco, datas de emissão e vencimento.</li>
+          <li>Clique em <b>Salvar cheque</b>.</li>
+        </ol>
+        <h4>Situações do cheque</h4>
+        <ul>
+          <li><b>Em carteira (verde):</b> cheque recebido, aguardando vencimento.</li>
+          <li><b>Prorrogado (amarelo):</b> vencimento foi estendido por acordo.</li>
+          <li><b>Vencido (vermelho):</b> passou da data de vencimento sem compensar.</li>
+          <li><b>Compensado (azul):</b> cheque depositado e aprovado pelo banco.</li>
+          <li><b>Devolvido (vermelho):</b> cheque rejeitado pelo banco com alínea registrada.</li>
+        </ul>
+        <h4>Prorrogar um cheque</h4>
+        <p>Abra o cheque → clique em <b>📅 Prorrogar</b> → informe o novo vencimento e o motivo. O sistema guarda o histórico completo de todas as prorrogações.</p>
+        <h4>Registrar devolução</h4>
+        <p>Abra o cheque → clique em <b>↩ Devolver</b> → selecione a alínea do Banco Central correspondente ao motivo da devolução.</p>
+        <h4>Emitir recibo</h4>
+        <p>Abra qualquer cheque → clique em <b>🖨 Recibo</b>. O navegador abrirá a janela de impressão. Escolha "Salvar como PDF" para criar um arquivo.</p>
+        <div class="atencao"><strong>⚠️ Limite de crédito</strong>Se o cliente tiver limite de crédito cadastrado, o sistema avisa quando um novo cheque ultrapassaria esse limite, mas permite o lançamento com confirmação.</div>
+      </div>
+
+      <div class="manual-secao" id="man-lembretes">
+        <h3>🔔 Lembretes & Agenda</h3>
+        <h4>Criar um lembrete</h4>
+        <ol>
+          <li>Acesse o menu <b>Lembretes</b> (Alt+6) ou clique no ícone 🔔 no topo.</li>
+          <li>Clique em <b>＋ Novo lembrete</b>.</li>
+          <li>Informe o título, tipo (Audiência, Prazo, Reunião, Pagamento, Ligação), data e hora.</li>
+          <li>Defina se deseja alerta sonoro.</li>
+          <li>Opcionalmente vincule ao cliente.</li>
+        </ol>
+        <h4>Alertas automáticos</h4>
+        <p>O sistema verifica automaticamente a cada 30 segundos se há lembretes para o dia de hoje ou vencidos. Quando encontra, dispara um alerta visual no canto da tela e um <b>som de três bipes</b>. O badge vermelho no botão 🔔 mostra quantos lembretes precisam de atenção.</p>
+        <div class="dica"><strong>💡 Calendário</strong>No calendário (F9), os dias com lembretes aparecem com um ponto laranja. Clique em qualquer dia para criar um lembrete diretamente naquela data.</div>
+        <h4>Marcar como concluído</h4>
+        <p>Clique no botão ✔ verde ao lado do lembrete. Ele aparecerá riscado na lista "Concluídos".</p>
+      </div>
+
+      <div class="manual-secao" id="man-relatorios">
+        <h3>📄 Relatórios</h3>
+        <p>Acesse o menu <b>Relatórios</b> (Alt+4). Há quatro tipos disponíveis:</p>
+        <ul>
+          <li><b>Relatório de Clientes:</b> lista completa com CPF, telefone, risco e limite.</li>
+          <li><b>Inadimplência:</b> ranking dos maiores devedores com valores vencidos e devolvidos.</li>
+          <li><b>Extrato por cliente:</b> selecione um cliente e veja todos os cheques dele com totais.</li>
+          <li><b>Cheques por período:</b> use os filtros na tela de Cheques antes de gerar — o relatório usa exatamente os filtros ativos.</li>
+        </ul>
+        <p>Todos os relatórios abrem a janela de impressão do navegador. Para <b>gerar PDF</b>, escolha "Salvar como PDF" na impressora.</p>
+        <h4>Exportar para Excel</h4>
+        <p>Nas telas de Clientes e Cheques, o botão <b>⬇ Excel</b> baixa um arquivo .csv que abre diretamente no Excel, LibreOffice Calc e Google Sheets.</p>
+      </div>
+
+      <div class="manual-secao" id="man-backup">
+        <h3>💾 Backup — o mais importante!</h3>
+        <div class="perigo"><strong>🔴 Risco real de perda de dados</strong>O NAVI guarda tudo no navegador (localStorage). Limpar cache, reinstalar o navegador, formatar o computador ou usar um navegador diferente resultará em <b>perda total e permanente</b> de todos os dados. Não há recuperação possível sem um arquivo de backup.</div>
+        <h4>Como fazer backup</h4>
+        <ol>
+          <li>Acesse o menu <b>Backup</b> (Alt+5).</li>
+          <li>Clique em <b>💾 Fazer backup agora</b>.</li>
+          <li>O navegador baixará um arquivo chamado <code>navi-backup-AAAA-MM-DD.json</code>.</li>
+          <li>Guarde este arquivo em um <b>pen drive, Google Drive, OneDrive ou WhatsApp</b> (mande para si mesmo).</li>
+        </ol>
+        <h4>Como restaurar backup</h4>
+        <ol>
+          <li>Acesse o menu <b>Backup</b>.</li>
+          <li>Clique em <b>📂 Restaurar backup</b>.</li>
+          <li>Selecione o arquivo .json do backup.</li>
+          <li>Digite a senha para confirmar.</li>
+          <li>Todos os dados serão restaurados imediatamente.</li>
+        </ol>
+        <div class="dica"><strong>💡 Frequência recomendada</strong>Faça backup a cada vez que encerrar o sistema, ou no mínimo uma vez por dia quando houver movimento. O sistema avisa automaticamente quando o backup está há mais de 12 horas sem ser feito.</div>
+        <h4>Atalho rápido</h4>
+        <p>Use <b>Ctrl+B</b> para acionar o backup imediatamente de qualquer tela.</p>
+      </div>
+
+      <div class="manual-secao" id="man-atalhos">
+        <h3>⌨️ Atalhos de teclado</h3>
+        <div class="atalhos-grade">
+          <div class="atalho-item"><kbd>Alt+1</kbd><span>Ir para Painel</span></div>
+          <div class="atalho-item"><kbd>Alt+2</kbd><span>Ir para Clientes</span></div>
+          <div class="atalho-item"><kbd>Alt+3</kbd><span>Ir para Cheques</span></div>
+          <div class="atalho-item"><kbd>Alt+4</kbd><span>Ir para Relatórios</span></div>
+          <div class="atalho-item"><kbd>Alt+5</kbd><span>Ir para Backup</span></div>
+          <div class="atalho-item"><kbd>Alt+6</kbd><span>Ir para Lembretes</span></div>
+          <div class="atalho-item"><kbd>F9</kbd><span>Abrir Calendário</span></div>
+          <div class="atalho-item"><kbd>F10</kbd><span>Abrir Calculadora</span></div>
+          <div class="atalho-item"><kbd>Ctrl+B</kbd><span>Fazer backup agora</span></div>
+          <div class="atalho-item"><kbd>/</kbd><span>Focar na busca global</span></div>
+          <div class="atalho-item"><kbd>Esc</kbd><span>Fechar janela/modal</span></div>
+          <div class="atalho-item"><kbd>Enter</kbd><span>Confirmar busca global</span></div>
+        </div>
+      </div>
+
+      <div class="manual-secao" id="man-faq">
+        <h3>❓ Perguntas frequentes</h3>
+        <h4>Posso usar o NAVI em dois computadores?</h4>
+        <p>Sim, mas os dados não sincronizam automaticamente. Faça backup em um computador, leve o arquivo .json e restaure no outro.</p>
+        <h4>O NAVI funciona no celular?</h4>
+        <p>Sim! O sistema é responsivo e funciona em smartphones. No celular aparece a navegação inferior com os menus principais.</p>
+        <h4>Esqueci a senha, o que faço?</h4>
+        <p>A senha inicial é <b>1234</b>. Se você a alterou e esqueceu, infelizmente não há recuperação automática — os dados ficam protegidos. Contate o suporte técnico em <a href="https://suporte.adv.br" target="_blank" style="color:var(--verde)">suporte.adv.br</a>.</p>
+        <h4>Por que meus dados sumiram?</h4>
+        <p>Provavelmente o cache do navegador foi limpo, ou você está usando um navegador diferente do habitual, ou abriu o arquivo NAVI de um local diferente. Se você tem um arquivo de backup .json, restaure-o pelo menu Backup.</p>
+        <h4>Como gerar PDF de um relatório?</h4>
+        <p>Na janela de impressão que o navegador abre, selecione <b>"Salvar como PDF"</b> no campo de impressora (funciona no Chrome, Edge e Firefox).</p>
+        <h4>Posso usar sem internet?</h4>
+        <p>Sim! O NAVI funciona 100% offline. A única exceção são as fontes do Google Fonts (tipografia), que podem não carregar sem internet — mas isso não afeta o funcionamento do sistema, apenas o visual das letras.</p>
+      </div>
+    </section>
   </main>
 </div>
 
-<!-- ===== NAVEGAÇÃO INFERIOR (celular) ===== -->
+<!-- ===== NAV INFERIOR CELULAR ===== -->
 <nav class="inferior"><div class="trilho" id="menuInferior">
   <button data-tela="painel" class="ativo"><span class="ico">📊</span>Painel</button>
   <button data-tela="clientes"><span class="ico">👥</span>Clientes</button>
   <button data-tela="cheques"><span class="ico">🏦</span>Cheques</button>
+  <button data-tela="lembretes"><span class="ico">🔔</span>Agenda</button>
   <button data-tela="relatorios"><span class="ico">📄</span>Relat.</button>
-  <button data-tela="backup"><span class="ico">💾</span>Backup</button>
 </div></nav>
 
-<!-- ===== MODAIS (preenchidos pelo JavaScript) ===== -->
 <div class="veu" id="veu"><div class="modal" id="modalCaixa"></div></div>
-
 <div id="areaImpressao"></div>
 <div class="aviso-flutuante" id="avisoFlutuante"></div>
+
 <script>
 /* ============================================================
-   NAVI — núcleo: dados, utilidades, navegação, relógio, modais
+   NAVI v2 — núcleo
    ============================================================ */
-const CHAVE = 'NAVI_DADOS_V1';
+const CHAVE = 'NAVI_DADOS_V2';
 let dados = carregar();
 
 function carregar(){
   try{
-    const bruto = localStorage.getItem(CHAVE);
-    if(bruto){ const d = JSON.parse(bruto); d.clientes ||= []; d.cheques ||= []; d.senha ||= '1234'; return d; }
+    const b = localStorage.getItem(CHAVE) || localStorage.getItem('NAVI_DADOS_V1');
+    if(b){ const d=JSON.parse(b); d.clientes||=[];d.cheques||=[];d.senha||='1234';d.lembretes||=[];return d; }
   }catch(e){}
-  return { senha:'1234', clientes:[], cheques:[], ultimoBackup:null, proxCodigo:1 };
+  return{senha:'1234',clientes:[],cheques:[],lembretes:[],ultimoBackup:null,proxCodigo:1};
 }
-function salvar(){ localStorage.setItem(CHAVE, JSON.stringify(dados)); }
-function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function salvar(){ localStorage.setItem(CHAVE,JSON.stringify(dados)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 
-/* ---------- formatação ---------- */
-const fmtBRL = v => (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-function fmtData(iso){ if(!iso) return '—'; const [a,m,d] = iso.split('-'); return d+'/'+m+'/'+a; }
-function hojeISO(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function somaDias(iso,n){ const d = new Date(iso+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-function esc(t){ return String(t??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const fmtBRL = v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function fmtData(iso){ if(!iso) return '—'; const[a,m,d]=iso.split('-'); return d+'/'+m+'/'+a; }
+function hojeISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function somaDias(iso,n){ const d=new Date(iso+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function esc(t){ return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function moedaParaNumero(t){ if(typeof t==='number') return t; t=String(t).replace(/[R$\s.]/g,'').replace(',','.'); return parseFloat(t)||0; }
 
-/* ---------- situação do cheque ---------- */
 function situacao(c){
   if(c.status==='compensado') return 'compensado';
   if(c.status==='devolvido')  return 'devolvido';
-  if(c.vencimento < hojeISO()) return 'vencido';
+  if(c.vencimento<hojeISO())  return 'vencido';
   if((c.prorrogacoes||[]).length) return 'prorrogado';
   return 'carteira';
 }
-const ROTULO_SIT = {carteira:'Em carteira', vencido:'Vencido', prorrogado:'Prorrogado', compensado:'Compensado', devolvido:'Devolvido'};
-function carimbo(c){ const s = situacao(c); return '<span class="carimbo '+s+'">'+ROTULO_SIT[s]+'</span>'; }
-const ROTULO_RISCO = {bom:'Bom pagador', atencao:'Atenção', inadimplente:'Inadimplente', bloqueado:'Bloqueado'};
+const ROTULO_SIT={carteira:'Em carteira',vencido:'Vencido',prorrogado:'Prorrogado',compensado:'Compensado',devolvido:'Devolvido'};
+function carimbo(c){ const s=situacao(c); return '<span class="carimbo '+s+'">'+ROTULO_SIT[s]+'</span>'; }
+const ROTULO_RISCO={bom:'Bom pagador',atencao:'Atenção',inadimplente:'Inadimplente',bloqueado:'Bloqueado'};
 function seloRisco(r){ r=r||'bom'; return '<span class="selo-risco '+r+'">'+ROTULO_RISCO[r]+'</span>'; }
-const ALINEAS = ['11 — Sem fundos (1ª apresentação)','12 — Sem fundos (2ª apresentação)','13 — Conta encerrada','14 — Prática espúria','20 — Folha cancelada','21 — Sustado pelo emitente','22 — Divergência de assinatura','28 — Sustado por roubo/furto','31 — Erro formal de preenchimento','35 — Cheque fraudado','44 — Cheque prescrito','48 — Sem registro no SCG'];
+const ALINEAS=['11 — Sem fundos (1ª apresentação)','12 — Sem fundos (2ª apresentação)','13 — Conta encerrada','14 — Prática espúria','20 — Folha cancelada','21 — Sustado pelo emitente','22 — Divergência de assinatura','28 — Sustado por roubo/furto','31 — Erro formal de preenchimento','35 — Cheque fraudado','44 — Cheque prescrito','48 — Sem registro no SCG'];
 
-function nomeCliente(id){ const c = dados.clientes.find(x=>x.id===id); return c ? c.nome : '(sem cliente)'; }
+function nomeCliente(id){ const c=dados.clientes.find(x=>x.id===id); return c?c.nome:'(sem cliente)'; }
 function cliPorId(id){ return dados.clientes.find(x=>x.id===id); }
 
-/* ---------- navegação ---------- */
+/* ===== Navegação ===== */
 function irPara(tela){
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   document.getElementById('tela-'+tela).classList.add('ativa');
-  document.querySelectorAll('nav [data-tela]').forEach(b=>b.classList.toggle('ativo', b.dataset.tela===tela));
+  document.querySelectorAll('nav [data-tela]').forEach(b=>b.classList.toggle('ativo',b.dataset.tela===tela));
   if(tela==='painel') renderPainel();
   if(tela==='clientes') renderClientes();
   if(tela==='cheques') renderCheques();
   if(tela==='relatorios') prepararRelatorios();
   if(tela==='backup') renderBackup();
-  window.scrollTo({top:0});
+  if(tela==='lembretes') renderLembretes();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('nav [data-tela]').forEach(b=>b.addEventListener('click',()=>irPara(b.dataset.tela)));
 
-/* ---------- tema claro/escuro ---------- */
+/* ===== Tema ===== */
 function alternarTema(){
-  const escuro = document.documentElement.getAttribute('data-tema')==='escuro';
-  if(escuro){ document.documentElement.removeAttribute('data-tema'); document.getElementById('botaoTema').textContent='🌙'; localStorage.setItem('NAVI_TEMA','claro'); }
-  else{ document.documentElement.setAttribute('data-tema','escuro'); document.getElementById('botaoTema').textContent='☀️'; localStorage.setItem('NAVI_TEMA','escuro'); }
+  const e=document.documentElement.getAttribute('data-tema')==='escuro';
+  if(e){document.documentElement.removeAttribute('data-tema');document.getElementById('botaoTema').textContent='🌙';localStorage.setItem('NAVI_TEMA','claro');}
+  else{document.documentElement.setAttribute('data-tema','escuro');document.getElementById('botaoTema').textContent='☀️';localStorage.setItem('NAVI_TEMA','escuro');}
 }
-if(localStorage.getItem('NAVI_TEMA')==='escuro'){ document.documentElement.setAttribute('data-tema','escuro'); }
-document.addEventListener('DOMContentLoaded', ()=>{ if(localStorage.getItem('NAVI_TEMA')==='escuro') document.getElementById('botaoTema').textContent='☀️'; });
+if(localStorage.getItem('NAVI_TEMA')==='escuro'){document.documentElement.setAttribute('data-tema','escuro');}
+document.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('NAVI_TEMA')==='escuro')document.getElementById('botaoTema').textContent='☀️';});
 
-/* ---------- relógio em tempo real ---------- */
+/* ===== Relógio ===== */
 function tique(){
-  const ag = new Date();
-  document.getElementById('relogioHora').textContent = ag.toLocaleTimeString('pt-BR');
-  document.getElementById('relogioData').textContent = ag.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  const ag=new Date();
+  document.getElementById('relogioHora').textContent=ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('relogioData').textContent=ag.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
 }
 setInterval(tique,1000); tique();
 
-/* ---------- modais ---------- */
-function abrirModal(html, estreito){
-  const cx = document.getElementById('modalCaixa');
-  cx.className = 'modal' + (estreito ? ' estreito' : '');
-  cx.innerHTML = html;
+/* ===== Modais ===== */
+function abrirModal(html,estreito,largo){
+  const cx=document.getElementById('modalCaixa');
+  cx.className='modal'+(estreito?' estreito':largo?' largo':'');
+  cx.innerHTML=html;
   document.getElementById('veu').classList.add('aberto');
-  const foco = cx.querySelector('input,select,textarea'); if(foco) setTimeout(()=>foco.focus(),60);
+  const f=cx.querySelector('input:not([type=file]),select,textarea'); if(f) setTimeout(()=>f.focus(),60);
 }
 function fecharModal(){ document.getElementById('veu').classList.remove('aberto'); }
-document.getElementById('veu').addEventListener('click', e=>{ if(e.target.id==='veu') fecharModal(); });
+document.getElementById('veu').addEventListener('click',e=>{ if(e.target.id==='veu') fecharModal(); });
 function cabecalhoModal(titulo){ return '<div class="modal-cab"><h3>'+titulo+'</h3><button class="fechar" onclick="fecharModal()">×</button></div>'; }
 
 function avisar(msg){
-  const a = document.getElementById('avisoFlutuante');
-  a.textContent = msg; a.classList.add('mostrar');
-  clearTimeout(a._t); a._t = setTimeout(()=>a.classList.remove('mostrar'), 2600);
+  const a=document.getElementById('avisoFlutuante');
+  a.textContent=msg; a.classList.add('mostrar');
+  clearTimeout(a._t); a._t=setTimeout(()=>a.classList.remove('mostrar'),2800);
 }
 
-/* ---------- senha de operações sensíveis ---------- */
+/* ===== Senha ===== */
 function pedirSenha(aoConfirmar){
-  abrirModal(cabecalhoModal('🔐 Senha de acesso') +
-    '<div class="modal-corpo"><div class="campo"><label>Digite a senha</label>' +
-    '<input type="password" id="campoSenha" autocomplete="off"></div>' +
-    '<p id="erroSenha" style="color:var(--carimbo);font-size:.8rem;margin-top:.4rem"></p></div>' +
-    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
-    '<button class="bt" id="btOkSenha">Confirmar</button></div>', true);
-  const ok = ()=>{
-    if(document.getElementById('campoSenha').value === dados.senha){ fecharModal(); aoConfirmar(); }
-    else document.getElementById('erroSenha').textContent = 'Senha incorreta.';
-  };
-  document.getElementById('btOkSenha').onclick = ok;
-  document.getElementById('campoSenha').addEventListener('keydown', e=>{ if(e.key==='Enter') ok(); });
+  abrirModal(cabecalhoModal('🔐 Senha de acesso')+
+    '<div class="modal-corpo"><div class="campo"><label>Digite a senha</label><input type="password" id="campoSenha" autocomplete="off"></div>'+
+    '<p id="erroSenha" style="color:var(--carimbo);font-size:.8rem;margin-top:.4rem"></p></div>'+
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" id="btOkSenha">Confirmar</button></div>',true);
+  const ok=()=>{ if(document.getElementById('campoSenha').value===dados.senha){fecharModal();aoConfirmar();}else document.getElementById('erroSenha').textContent='Senha incorreta.'; };
+  document.getElementById('btOkSenha').onclick=ok;
+  document.getElementById('campoSenha').addEventListener('keydown',e=>{ if(e.key==='Enter') ok(); });
 }
 function trocarSenha(){
   pedirSenha(()=>{
-    abrirModal(cabecalhoModal('🔐 Nova senha') +
-      '<div class="modal-corpo"><div class="campo"><label>Nova senha</label><input type="password" id="novaSenha"></div></div>' +
-      '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
-      '<button class="bt" onclick="confirmarNovaSenha()">Salvar</button></div>', true);
+    abrirModal(cabecalhoModal('🔐 Nova senha')+'<div class="modal-corpo"><div class="campo"><label>Nova senha</label><input type="password" id="novaSenha"></div></div>'+
+      '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="confirmarNovaSenha()">Salvar</button></div>',true);
   });
 }
-function confirmarNovaSenha(){
-  const n = document.getElementById('novaSenha').value.trim();
-  if(n.length < 3){ avisar('A senha precisa ter pelo menos 3 caracteres.'); return; }
-  dados.senha = n; salvar(); fecharModal(); avisar('Senha alterada ✔');
+function confirmarNovaSenha(){ const n=document.getElementById('novaSenha').value.trim(); if(n.length<3){avisar('Mínimo 3 caracteres.');return;} dados.senha=n;salvar();fecharModal();avisar('Senha alterada ✔'); }
+
+/* ============================================================
+   FERIADOS NACIONAIS BRASILEIROS
+   ============================================================ */
+function feriadosDoAno(ano){
+  // Cálculo da Páscoa (algoritmo Meeus/Jones/Butcher)
+  const a=ano%19,b=Math.floor(ano/100),c=ano%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mes=Math.floor((h+l-7*m+114)/31),dia=((h+l-7*m+114)%31)+1;
+  const pascoa=new Date(ano,mes-1,dia);
+  const ad=n=>{const d=new Date(pascoa);d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+  const f0=d=>ano+'-'+String(d[0]).padStart(2,'0')+'-'+String(d[1]).padStart(2,'0');
+  return {
+    [f0([1,1])]:'Ano Novo',
+    [ad(-48)]:'2ª feira de Carnaval',
+    [ad(-47)]:'3ª feira de Carnaval',
+    [ad(-46)]:'4ª de Cinzas (ponto facultativo)',
+    [ad(-2)]:'Sexta-feira Santa',
+    [ad(0)]:'Páscoa',
+    [f0([4,21])]:'Tiradentes',
+    [f0([5,1])]:'Dia do Trabalho',
+    [ad(60)]:'Corpus Christi (facultativo)',
+    [f0([9,7])]:'Independência do Brasil',
+    [f0([10,12])]:'N.Sra. Aparecida',
+    [f0([11,2])]:'Finados',
+    [f0([11,15])]:'Proclamação da República',
+    [f0([11,20])]:'Consciência Negra',
+    [f0([12,25])]:'Natal',
+  };
+}
+let _feriadosCache={};
+function getFeriados(ano){ if(!_feriadosCache[ano]) _feriadosCache[ano]=feriadosDoAno(ano); return _feriadosCache[ano]; }
+
+/* ============================================================
+   LEMBRETES & AGENDA
+   ============================================================ */
+let filtroLembreteAtivo='todos';
+const TIPOS_LEMBRETE={audiencia:'⚖️',prazo:'📋',reuniao:'🤝',pagamento:'💰',ligacao:'📞',outro:'🔔'};
+const ROTULO_TIPO={audiencia:'Audiência',prazo:'Prazo Processual',reuniao:'Reunião',pagamento:'Pagamento',ligacao:'Ligação',outro:'Lembrete'};
+
+function statusLembrete(l){
+  if(l.concluido) return 'concluido';
+  const hoje=hojeISO();
+  if(l.data<hoje) return 'urgente';
+  if(l.data===hoje) return 'hoje';
+  return 'futuro';
+}
+
+function filtrarLembretes(tipo){
+  filtroLembreteAtivo=tipo;
+  document.querySelectorAll('[id^="filtLem_"]').forEach(b=>b.classList.toggle('bt',b.id==='filtLem_'+tipo));
+  document.querySelectorAll('[id^="filtLem_"]').forEach(b=>b.classList.toggle('claro',b.id!=='filtLem_'+tipo));
+  renderLembretes();
+}
+
+function renderLembretes(){
+  const lista=dados.lembretes||[];
+  let filtrados=lista.slice().sort((a,b)=>{
+    if(a.concluido!==b.concluido) return a.concluido?1:-1;
+    return a.data.localeCompare(b.data)||(a.hora||'').localeCompare(b.hora||'');
+  });
+  if(filtroLembreteAtivo!=='todos') filtrados=filtrados.filter(l=>statusLembrete(l)===filtroLembreteAtivo);
+  const el=document.getElementById('lembreteListaEl');
+  if(!filtrados.length){
+    el.innerHTML='<div class="vazio">'+( filtroLembreteAtivo==='todos' ? 'Nenhum lembrete cadastrado.<br>Clique em "＋ Novo lembrete" para começar.' : 'Nenhum lembrete nesta categoria.')+'</div>';
+    return;
+  }
+  el.innerHTML=filtrados.map(l=>{
+    const st=statusLembrete(l);
+    const ico=TIPOS_LEMBRETE[l.tipo]||'🔔';
+    return '<div class="lembrete-item '+st+'" id="lem_'+l.id+'">' +
+      '<div class="lembrete-ico">'+ico+'</div>' +
+      '<div class="lembrete-info">' +
+        '<div class="lembrete-titulo">'+esc(l.titulo)+'</div>' +
+        '<div class="lembrete-meta">' +
+          '<span>'+fmtData(l.data)+'</span>' +
+          (l.hora?'<span class="badge-hora">'+l.hora+'</span>':'') +
+          '<span style="opacity:.7">'+ROTULO_TIPO[l.tipo]+'</span>' +
+          (l.cliente?'<span>👤 '+esc(nomeCliente(l.cliente))+'</span>':'') +
+        '</div>' +
+        (l.obs?'<div style="font-size:.8rem;color:var(--cinza);margin-top:.2rem">'+esc(l.obs)+'</div>':'') +
+      '</div>' +
+      '<div class="lembrete-acoes">' +
+        (!l.concluido?'<button class="bt mini" style="background:var(--verde)" onclick="concluirLembrete(\''+l.id+'\')" title="Marcar como concluído">✔</button>':'') +
+        '<button class="bt claro mini" onclick="editarLembrete(\''+l.id+'\')" title="Editar">✏</button>' +
+        '<button class="bt claro mini" onclick="excluirLembrete(\''+l.id+'\')" title="Excluir">🗑</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  atualizarBadgeLembretes();
+}
+
+function atualizarBadgeLembretes(){
+  const pendentes=(dados.lembretes||[]).filter(l=>!l.concluido&&(statusLembrete(l)==='urgente'||statusLembrete(l)==='hoje')).length;
+  const cnt=document.getElementById('cntLembretes');
+  if(pendentes>0){cnt.textContent=pendentes>9?'9+':pendentes;cnt.style.display='flex';}
+  else cnt.style.display='none';
+}
+
+function novoLembrete(dataPresel){
+  formLembrete(null,dataPresel);
+}
+function editarLembrete(id){ formLembrete(id); }
+
+function formLembrete(id,dataPresel){
+  const l=id?dados.lembretes.find(x=>x.id===id):{titulo:'',tipo:'outro',data:dataPresel||hojeISO(),hora:'',cliente:'',obs:'',alerta:true};
+  const opsCli=dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))
+    .map(x=>'<option value="'+x.id+'"'+(x.id===l.cliente?' selected':'')+'>'+esc(x.nome)+'</option>').join('');
+  abrirModal(cabecalhoModal(id?'✏ Editar lembrete':'🔔 Novo lembrete')+
+    '<div class="modal-corpo"><div class="form-grade">'+
+    '<div class="campo cheio"><label>Título *</label><input id="lTit" value="'+esc(l.titulo)+'"></div>'+
+    '<div class="campo"><label>Tipo</label><select id="lTipo">'+
+      Object.entries(ROTULO_TIPO).map(([v,r])=>'<option value="'+v+'"'+(v===l.tipo?' selected':'')+'>'+TIPOS_LEMBRETE[v]+' '+r+'</option>').join('')+
+    '</select></div>'+
+    '<div class="campo"><label>Data *</label><input type="date" id="lData" value="'+l.data+'"></div>'+
+    '<div class="campo"><label>Hora</label><input type="time" id="lHora" value="'+(l.hora||'')+'"></div>'+
+    '<div class="campo"><label>Cliente vinculado</label><select id="lCli"><option value="">— nenhum —</option>'+opsCli+'</select></div>'+
+    '<div class="campo"><label>Alerta sonoro</label><select id="lAlerta"><option value="1"'+(l.alerta!==false?' selected':'')+'>Sim, ativar alerta</option><option value="0"'+(l.alerta===false?' selected':'')+'>>Não</option></select></div>'+
+    '<div class="campo cheio"><label>Observações</label><textarea id="lObs" rows="2">'+esc(l.obs)+'</textarea></div>'+
+    '</div></div>'+
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>'+
+    '<button class="bt" onclick="salvarLembrete(\''+(id||'')+'\')">Salvar lembrete</button></div>');
+}
+
+function salvarLembrete(id){
+  const titulo=document.getElementById('lTit').value.trim();
+  if(!titulo){avisar('Informe o título do lembrete.');return;}
+  const data=document.getElementById('lData').value;
+  if(!data){avisar('Informe a data.');return;}
+  const campos={titulo,tipo:document.getElementById('lTipo').value,data,hora:document.getElementById('lHora').value,cliente:document.getElementById('lCli').value,obs:document.getElementById('lObs').value.trim(),alerta:document.getElementById('lAlerta').value==='1'};
+  if(id){Object.assign(dados.lembretes.find(x=>x.id===id),campos);}
+  else{dados.lembretes.push(Object.assign({id:uid(),concluido:false,criado:hojeISO()},campos));}
+  salvar();fecharModal();renderLembretes();avisar('Lembrete salvo ✔');
+}
+
+function concluirLembrete(id){
+  const l=dados.lembretes.find(x=>x.id===id);
+  l.concluido=!l.concluido;salvar();renderLembretes();avisar(l.concluido?'Lembrete concluído ✔':'Lembrete reaberto.');
+}
+
+function excluirLembrete(id){
+  if(!confirm('Excluir este lembrete?')) return;
+  dados.lembretes=dados.lembretes.filter(x=>x.id!==id);
+  salvar();renderLembretes();avisar('Lembrete excluído.');
+}
+
+/* --- Verificação de alertas (a cada minuto) --- */
+let _alertasExibidos=new Set();
+function verificarAlertasLembrete(){
+  const agora=new Date();
+  const hojeStr=hojeISO();
+  const hhmm=String(agora.getHours()).padStart(2,'0')+':'+String(agora.getMinutes()).padStart(2,'0');
+  (dados.lembretes||[]).filter(l=>!l.concluido&&l.alerta!==false).forEach(l=>{
+    const key=l.id+'_'+l.data+(l.hora||'');
+    if(_alertasExibidos.has(key)) return;
+    const ehHoje=l.data===hojeStr;
+    const estaVencido=l.data<hojeStr;
+    const horaOk=!l.hora||(l.hora===hhmm);
+    if((ehHoje&&horaOk)||estaVencido){
+      _alertasExibidos.add(key);
+      dispararAlertaLembrete(l);
+    }
+  });
+  atualizarBadgeLembretes();
+}
+
+function dispararAlertaLembrete(l){
+  tocarBeep();
+  const el=document.getElementById('alertaLembrete');
+  el.style.display='block';
+  el.innerHTML='<h4>'+TIPOS_LEMBRETE[l.tipo]+' Lembrete!</h4>'+
+    '<p><b>'+esc(l.titulo)+'</b>'+(l.hora?' às '+l.hora:'')+' · '+fmtData(l.data)+'</p>'+
+    (l.obs?'<p style="margin-bottom:.7rem;font-size:.8rem">'+esc(l.obs)+'</p>':'')+
+    '<div class="acoes">'+
+    '<button class="bt mini" onclick="concluirAlerta(\''+l.id+'\')">✔ Ciente</button>'+
+    '<button class="bt claro mini" onclick="verLembretesAlerta()">Ver todos</button>'+
+    '</div>';
+  setTimeout(()=>{ if(document.getElementById('alertaLembrete').style.display==='block') document.getElementById('alertaLembrete').style.display='none'; },12000);
+}
+
+function concluirAlerta(id){ concluirLembrete(id); document.getElementById('alertaLembrete').style.display='none'; }
+function verLembretesAlerta(){ document.getElementById('alertaLembrete').style.display='none'; irPara('lembretes'); }
+
+function tocarBeep(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const play=(freq,start,dur)=>{
+      const osc=ctx.createOscillator(); const gain=ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value=freq; osc.type='sine';
+      gain.gain.setValueAtTime(0,ctx.currentTime+start);
+      gain.gain.linearRampToValueAtTime(0.35,ctx.currentTime+start+0.02);
+      gain.gain.linearRampToValueAtTime(0,ctx.currentTime+start+dur);
+      osc.start(ctx.currentTime+start); osc.stop(ctx.currentTime+start+dur+0.05);
+    };
+    play(880,0,0.18); play(1100,0.22,0.18); play(880,0.44,0.3);
+  }catch(e){}
+}
+
+setInterval(verificarAlertasLembrete, 30000);
+
+/* ============================================================
+   CALENDÁRIO GRANDE COM FERIADOS
+   ============================================================ */
+let calGrandeRef=new Date();
+
+function abrirCalendarioGrande(ref){
+  calGrandeRef=ref||new Date();
+  renderCalGrande();
+}
+
+function renderCalGrande(){
+  const ano=calGrandeRef.getFullYear(), mes=calGrandeRef.getMonth();
+  const nomeMes=calGrandeRef.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const primeiro=new Date(ano,mes,1).getDay(), qtDias=new Date(ano,mes+1,0).getDate();
+  const hj=new Date(); const hjISO=hojeISO();
+  const feriados=getFeriados(ano);
+  const lembretesDias={};
+  (dados.lembretes||[]).filter(l=>!l.concluido).forEach(l=>{ lembretesDias[l.data]=(lembretesDias[l.data]||0)+1; });
+
+  let dias='';
+  for(let i=0;i<primeiro;i++) dias+='<div class="dia"></div>';
+  for(let d=1;d<=qtDias;d++){
+    const iso=ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const diaSem=new Date(iso+'T12:00:00').getDay();
+    const ehHoje=iso===hjISO;
+    const feriadoNome=feriados[iso]||null;
+    const temLem=lembretesDias[iso]||0;
+    const classes=['dia',ehHoje?'hoje':'',diaSem===0?'dom':'',feriadoNome?'feriado':'',temLem?'tem-lembrete':''].filter(Boolean).join(' ');
+    dias+='<div class="'+classes+'" onclick="cliqueDia(\''+iso+'\')" title="'+(feriadoNome||'')+'">'+
+      d+(feriadoNome?'<div class="feriado-label">'+feriadoNome.split(' ').slice(0,2).join(' ')+'</div>':'')+'</div>';
+  }
+
+  const html=cabecalhoModal('📅 Calendário — '+nomeMes)+
+    '<div class="modal-corpo" style="padding:.6rem">'+
+    '<div class="cal-grande">'+
+    '<div class="cal-cab-grande">'+
+    '<button class="bt claro mini" style="background:rgba(255,255,255,.2);border:none;color:#fff" onclick="mudarMesGrande(-1)">‹ Anterior</button>'+
+    '<b>'+nomeMes+'</b>'+
+    '<button class="bt claro mini" style="background:rgba(255,255,255,.2);border:none;color:#fff" onclick="mudarMesGrande(1)">Próximo ›</button>'+
+    '</div>'+
+    '<div class="cal-grade-grande">'+
+    ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(x=>'<div class="dia-sem">'+x+'</div>').join('')+
+    dias+'</div>'+
+    '<div class="cal-legenda">'+
+    '<span><div class="dot" style="background:var(--verde)"></div>Hoje</span>'+
+    '<span><div class="dot" style="background:#EBD9A8"></div>Feriado</span>'+
+    '<span><div class="dot" style="background:var(--ambar)"></div>Tem lembrete</span>'+
+    '<span style="color:var(--carimbo)">Dom = Domingo</span>'+
+    '</div></div></div>'+
+    '<div class="modal-pe"><button class="bt mini" onclick="novoLembrete()">＋ Novo lembrete</button><button class="bt claro" onclick="fecharModal()">Fechar</button></div>';
+
+  abrirModal(html,false,true);
+}
+
+function mudarMesGrande(n){ calGrandeRef.setMonth(calGrandeRef.getMonth()+n); renderCalGrande(); }
+function cliqueDia(iso){
+  const feriados=getFeriados(new Date(iso+'T12:00:00').getFullYear());
+  const ferNome=feriados[iso];
+  const lems=(dados.lembretes||[]).filter(l=>l.data===iso);
+  let msg=fmtData(iso);
+  if(ferNome) msg+=' 🎉 '+ferNome;
+  if(lems.length) msg+=' · '+lems.length+' lembrete(s)';
+  if(confirm((ferNome?'🎉 Feriado: '+ferNome+'\n':'')+(lems.length?lems.length+' lembrete(s) neste dia.\n':'')+'\nDeseja adicionar um lembrete para '+fmtData(iso)+'?')){
+    fecharModal();novoLembrete(iso);
+  }
 }
 
 /* ============================================================
-   MÓDULO CLIENTES
+   CLIENTES
    ============================================================ */
 function renderClientes(){
-  const filtro = (document.getElementById('filtroCli').value||'').toLowerCase();
-  const risco = document.getElementById('filtroCliRisco').value;
-  const corpo = document.getElementById('tbClientes');
-  let lista = dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  if(filtro) lista = lista.filter(c => (c.nome+' '+c.doc+' '+c.codigo).toLowerCase().includes(filtro));
-  if(risco) lista = lista.filter(c => (c.risco||'bom')===risco);
-  if(!lista.length){ corpo.innerHTML = '<tr><td colspan="8" class="vazio">Nenhum cliente encontrado. Clique em “＋ Novo cliente”.</td></tr>'; return; }
-  corpo.innerHTML = lista.map(c=>{
-    const foto = c.foto ? '<img class="foto-mini" src="'+c.foto+'">' : '<div class="foto-mini" style="display:flex;align-items:center;justify-content:center;color:var(--cinza)">👤</div>';
-    return '<tr>' +
-      '<td>'+foto+'</td>' +
-      '<td class="num">'+String(c.codigo).padStart(4,'0')+'</td>' +
-      '<td><a href="javascript:fichaCliente(\''+c.id+'\')" style="color:var(--verde);font-weight:600;text-decoration:none">'+esc(c.nome)+'</a></td>' +
-      '<td class="num">'+esc(c.doc||'—')+'</td>' +
-      '<td class="num">'+esc(c.tel||'—')+'</td>' +
-      '<td>'+seloRisco(c.risco)+'</td>' +
-      '<td class="num">'+(c.limite ? fmtBRL(c.limite) : '—')+'</td>' +
-      '<td class="acoes-td">' +
-        '<button class="bt claro mini" onclick="fichaCliente(\''+c.id+'\')">Ficha</button> ' +
-        '<button class="bt claro mini" onclick="editarClienteProtegido(\''+c.id+'\')">✏</button> ' +
-        '<button class="bt claro mini" onclick="excluirCliente(\''+c.id+'\')">🗑</button></td></tr>';
+  const filtro=(document.getElementById('filtroCli').value||'').toLowerCase();
+  const risco=document.getElementById('filtroCliRisco').value;
+  const corpo=document.getElementById('tbClientes');
+  let lista=dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  if(filtro) lista=lista.filter(c=>(c.nome+' '+c.doc+' '+c.codigo).toLowerCase().includes(filtro));
+  if(risco) lista=lista.filter(c=>(c.risco||'bom')===risco);
+  if(!lista.length){corpo.innerHTML='<tr><td colspan="8" class="vazio">Nenhum cliente encontrado. Clique em "＋ Novo cliente".</td></tr>';return;}
+  corpo.innerHTML=lista.map(c=>{
+    const foto=c.foto?'<img class="foto-mini" src="'+c.foto+'" style="border-radius:7px">':'<div class="foto-mini">👤</div>';
+    return '<tr><td>'+foto+'</td>'+
+      '<td class="num">'+String(c.codigo).padStart(4,'0')+'</td>'+
+      '<td><a href="javascript:fichaCliente(\''+c.id+'\')" style="color:var(--verde);font-weight:600;text-decoration:none">'+esc(c.nome)+'</a></td>'+
+      '<td class="num">'+esc(c.doc||'—')+'</td>'+
+      '<td class="num">'+esc(c.tel||'—')+'</td>'+
+      '<td>'+seloRisco(c.risco)+'</td>'+
+      '<td class="num">'+(c.limite?fmtBRL(c.limite):'—')+'</td>'+
+      '<td class="acoes-td"><button class="bt claro mini" onclick="fichaCliente(\''+c.id+'\')">Ficha</button> '+
+      '<button class="bt claro mini" onclick="editarClienteProtegido(\''+c.id+'\')">✏</button> '+
+      '<button class="bt claro mini" onclick="excluirCliente(\''+c.id+'\')">🗑</button></td></tr>';
   }).join('');
 }
 
 function novoCliente(){ formCliente(null); }
 function editarClienteProtegido(id){ pedirSenha(()=>formCliente(id)); }
-
 function formCliente(id){
-  const c = id ? cliPorId(id) : {nome:'',doc:'',tel:'',email:'',endereco:'',limite:'',risco:'bom',obs:'',foto:''};
-  abrirModal(cabecalhoModal(id ? '✏ Alterar cliente' : '＋ Novo cliente') +
-    '<div class="modal-corpo"><div class="form-grade">' +
-    '<div class="campo cheio"><label>Nome *</label><input id="fNome" value="'+esc(c.nome)+'"></div>' +
-    '<div class="campo"><label>CPF / CNPJ</label><input id="fDoc" value="'+esc(c.doc)+'"></div>' +
-    '<div class="campo"><label>Telefone</label><input id="fTel" value="'+esc(c.tel)+'"></div>' +
-    '<div class="campo cheio"><label>Endereço</label><input id="fEnd" value="'+esc(c.endereco)+'"></div>' +
-    '<div class="campo"><label>E-mail</label><input id="fEmail" value="'+esc(c.email)+'"></div>' +
-    '<div class="campo"><label>Limite de crédito (R$)</label><input id="fLimite" inputmode="decimal" value="'+(c.limite||'')+'"></div>' +
-    '<div class="campo"><label>Classificação de risco</label><select id="fRisco">' +
-      Object.entries(ROTULO_RISCO).map(([v,r])=>'<option value="'+v+'"'+((c.risco||'bom')===v?' selected':'')+'>'+r+'</option>').join('') +
-    '</select></div>' +
-    '<div class="campo"><label>Foto</label><input type="file" id="fFoto" accept="image/*"></div>' +
-    '<div class="campo cheio"><label>Observações</label><textarea id="fObs" rows="2">'+esc(c.obs)+'</textarea></div>' +
-    '</div></div>' +
-    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
-    '<button class="bt" onclick="salvarCliente(\''+(id||'')+'\')">Salvar cliente</button></div>');
-  window._fotoTemp = c.foto || '';
-  document.getElementById('fFoto').addEventListener('change', function(){
-    const arq = this.files[0]; if(!arq) return;
-    const leitor = new FileReader();
-    leitor.onload = ev => redimensionarFoto(ev.target.result, b64 => { window._fotoTemp = b64; avisar('Foto carregada ✔'); });
+  const c=id?cliPorId(id):{nome:'',doc:'',tel:'',email:'',endereco:'',limite:'',risco:'bom',obs:'',foto:''};
+  abrirModal(cabecalhoModal(id?'✏ Alterar cliente':'＋ Novo cliente')+
+    '<div class="modal-corpo"><div class="form-grade">'+
+    '<div class="campo cheio"><label>Nome *</label><input id="fNome" value="'+esc(c.nome)+'"></div>'+
+    '<div class="campo"><label>CPF / CNPJ</label><input id="fDoc" value="'+esc(c.doc)+'"></div>'+
+    '<div class="campo"><label>Telefone</label><input id="fTel" value="'+esc(c.tel)+'"></div>'+
+    '<div class="campo cheio"><label>Endereço</label><input id="fEnd" value="'+esc(c.endereco)+'"></div>'+
+    '<div class="campo"><label>E-mail</label><input id="fEmail" value="'+esc(c.email)+'"></div>'+
+    '<div class="campo"><label>Limite de crédito (R$)</label><input id="fLimite" inputmode="decimal" value="'+(c.limite||'')+'"></div>'+
+    '<div class="campo"><label>Classificação de risco</label><select id="fRisco">'+
+      Object.entries(ROTULO_RISCO).map(([v,r])=>'<option value="'+v+'"'+((c.risco||'bom')===v?' selected':'')+'>'+r+'</option>').join('')+
+    '</select></div>'+
+    '<div class="campo"><label>Foto</label><input type="file" id="fFoto" accept="image/*"></div>'+
+    '<div class="campo cheio"><label>Observações</label><textarea id="fObs" rows="2">'+esc(c.obs)+'</textarea></div>'+
+    '</div></div>'+
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="salvarCliente(\''+(id||'')+'\')">Salvar cliente</button></div>');
+  window._fotoTemp=c.foto||'';
+  document.getElementById('fFoto').addEventListener('change',function(){
+    const arq=this.files[0]; if(!arq) return;
+    const leitor=new FileReader();
+    leitor.onload=ev=>redimensionarFoto(ev.target.result,b64=>{window._fotoTemp=b64;avisar('Foto carregada ✔');});
     leitor.readAsDataURL(arq);
   });
 }
-function redimensionarFoto(srcB64, retorno){
-  const img = new Image();
-  img.onload = ()=>{
-    const MAX = 240, esc = Math.min(1, MAX/Math.max(img.width,img.height));
-    const cv = document.createElement('canvas');
-    cv.width = Math.round(img.width*esc); cv.height = Math.round(img.height*esc);
-    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
-    retorno(cv.toDataURL('image/jpeg',0.72));
-  };
-  img.src = srcB64;
+function redimensionarFoto(srcB64,retorno){
+  const img=new Image();
+  img.onload=()=>{const MAX=240,esc=Math.min(1,MAX/Math.max(img.width,img.height)),cv=document.createElement('canvas');cv.width=Math.round(img.width*esc);cv.height=Math.round(img.height*esc);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);retorno(cv.toDataURL('image/jpeg',.72));};
+  img.src=srcB64;
 }
 function salvarCliente(id){
-  const nome = document.getElementById('fNome').value.trim();
-  if(!nome){ avisar('Informe o nome do cliente.'); return; }
-  const campos = {
-    nome, doc:document.getElementById('fDoc').value.trim(), tel:document.getElementById('fTel').value.trim(),
-    email:document.getElementById('fEmail').value.trim(), endereco:document.getElementById('fEnd').value.trim(),
-    limite:moedaParaNumero(document.getElementById('fLimite').value), risco:document.getElementById('fRisco').value,
-    obs:document.getElementById('fObs').value.trim(), foto:window._fotoTemp||''
-  };
-  if(id){ Object.assign(cliPorId(id), campos); }
-  else{ dados.proxCodigo ||= 1; dados.clientes.push(Object.assign({id:uid(), codigo:dados.proxCodigo++, criado:hojeISO()}, campos)); }
-  salvar(); fecharModal(); renderClientes(); avisar('Cliente salvo ✔');
+  const nome=document.getElementById('fNome').value.trim();
+  if(!nome){avisar('Informe o nome do cliente.');return;}
+  const campos={nome,doc:document.getElementById('fDoc').value.trim(),tel:document.getElementById('fTel').value.trim(),email:document.getElementById('fEmail').value.trim(),endereco:document.getElementById('fEnd').value.trim(),limite:moedaParaNumero(document.getElementById('fLimite').value),risco:document.getElementById('fRisco').value,obs:document.getElementById('fObs').value.trim(),foto:window._fotoTemp||''};
+  if(id){Object.assign(cliPorId(id),campos);}
+  else{dados.proxCodigo||=1;dados.clientes.push(Object.assign({id:uid(),codigo:dados.proxCodigo++,criado:hojeISO()},campos));}
+  salvar();fecharModal();renderClientes();avisar('Cliente salvo ✔');
 }
 function excluirCliente(id){
   pedirSenha(()=>{
-    const c = cliPorId(id);
-    const qt = dados.cheques.filter(x=>x.clienteId===id).length;
-    if(!confirm('Excluir o cliente "'+c.nome+'"?'+(qt ? '\nOs '+qt+' cheque(s) dele continuarão no sistema, sem cliente vinculado.' : ''))) return;
-    dados.clientes = dados.clientes.filter(x=>x.id!==id);
-    salvar(); renderClientes(); avisar('Cliente excluído.');
+    const c=cliPorId(id);const qt=dados.cheques.filter(x=>x.clienteId===id).length;
+    if(!confirm('Excluir o cliente "'+c.nome+'"?'+(qt?'\nOs '+qt+' cheque(s) continuarão sem cliente vinculado.':''))) return;
+    dados.clientes=dados.clientes.filter(x=>x.id!==id);salvar();renderClientes();avisar('Cliente excluído.');
   });
 }
-
-/* ---- Ficha do cliente: histórico de cheques em 1 clique ---- */
 function fichaCliente(id){
-  const c = cliPorId(id); if(!c) return;
-  const chs = dados.cheques.filter(x=>x.clienteId===id).sort((a,b)=>b.vencimento.localeCompare(a.vencimento));
-  const total = chs.reduce((s,x)=>s+x.valor,0);
-  const aberto = chs.filter(x=>['carteira','vencido','prorrogado'].includes(situacao(x))).reduce((s,x)=>s+x.valor,0);
-  const limiteTxt = c.limite ? fmtBRL(c.limite) + (aberto>c.limite ? ' <span class="carimbo devolvido reto">limite estourado</span>' : '') : '—';
-  const foto = c.foto ? '<img class="foto-cli" src="'+c.foto+'">' : '<div class="foto-cli" style="display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--cinza)">👤</div>';
-  const linhas = chs.length ? chs.map(x =>
-    '<tr><td class="num">'+esc(x.numero)+'</td><td class="num">'+fmtBRL(x.valor)+'</td>' +
-    '<td class="num">'+fmtData(x.vencimento)+'</td><td>'+carimbo(x)+'</td></tr>').join('')
-    : '<tr><td colspan="4" class="vazio">Nenhum cheque deste cliente.</td></tr>';
-  abrirModal(cabecalhoModal('👤 Ficha do cliente') +
-    '<div class="modal-corpo">' +
+  const c=cliPorId(id); if(!c) return;
+  const chs=dados.cheques.filter(x=>x.clienteId===id).sort((a,b)=>b.vencimento.localeCompare(a.vencimento));
+  const total=chs.reduce((s,x)=>s+x.valor,0);
+  const aberto=chs.filter(x=>['carteira','vencido','prorrogado'].includes(situacao(x))).reduce((s,x)=>s+x.valor,0);
+  const limiteTxt=c.limite?fmtBRL(c.limite)+(aberto>c.limite?' <span class="carimbo devolvido reto">limite estourado</span>':''):'—';
+  const foto=c.foto?'<img class="foto-cli" src="'+c.foto+'">':`<div class="foto-cli" style="display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--cinza)">👤</div>`;
+  const linhas=chs.length?chs.map(x=>'<tr><td class="num">'+esc(x.numero)+'</td><td class="num">'+fmtBRL(x.valor)+'</td><td class="num">'+fmtData(x.vencimento)+'</td><td>'+carimbo(x)+'</td></tr>').join(''):'<tr><td colspan="4" class="vazio">Nenhum cheque deste cliente.</td></tr>';
+  abrirModal(cabecalhoModal('👤 Ficha do cliente')+
+    '<div class="modal-corpo">'+
     '<div class="ficha-cab">'+foto+'<div class="info"><b>'+esc(c.nome)+'</b> '+seloRisco(c.risco)+
-    '<div class="doc">Cód. '+String(c.codigo).padStart(4,'0')+' · '+esc(c.doc||'sem CPF/CNPJ')+'</div>' +
-    '<div style="font-size:.85rem;margin-top:.2rem">'+esc(c.tel||'')+' '+esc(c.email||'')+'</div></div></div>' +
-    '<div class="cartoes" style="grid-template-columns:repeat(3,1fr);margin-bottom:.8rem">' +
-    '<div class="cartao"><div class="rotulo">Movimentado</div><div class="valor" style="font-size:1rem">'+fmtBRL(total)+'</div></div>' +
-    '<div class="cartao am"><div class="rotulo">Em aberto</div><div class="valor" style="font-size:1rem">'+fmtBRL(aberto)+'</div></div>' +
-    '<div class="cartao"><div class="rotulo">Limite</div><div class="valor" style="font-size:1rem">'+limiteTxt+'</div></div></div>' +
-    (c.obs ? '<p style="font-size:.85rem;color:var(--cinza);margin-bottom:.8rem">📝 '+esc(c.obs)+'</p>' : '') +
-    '<div class="tabela-rolagem" style="max-height:240px;overflow-y:auto"><table><thead><tr><th>Cheque</th><th>Valor</th><th>Venc.</th><th>Situação</th></tr></thead><tbody>'+linhas+'</tbody></table></div>' +
-    '</div><div class="modal-pe">' +
-    '<button class="bt claro" onclick="relExtratoClienteId(\''+id+'\')">🖨 Extrato em PDF</button>' +
+    '<div class="doc">Cód. '+String(c.codigo).padStart(4,'0')+' · '+esc(c.doc||'sem CPF/CNPJ')+'</div>'+
+    '<div style="font-size:.83rem;margin-top:.2rem">'+esc(c.tel||'')+' '+esc(c.email||'')+'</div></div></div>'+
+    '<div class="cartoes" style="grid-template-columns:repeat(3,1fr);margin-bottom:.8rem">'+
+    '<div class="cartao"><div class="rotulo">Movimentado</div><div class="valor" style="font-size:1rem">'+fmtBRL(total)+'</div></div>'+
+    '<div class="cartao am"><div class="rotulo">Em aberto</div><div class="valor" style="font-size:1rem">'+fmtBRL(aberto)+'</div></div>'+
+    '<div class="cartao"><div class="rotulo">Limite</div><div class="valor" style="font-size:1rem">'+limiteTxt+'</div></div></div>'+
+    (c.obs?'<p style="font-size:.83rem;color:var(--cinza);margin-bottom:.8rem">📝 '+esc(c.obs)+'</p>':'')+
+    '<div class="tabela-rolagem" style="max-height:230px;overflow-y:auto"><table><thead><tr><th>Cheque</th><th>Valor</th><th>Venc.</th><th>Situação</th></tr></thead><tbody>'+linhas+'</tbody></table></div>'+
+    '</div><div class="modal-pe">'+
+    '<button class="bt claro" onclick="relExtratoClienteId(\''+id+'\')">🖨 Extrato</button>'+
     '<button class="bt" onclick="fecharModal()">Fechar</button></div>');
 }
 
 /* ============================================================
-   MÓDULO CHEQUES
+   CHEQUES
    ============================================================ */
 function chequesFiltrados(){
-  const filtro = (document.getElementById('filtroChq').value||'').toLowerCase();
-  const st = document.getElementById('filtroChqStatus').value;
-  const campo = document.getElementById('filtroChqCampoData').value;
-  const de = document.getElementById('filtroChqDe').value, ate = document.getElementById('filtroChqAte').value;
-  let lista = dados.cheques.slice().sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
-  if(filtro) lista = lista.filter(c => (c.numero+' '+nomeCliente(c.clienteId)+' '+(c.cpfEmitente||'')+' '+(c.emitente||'')).toLowerCase().includes(filtro));
-  if(st) lista = lista.filter(c => situacao(c)===st);
-  if(de) lista = lista.filter(c => (c[campo]||'') >= de);
-  if(ate) lista = lista.filter(c => (c[campo]||'') <= ate);
+  const filtro=(document.getElementById('filtroChq').value||'').toLowerCase();
+  const st=document.getElementById('filtroChqStatus').value;
+  const campo=document.getElementById('filtroChqCampoData').value;
+  const de=document.getElementById('filtroChqDe').value, ate=document.getElementById('filtroChqAte').value;
+  let lista=dados.cheques.slice().sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+  if(filtro) lista=lista.filter(c=>(c.numero+' '+nomeCliente(c.clienteId)+' '+(c.cpfEmitente||'')+' '+(c.emitente||'')).toLowerCase().includes(filtro));
+  if(st) lista=lista.filter(c=>situacao(c)===st);
+  if(de) lista=lista.filter(c=>(c[campo]||'')>=de);
+  if(ate) lista=lista.filter(c=>(c[campo]||'')<=ate);
   return lista;
 }
-function limparFiltrosCheques(){
-  ['filtroChq','filtroChqDe','filtroChqAte'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('filtroChqStatus').value=''; renderCheques();
-}
+function limparFiltrosCheques(){['filtroChq','filtroChqDe','filtroChqAte'].forEach(i=>document.getElementById(i).value='');document.getElementById('filtroChqStatus').value='';renderCheques();}
 function renderCheques(){
-  const corpo = document.getElementById('tbCheques');
-  const lista = chequesFiltrados();
-  if(!lista.length){ corpo.innerHTML = '<tr><td colspan="7" class="vazio">Nenhum cheque encontrado.</td></tr>'; return; }
-  corpo.innerHTML = lista.map(c =>
-    '<tr><td class="num">'+esc(c.numero)+'</td>' +
-    '<td>'+esc(nomeCliente(c.clienteId))+'</td>' +
-    '<td class="num"><b>'+fmtBRL(c.valor)+'</b></td>' +
-    '<td class="num">'+fmtData(c.emissao)+'</td>' +
-    '<td class="num">'+fmtData(c.vencimento)+'</td>' +
-    '<td>'+carimbo(c)+'</td>' +
-    '<td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('');
+  const corpo=document.getElementById('tbCheques'),lista=chequesFiltrados();
+  if(!lista.length){corpo.innerHTML='<tr><td colspan="7" class="vazio">Nenhum cheque encontrado.</td></tr>';return;}
+  corpo.innerHTML=lista.map(c=>'<tr><td class="num">'+esc(c.numero)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="num"><b>'+fmtBRL(c.valor)+'</b></td><td class="num">'+fmtData(c.emissao)+'</td><td class="num">'+fmtData(c.vencimento)+'</td><td>'+carimbo(c)+'</td><td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('');
 }
 
-function novoCheque(){
-  if(!dados.clientes.length){ avisar('Cadastre um cliente antes de lançar cheques.'); irPara('clientes'); return; }
-  formCheque(null);
-}
+function novoCheque(){if(!dados.clientes.length){avisar('Cadastre um cliente antes de lançar cheques.');irPara('clientes');return;}formCheque(null);}
 function formCheque(id){
-  const c = id ? dados.cheques.find(x=>x.id===id) : {clienteId:'',numero:'',banco:'',agencia:'',conta:'',emitente:'',cpfEmitente:'',valor:'',emissao:hojeISO(),vencimento:hojeISO(),obs:''};
-  const ops = dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))
-    .map(x=>'<option value="'+x.id+'"'+(x.id===c.clienteId?' selected':'')+'>'+esc(x.nome)+((x.risco==='bloqueado')?' 🚫':'')+'</option>').join('');
-  abrirModal(cabecalhoModal(id ? '✏ Alterar cheque' : '＋ Novo cheque') +
-    '<div class="modal-corpo"><div class="form-grade">' +
-    '<div class="campo cheio"><label>Cliente *</label><select id="qCli"><option value="">— selecione —</option>'+ops+'</select></div>' +
-    '<div class="campo"><label>Nº do cheque *</label><input id="qNum" value="'+esc(c.numero)+'"></div>' +
-    '<div class="campo"><label>Valor (R$) *</label><input id="qValor" inputmode="decimal" value="'+(c.valor||'')+'"></div>' +
-    '<div class="campo"><label>Banco</label><input id="qBanco" value="'+esc(c.banco)+'"></div>' +
-    '<div class="campo"><label>Agência</label><input id="qAg" value="'+esc(c.agencia)+'"></div>' +
-    '<div class="campo"><label>Conta</label><input id="qConta" value="'+esc(c.conta)+'"></div>' +
-    '<div class="campo"><label>Emitente</label><input id="qEmit" value="'+esc(c.emitente)+'"></div>' +
-    '<div class="campo"><label>CPF do emitente</label><input id="qCpf" value="'+esc(c.cpfEmitente)+'"></div>' +
-    '<div class="campo"><label>Emissão *</label><input type="date" id="qEmis" value="'+c.emissao+'"></div>' +
-    '<div class="campo"><label>Vencimento *</label><input type="date" id="qVenc" value="'+c.vencimento+'"></div>' +
-    '<div class="campo cheio"><label>Observações</label><textarea id="qObs" rows="2">'+esc(c.obs)+'</textarea></div>' +
-    '</div><p id="avisoLimite" style="color:var(--carimbo);font-size:.8rem;margin-top:.5rem"></p></div>' +
-    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button>' +
-    '<button class="bt" onclick="salvarCheque(\''+(id||'')+'\')">Salvar cheque</button></div>');
+  const c=id?dados.cheques.find(x=>x.id===id):{clienteId:'',numero:'',banco:'',agencia:'',conta:'',emitente:'',cpfEmitente:'',valor:'',emissao:hojeISO(),vencimento:hojeISO(),obs:''};
+  const ops=dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(x=>'<option value="'+x.id+'"'+(x.id===c.clienteId?' selected':'')+'>'+esc(x.nome)+(x.risco==='bloqueado'?' 🚫':'')+'</option>').join('');
+  abrirModal(cabecalhoModal(id?'✏ Alterar cheque':'＋ Novo cheque')+
+    '<div class="modal-corpo"><div class="form-grade">'+
+    '<div class="campo cheio"><label>Cliente *</label><select id="qCli"><option value="">— selecione —</option>'+ops+'</select></div>'+
+    '<div class="campo"><label>Nº do cheque *</label><input id="qNum" value="'+esc(c.numero)+'"></div>'+
+    '<div class="campo"><label>Valor (R$) *</label><input id="qValor" inputmode="decimal" value="'+(c.valor||'')+'"></div>'+
+    '<div class="campo"><label>Banco</label><input id="qBanco" value="'+esc(c.banco)+'"></div>'+
+    '<div class="campo"><label>Agência</label><input id="qAg" value="'+esc(c.agencia)+'"></div>'+
+    '<div class="campo"><label>Conta</label><input id="qConta" value="'+esc(c.conta)+'"></div>'+
+    '<div class="campo"><label>Emitente</label><input id="qEmit" value="'+esc(c.emitente)+'"></div>'+
+    '<div class="campo"><label>CPF do emitente</label><input id="qCpf" value="'+esc(c.cpfEmitente)+'"></div>'+
+    '<div class="campo"><label>Emissão *</label><input type="date" id="qEmis" value="'+c.emissao+'"></div>'+
+    '<div class="campo"><label>Vencimento *</label><input type="date" id="qVenc" value="'+c.vencimento+'"></div>'+
+    '<div class="campo cheio"><label>Observações</label><textarea id="qObs" rows="2">'+esc(c.obs)+'</textarea></div>'+
+    '</div></div>'+
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="salvarCheque(\''+(id||'')+'\')">Salvar cheque</button></div>');
 }
 function salvarCheque(id){
-  const clienteId = document.getElementById('qCli').value;
-  const numero = document.getElementById('qNum').value.trim();
-  const valor = moedaParaNumero(document.getElementById('qValor').value);
-  const emissao = document.getElementById('qEmis').value, vencimento = document.getElementById('qVenc').value;
-  if(!clienteId || !numero || !valor || !emissao || !vencimento){ avisar('Preencha cliente, nº, valor e datas.'); return; }
-  const cli = cliPorId(clienteId);
-  if(cli && cli.risco==='bloqueado' && !confirm('⚠ Este cliente está BLOQUEADO. Lançar mesmo assim?')) return;
-  if(cli && cli.limite){
-    const aberto = dados.cheques.filter(x=>x.clienteId===clienteId && x.id!==id && ['carteira','vencido','prorrogado'].includes(situacao(x))).reduce((s,x)=>s+x.valor,0);
-    if(aberto + valor > cli.limite && !confirm('⚠ Limite de crédito ('+fmtBRL(cli.limite)+') será ultrapassado.\nEm aberto: '+fmtBRL(aberto)+' + este cheque: '+fmtBRL(valor)+'.\nLançar mesmo assim?')) return;
+  const clienteId=document.getElementById('qCli').value,numero=document.getElementById('qNum').value.trim(),valor=moedaParaNumero(document.getElementById('qValor').value),emissao=document.getElementById('qEmis').value,vencimento=document.getElementById('qVenc').value;
+  if(!clienteId||!numero||!valor||!emissao||!vencimento){avisar('Preencha cliente, nº, valor e datas.');return;}
+  const cli=cliPorId(clienteId);
+  if(cli&&cli.risco==='bloqueado'&&!confirm('⚠ Este cliente está BLOQUEADO. Lançar mesmo assim?')) return;
+  if(cli&&cli.limite){
+    const aberto=dados.cheques.filter(x=>x.clienteId===clienteId&&x.id!==id&&['carteira','vencido','prorrogado'].includes(situacao(x))).reduce((s,x)=>s+x.valor,0);
+    if(aberto+valor>cli.limite&&!confirm('⚠ Limite ultrapassado. Lançar mesmo assim?')) return;
   }
-  const campos = { clienteId, numero, valor, emissao, vencimento,
-    banco:document.getElementById('qBanco').value.trim(), agencia:document.getElementById('qAg').value.trim(),
-    conta:document.getElementById('qConta').value.trim(), emitente:document.getElementById('qEmit').value.trim(),
-    cpfEmitente:document.getElementById('qCpf').value.trim(), obs:document.getElementById('qObs').value.trim() };
-  if(id){ Object.assign(dados.cheques.find(x=>x.id===id), campos); }
-  else{ dados.cheques.push(Object.assign({id:uid(), status:'carteira', prorrogacoes:[], criado:hojeISO()}, campos)); }
-  salvar(); fecharModal(); renderCheques(); avisar('Cheque salvo ✔');
+  const campos={clienteId,numero,valor,emissao,vencimento,banco:document.getElementById('qBanco').value.trim(),agencia:document.getElementById('qAg').value.trim(),conta:document.getElementById('qConta').value.trim(),emitente:document.getElementById('qEmit').value.trim(),cpfEmitente:document.getElementById('qCpf').value.trim(),obs:document.getElementById('qObs').value.trim()};
+  if(id){Object.assign(dados.cheques.find(x=>x.id===id),campos);}
+  else{dados.cheques.push(Object.assign({id:uid(),status:'carteira',prorrogacoes:[],criado:hojeISO()},campos));}
+  salvar();fecharModal();renderCheques();avisar('Cheque salvo ✔');
 }
-
-/* ---- detalhe do cheque: prorrogar, devolver, compensar, recibo ---- */
 function detalheCheque(id){
-  const c = dados.cheques.find(x=>x.id===id); if(!c) return;
-  const pr = (c.prorrogacoes||[]).map(p =>
-    '<tr><td class="num">'+fmtData(p.de)+'</td><td class="num">'+fmtData(p.para)+'</td><td>'+esc(p.motivo||'—')+'</td><td class="num">'+fmtData(p.data)+'</td></tr>').join('');
-  abrirModal(cabecalhoModal('🏦 Cheque nº '+esc(c.numero)) +
-    '<div class="modal-corpo">' +
-    '<p style="margin-bottom:.6rem"><b>'+esc(nomeCliente(c.clienteId))+'</b> · '+carimbo(c)+'</p>' +
-    '<p class="num" style="font-family:var(--mono);font-size:.85rem;color:var(--cinza);margin-bottom:.8rem">' +
-      'Banco '+esc(c.banco||'—')+' · Ag '+esc(c.agencia||'—')+' · CC '+esc(c.conta||'—')+'<br>' +
-      'Emitente: '+esc(c.emitente||'—')+' ('+esc(c.cpfEmitente||'sem CPF')+')</p>' +
-    '<div class="cartoes" style="grid-template-columns:repeat(3,1fr)">' +
-    '<div class="cartao vd"><div class="rotulo">Valor</div><div class="valor" style="font-size:1rem">'+fmtBRL(c.valor)+'</div></div>' +
-    '<div class="cartao"><div class="rotulo">Emissão</div><div class="valor" style="font-size:1rem">'+fmtData(c.emissao)+'</div></div>' +
-    '<div class="cartao"><div class="rotulo">Vencimento</div><div class="valor" style="font-size:1rem">'+fmtData(c.vencimento)+'</div></div></div>' +
-    (c.status==='devolvido' ? '<p class="faixa-aviso vermelha">Devolvido — alínea '+esc(c.alinea||'?')+'</p>' : '') +
-    (c.status==='compensado' ? '<p class="faixa-aviso" style="background:#E8F0F7;border-color:#B9CFE2;color:#1F4360">Compensado em '+fmtData(c.recebidoEm)+'</p>' : '') +
-    (pr ? '<h3 style="font-size:.78rem;text-transform:uppercase;color:var(--cinza);margin:.6rem 0 .4rem">Histórico de prorrogações</h3>' +
-      '<div class="tabela-rolagem"><table><thead><tr><th>De</th><th>Para</th><th>Motivo</th><th>Registrado em</th></tr></thead><tbody>'+pr+'</tbody></table></div>' : '') +
-    (c.obs ? '<p style="font-size:.85rem;color:var(--cinza);margin-top:.6rem">📝 '+esc(c.obs)+'</p>' : '') +
-    '</div><div class="modal-pe" style="justify-content:flex-start">' +
-    (c.status!=='compensado' && c.status!=='devolvido' ?
-      '<button class="bt mini" onclick="compensarCheque(\''+id+'\')">✔ Compensar</button>' +
-      '<button class="bt claro mini" onclick="prorrogarCheque(\''+id+'\')">📅 Prorrogar</button>' +
-      '<button class="bt perigo mini" onclick="devolverCheque(\''+id+'\')">↩ Devolver</button>' : '') +
-    '<button class="bt claro mini" onclick="reciboCheque(\''+id+'\')">🖨 Recibo</button>' +
-    '<button class="bt claro mini" onclick="formCheque(\''+id+'\')">✏ Editar</button>' +
-    '<button class="bt claro mini" onclick="excluirCheque(\''+id+'\')">🗑 Excluir</button>' +
-    '</div>');
+  const c=dados.cheques.find(x=>x.id===id); if(!c) return;
+  const pr=(c.prorrogacoes||[]).map(p=>'<tr><td class="num">'+fmtData(p.de)+'</td><td class="num">'+fmtData(p.para)+'</td><td>'+esc(p.motivo||'—')+'</td><td class="num">'+fmtData(p.data)+'</td></tr>').join('');
+  abrirModal(cabecalhoModal('🏦 Cheque nº '+esc(c.numero))+
+    '<div class="modal-corpo">'+
+    '<p style="margin-bottom:.6rem"><b>'+esc(nomeCliente(c.clienteId))+'</b> · '+carimbo(c)+'</p>'+
+    '<p style="font-family:var(--mono);font-size:.82rem;color:var(--cinza);margin-bottom:.8rem">Banco '+esc(c.banco||'—')+' · Ag '+esc(c.agencia||'—')+' · CC '+esc(c.conta||'—')+'<br>Emitente: '+esc(c.emitente||'—')+' ('+esc(c.cpfEmitente||'sem CPF')+')</p>'+
+    '<div class="cartoes" style="grid-template-columns:repeat(3,1fr)">'+
+    '<div class="cartao vd"><div class="rotulo">Valor</div><div class="valor" style="font-size:1rem">'+fmtBRL(c.valor)+'</div></div>'+
+    '<div class="cartao"><div class="rotulo">Emissão</div><div class="valor" style="font-size:1rem">'+fmtData(c.emissao)+'</div></div>'+
+    '<div class="cartao"><div class="rotulo">Vencimento</div><div class="valor" style="font-size:1rem">'+fmtData(c.vencimento)+'</div></div></div>'+
+    (c.status==='devolvido'?'<p class="faixa-aviso vermelha">Devolvido — alínea '+esc(c.alinea||'?')+'</p>':'')+
+    (c.status==='compensado'?'<p class="faixa-aviso" style="background:#E8F0F7;border-color:#B9CFE2;color:#1F4360">Compensado em '+fmtData(c.recebidoEm)+'</p>':'')+
+    (pr?'<h3 style="font-size:.72rem;text-transform:uppercase;color:var(--cinza);margin:.6rem 0 .4rem">Histórico de prorrogações</h3><div class="tabela-rolagem"><table><thead><tr><th>De</th><th>Para</th><th>Motivo</th><th>Registrado</th></tr></thead><tbody>'+pr+'</tbody></table></div>':'')+
+    (c.obs?'<p style="font-size:.83rem;color:var(--cinza);margin-top:.6rem">📝 '+esc(c.obs)+'</p>':'')+
+    '</div><div class="modal-pe" style="justify-content:flex-start;flex-wrap:wrap">'+
+    (c.status!=='compensado'&&c.status!=='devolvido'?
+      '<button class="bt mini" onclick="compensarCheque(\''+id+'\')">✔ Compensar</button>'+
+      '<button class="bt claro mini" onclick="prorrogarCheque(\''+id+'\')">📅 Prorrogar</button>'+
+      '<button class="bt perigo mini" onclick="devolverCheque(\''+id+'\')">↩ Devolver</button>':'')+
+    '<button class="bt claro mini" onclick="reciboCheque(\''+id+'\')">🖨 Recibo</button>'+
+    '<button class="bt claro mini" onclick="formCheque(\''+id+'\')">✏ Editar</button>'+
+    '<button class="bt claro mini" onclick="excluirCheque(\''+id+'\')">🗑 Excluir</button></div>');
 }
-function compensarCheque(id){
-  const c = dados.cheques.find(x=>x.id===id);
-  c.status='compensado'; c.recebidoEm=hojeISO(); salvar(); fecharModal(); renderCheques(); renderPainel(); avisar('Cheque compensado ✔');
-}
+function compensarCheque(id){const c=dados.cheques.find(x=>x.id===id);c.status='compensado';c.recebidoEm=hojeISO();salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque compensado ✔');}
 function prorrogarCheque(id){
-  const c = dados.cheques.find(x=>x.id===id);
-  abrirModal(cabecalhoModal('📅 Prorrogar cheque nº '+esc(c.numero)) +
-    '<div class="modal-corpo"><div class="form-grade">' +
-    '<div class="campo"><label>Vencimento atual</label><input value="'+fmtData(c.vencimento)+'" disabled></div>' +
-    '<div class="campo"><label>Novo vencimento *</label><input type="date" id="pNovo" value="'+somaDias(c.vencimento,30)+'"></div>' +
-    '<div class="campo cheio"><label>Motivo</label><input id="pMotivo" placeholder="Ex.: acordo com o cliente"></div>' +
-    '</div></div><div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button>' +
-    '<button class="bt" onclick="confirmarProrrogacao(\''+id+'\')">Prorrogar</button></div>', true);
+  const c=dados.cheques.find(x=>x.id===id);
+  abrirModal(cabecalhoModal('📅 Prorrogar cheque nº '+esc(c.numero))+
+    '<div class="modal-corpo"><div class="form-grade">'+
+    '<div class="campo"><label>Vencimento atual</label><input value="'+fmtData(c.vencimento)+'" disabled></div>'+
+    '<div class="campo"><label>Novo vencimento *</label><input type="date" id="pNovo" value="'+somaDias(c.vencimento,30)+'"></div>'+
+    '<div class="campo cheio"><label>Motivo</label><input id="pMotivo" placeholder="Ex.: acordo com o cliente"></div>'+
+    '</div></div><div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button><button class="bt" onclick="confirmarProrrogacao(\''+id+'\')">Prorrogar</button></div>',true);
 }
 function confirmarProrrogacao(id){
-  const c = dados.cheques.find(x=>x.id===id);
-  const novo = document.getElementById('pNovo').value;
-  if(!novo || novo <= c.vencimento){ avisar('Informe uma data posterior ao vencimento atual.'); return; }
-  c.prorrogacoes ||= [];
-  c.prorrogacoes.push({de:c.vencimento, para:novo, motivo:document.getElementById('pMotivo').value.trim(), data:hojeISO()});
-  c.vencimento = novo; c.status='carteira';
-  salvar(); renderCheques(); renderPainel(); detalheCheque(id); avisar('Cheque prorrogado ✔');
+  const c=dados.cheques.find(x=>x.id===id),novo=document.getElementById('pNovo').value;
+  if(!novo||novo<=c.vencimento){avisar('Informe uma data posterior ao vencimento atual.');return;}
+  c.prorrogacoes||=[];c.prorrogacoes.push({de:c.vencimento,para:novo,motivo:document.getElementById('pMotivo').value.trim(),data:hojeISO()});
+  c.vencimento=novo;c.status='carteira';salvar();renderCheques();renderPainel();detalheCheque(id);avisar('Cheque prorrogado ✔');
 }
 function devolverCheque(id){
-  const c = dados.cheques.find(x=>x.id===id);
-  abrirModal(cabecalhoModal('↩ Devolução do cheque nº '+esc(c.numero)) +
-    '<div class="modal-corpo"><div class="campo"><label>Motivo (alínea do Banco Central)</label>' +
-    '<select id="dAlinea">'+ALINEAS.map(a=>'<option>'+a+'</option>').join('')+'</select></div></div>' +
-    '<div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button>' +
-    '<button class="bt perigo" onclick="confirmarDevolucao(\''+id+'\')">Registrar devolução</button></div>', true);
+  const c=dados.cheques.find(x=>x.id===id);
+  abrirModal(cabecalhoModal('↩ Devolução do cheque nº '+esc(c.numero))+
+    '<div class="modal-corpo"><div class="campo"><label>Motivo (alínea do Banco Central)</label>'+
+    '<select id="dAlinea">'+ALINEAS.map(a=>'<option>'+a+'</option>').join('')+'</select></div></div>'+
+    '<div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button><button class="bt perigo" onclick="confirmarDevolucao(\''+id+'\')">Registrar devolução</button></div>',true);
 }
-function confirmarDevolucao(id){
-  const c = dados.cheques.find(x=>x.id===id);
-  c.status='devolvido'; c.alinea=document.getElementById('dAlinea').value;
-  salvar(); renderCheques(); renderPainel(); fecharModal(); avisar('Devolução registrada.');
-}
-function excluirCheque(id){
-  pedirSenha(()=>{
-    if(!confirm('Excluir este cheque definitivamente?')) return;
-    dados.cheques = dados.cheques.filter(x=>x.id!==id);
-    salvar(); fecharModal(); renderCheques(); renderPainel(); avisar('Cheque excluído.');
-  });
-}
+function confirmarDevolucao(id){const c=dados.cheques.find(x=>x.id===id);c.status='devolvido';c.alinea=document.getElementById('dAlinea').value;salvar();renderCheques();renderPainel();fecharModal();avisar('Devolução registrada.');}
+function excluirCheque(id){pedirSenha(()=>{if(!confirm('Excluir este cheque definitivamente?')) return;dados.cheques=dados.cheques.filter(x=>x.id!==id);salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque excluído.');});}
 function reciboCheque(id){
-  const c = dados.cheques.find(x=>x.id===id);
-  const cli = cliPorId(c.clienteId);
-  imprimir('<div class="recibo"><h1>RECIBO DE CHEQUE RECEBIDO</h1>' +
-    '<div class="sub">NAVI · emitido em '+new Date().toLocaleString('pt-BR')+'</div>' +
-    '<p>Recebemos de <b>'+esc(cli?cli.nome:'—')+'</b>'+(cli&&cli.doc?' (CPF/CNPJ '+esc(cli.doc)+')':'')+
-    ' o cheque abaixo descrito:</p><br><table>' +
-    '<tr><th>Cheque nº</th><td class="mono">'+esc(c.numero)+'</td><th>Valor</th><td class="mono"><b>'+fmtBRL(c.valor)+'</b></td></tr>' +
-    '<tr><th>Banco</th><td>'+esc(c.banco||'—')+'</td><th>Agência / Conta</th><td class="mono">'+esc(c.agencia||'—')+' / '+esc(c.conta||'—')+'</td></tr>' +
-    '<tr><th>Emitente</th><td>'+esc(c.emitente||'—')+'</td><th>CPF emitente</th><td class="mono">'+esc(c.cpfEmitente||'—')+'</td></tr>' +
-    '<tr><th>Emissão</th><td class="mono">'+fmtData(c.emissao)+'</td><th>Bom para (vencimento)</th><td class="mono">'+fmtData(c.vencimento)+'</td></tr></table>' +
+  const c=dados.cheques.find(x=>x.id===id),cli=cliPorId(c.clienteId);
+  imprimir('<div class="recibo"><h1>RECIBO DE CHEQUE RECEBIDO</h1><div class="sub">NAVI · emitido em '+new Date().toLocaleString('pt-BR')+'</div>'+
+    '<p>Recebemos de <b>'+esc(cli?cli.nome:'—')+'</b>'+(cli&&cli.doc?' (CPF/CNPJ '+esc(cli.doc)+')':'')+' o cheque abaixo descrito:</p><br><table>'+
+    '<tr><th>Cheque nº</th><td class="mono">'+esc(c.numero)+'</td><th>Valor</th><td class="mono"><b>'+fmtBRL(c.valor)+'</b></td></tr>'+
+    '<tr><th>Banco</th><td>'+esc(c.banco||'—')+'</td><th>Agência / Conta</th><td class="mono">'+esc(c.agencia||'—')+' / '+esc(c.conta||'—')+'</td></tr>'+
+    '<tr><th>Emitente</th><td>'+esc(c.emitente||'—')+'</td><th>CPF emitente</th><td class="mono">'+esc(c.cpfEmitente||'—')+'</td></tr>'+
+    '<tr><th>Emissão</th><td class="mono">'+fmtData(c.emissao)+'</td><th>Vencimento</th><td class="mono">'+fmtData(c.vencimento)+'</td></tr></table>'+
     '<div class="linha-ass">Assinatura do recebedor</div></div>');
 }
 
 /* ============================================================
-   PAINEL (dashboard), ALERTA DE VENCIMENTOS, GRÁFICO
+   PAINEL
    ============================================================ */
 function renderPainel(){
-  const hoje = hojeISO(), em7 = somaDias(hoje,7);
-  const abertos = dados.cheques.filter(c=>!['compensado','devolvido'].includes(c.status));
-  const soma = l => l.reduce((s,c)=>s+c.valor,0);
-  const aReceber = soma(abertos);
-  const vencidos = abertos.filter(c=>c.vencimento<hoje);
-  const aVencer7 = abertos.filter(c=>c.vencimento>=hoje && c.vencimento<=em7);
-  const recebidoTot = soma(dados.cheques.filter(c=>c.status==='compensado'));
-  const devolvidoTot = soma(dados.cheques.filter(c=>c.status==='devolvido'));
-
-  document.getElementById('cartoesPainel').innerHTML =
-    '<div class="cartao vd"><div class="rotulo">A receber (em carteira)</div><div class="valor">'+fmtBRL(aReceber)+'</div></div>' +
-    '<div class="cartao vm"><div class="rotulo">Vencido ('+vencidos.length+')</div><div class="valor">'+fmtBRL(soma(vencidos))+'</div></div>' +
-    '<div class="cartao am"><div class="rotulo">A vencer em 7 dias ('+aVencer7.length+')</div><div class="valor">'+fmtBRL(soma(aVencer7))+'</div></div>' +
-    '<div class="cartao az"><div class="rotulo">Recebido (total)</div><div class="valor">'+fmtBRL(recebidoTot)+'</div></div>' +
-    '<div class="cartao vm"><div class="rotulo">Devolvidos (total)</div><div class="valor">'+fmtBRL(devolvidoTot)+'</div></div>';
-
-  const avisos = [];
+  const hoje=hojeISO(),em7=somaDias(hoje,7);
+  const abertos=dados.cheques.filter(c=>!['compensado','devolvido'].includes(c.status));
+  const soma=l=>l.reduce((s,c)=>s+c.valor,0);
+  const aReceber=soma(abertos),vencidos=abertos.filter(c=>c.vencimento<hoje),aVencer7=abertos.filter(c=>c.vencimento>=hoje&&c.vencimento<=em7);
+  const recebidoTot=soma(dados.cheques.filter(c=>c.status==='compensado')),devolvidoTot=soma(dados.cheques.filter(c=>c.status==='devolvido'));
+  document.getElementById('cartoesPainel').innerHTML=
+    '<div class="cartao vd"><div class="rotulo">A receber (carteira)</div><div class="valor">'+fmtBRL(aReceber)+'</div></div>'+
+    '<div class="cartao vm"><div class="rotulo">Vencido ('+vencidos.length+')</div><div class="valor">'+fmtBRL(soma(vencidos))+'</div></div>'+
+    '<div class="cartao am"><div class="rotulo">A vencer em 7 dias ('+aVencer7.length+')</div><div class="valor">'+fmtBRL(soma(aVencer7))+'</div></div>'+
+    '<div class="cartao az"><div class="rotulo">Recebido total</div><div class="valor">'+fmtBRL(recebidoTot)+'</div></div>'+
+    '<div class="cartao vm"><div class="rotulo">Devolvidos total</div><div class="valor">'+fmtBRL(devolvidoTot)+'</div></div>';
+  const avisos=[];
   if(vencidos.length) avisos.push('<div class="faixa-aviso vermelha">⚠ <b>'+vencidos.length+' cheque(s) vencido(s)</b> somando '+fmtBRL(soma(vencidos))+'. <button class="bt perigo mini" onclick="verVencidos()">Ver agora</button></div>');
   if(aVencer7.length) avisos.push('<div class="faixa-aviso">📅 <b>'+aVencer7.length+' cheque(s)</b> vencem nos próximos 7 dias ('+fmtBRL(soma(aVencer7))+').</div>');
-  document.getElementById('avisosPainel').innerHTML = avisos.join('');
-
-  document.getElementById('tbProximos').innerHTML = aVencer7.length
-    ? aVencer7.sort((a,b)=>a.vencimento.localeCompare(b.vencimento)).map(c =>
-      '<tr><td class="num">'+fmtData(c.vencimento)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td>' +
-      '<td class="num">'+esc(c.numero)+'</td><td class="num"><b>'+fmtBRL(c.valor)+'</b></td>' +
-      '<td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('')
-    : '<tr><td colspan="5" class="vazio">Nada vencendo nos próximos 7 dias. 👍</td></tr>';
-
-  // gráfico de barras: compensados por mês (últimos 6 meses)
-  const meses = [], rotMes = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  const ag = new Date();
-  for(let i=5;i>=0;i--){
-    const d = new Date(ag.getFullYear(), ag.getMonth()-i, 1);
-    meses.push({chave: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), rot: rotMes[d.getMonth()]+'/'+String(d.getFullYear()).slice(2), total:0});
-  }
-  dados.cheques.forEach(c=>{
-    if(c.status==='compensado' && c.recebidoEm){
-      const m = meses.find(x=>c.recebidoEm.startsWith(x.chave)); if(m) m.total += c.valor;
-    }
-  });
-  const maior = Math.max(...meses.map(m=>m.total), 1);
-  document.getElementById('graficoMeses').innerHTML = meses.map(m =>
-    '<div class="col"><span class="qt">'+(m.total ? fmtBRL(m.total).replace(/\u00a0/,' ') : '')+'</span>' +
-    '<div class="barra" style="height:'+Math.round(m.total/maior*100)+'%"></div>' +
-    '<span class="mes">'+m.rot+'</span></div>').join('');
+  document.getElementById('avisosPainel').innerHTML=avisos.join('');
+  document.getElementById('tbProximos').innerHTML=aVencer7.length
+    ?aVencer7.sort((a,b)=>a.vencimento.localeCompare(b.vencimento)).map(c=>'<tr><td class="num">'+fmtData(c.vencimento)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="num">'+esc(c.numero)+'</td><td class="num"><b>'+fmtBRL(c.valor)+'</b></td><td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('')
+    :'<tr><td colspan="5" class="vazio">Nada vencendo nos próximos 7 dias. 👍</td></tr>';
+  const meses=[],rotMes=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const ag=new Date();
+  for(let i=5;i>=0;i--){const d=new Date(ag.getFullYear(),ag.getMonth()-i,1);meses.push({chave:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),rot:rotMes[d.getMonth()]+'/'+String(d.getFullYear()).slice(2),total:0});}
+  dados.cheques.forEach(c=>{if(c.status==='compensado'&&c.recebidoEm){const m=meses.find(x=>c.recebidoEm.startsWith(x.chave));if(m)m.total+=c.valor;}});
+  const maior=Math.max(...meses.map(m=>m.total),1);
+  document.getElementById('graficoMeses').innerHTML=meses.map(m=>'<div class="col"><span class="qt">'+(m.total?fmtBRL(m.total):'')+'</span><div class="barra" style="height:'+Math.round(m.total/maior*100)+'%"></div><span class="mes">'+m.rot+'</span></div>').join('');
 }
-function verVencidos(){ irPara('cheques'); document.getElementById('filtroChqStatus').value='vencido'; renderCheques(); }
-
+function verVencidos(){irPara('cheques');document.getElementById('filtroChqStatus').value='vencido';renderCheques();}
 function alertaAbertura(){
-  const hoje = hojeISO(), em7 = somaDias(hoje,7);
-  const abertos = dados.cheques.filter(c=>!['compensado','devolvido'].includes(c.status));
-  const vencidos = abertos.filter(c=>c.vencimento<hoje);
-  const aVencer = abertos.filter(c=>c.vencimento>=hoje && c.vencimento<=em7);
-  if(!vencidos.length && !aVencer.length) return;
-  const linha = c => '<tr><td class="num">'+fmtData(c.vencimento)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="num">'+esc(c.numero)+'</td><td class="num">'+fmtBRL(c.valor)+'</td></tr>';
-  abrirModal(cabecalhoModal('🔔 Avisos de vencimento') + '<div class="modal-corpo">' +
-    (vencidos.length ? '<p class="faixa-aviso vermelha"><b>'+vencidos.length+' cheque(s) já vencido(s)!</b></p>' +
-      '<div class="tabela-rolagem" style="margin-bottom:1rem"><table><thead><tr><th>Venc.</th><th>Cliente</th><th>Nº</th><th>Valor</th></tr></thead><tbody>'+vencidos.map(linha).join('')+'</tbody></table></div>' : '') +
-    (aVencer.length ? '<p class="faixa-aviso"><b>'+aVencer.length+' cheque(s)</b> vencem nos próximos 7 dias:</p>' +
-      '<div class="tabela-rolagem"><table><thead><tr><th>Venc.</th><th>Cliente</th><th>Nº</th><th>Valor</th></tr></thead><tbody>'+aVencer.map(linha).join('')+'</tbody></table></div>' : '') +
+  const hoje=hojeISO(),em7=somaDias(hoje,7);
+  const abertos=dados.cheques.filter(c=>!['compensado','devolvido'].includes(c.status));
+  const vencidos=abertos.filter(c=>c.vencimento<hoje),aVencer=abertos.filter(c=>c.vencimento>=hoje&&c.vencimento<=em7);
+  if(!vencidos.length&&!aVencer.length) return;
+  const linha=c=>'<tr><td class="num">'+fmtData(c.vencimento)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="num">'+esc(c.numero)+'</td><td class="num">'+fmtBRL(c.valor)+'</td></tr>';
+  abrirModal(cabecalhoModal('🔔 Avisos de vencimento')+'<div class="modal-corpo">'+
+    (vencidos.length?'<p class="faixa-aviso vermelha"><b>'+vencidos.length+' cheque(s) já vencido(s)!</b></p><div class="tabela-rolagem" style="margin-bottom:1rem"><table><thead><tr><th>Venc.</th><th>Cliente</th><th>Nº</th><th>Valor</th></tr></thead><tbody>'+vencidos.map(linha).join('')+'</tbody></table></div>':'')+
+    (aVencer.length?'<p class="faixa-aviso"><b>'+aVencer.length+' cheque(s)</b> vencem nos próximos 7 dias:</p><div class="tabela-rolagem"><table><thead><tr><th>Venc.</th><th>Cliente</th><th>Nº</th><th>Valor</th></tr></thead><tbody>'+aVencer.map(linha).join('')+'</tbody></table></div>':'')+
     '</div><div class="modal-pe"><button class="bt" onclick="fecharModal()">Entendi</button></div>');
 }
 
 /* ============================================================
-   RELATÓRIOS (impressão → PDF pelo próprio navegador)
+   RELATÓRIOS
    ============================================================ */
-function imprimir(html){
-  document.getElementById('areaImpressao').innerHTML = html;
-  setTimeout(()=>window.print(), 80);
-}
-function cabecalhoRel(titulo, sub){
-  return '<h1>'+titulo+'</h1><div class="sub">NAVI · '+new Date().toLocaleString('pt-BR')+(sub?' · '+sub:'')+'</div>';
-}
+function imprimir(html){document.getElementById('areaImpressao').innerHTML=html;setTimeout(()=>window.print(),80);}
+function cabecalhoRel(titulo,sub){return '<h1>'+titulo+'</h1><div class="sub">NAVI · '+new Date().toLocaleString('pt-BR')+(sub?' · '+sub:'')+'</div>';}
 function prepararRelatorios(){
-  document.getElementById('relCliSel').innerHTML = '<option value="">— escolha o cliente —</option>' +
+  document.getElementById('relCliSel').innerHTML='<option value="">— escolha o cliente —</option>'+
     dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(c=>'<option value="'+c.id+'">'+esc(c.nome)+'</option>').join('');
 }
 function relClientes(){
-  if(!dados.clientes.length){ avisar('Nenhum cliente cadastrado.'); return; }
-  imprimir(cabecalhoRel('Relatório de Clientes','total: '+dados.clientes.length) +
-    '<table><thead><tr><th>Cód.</th><th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>Risco</th><th>Limite</th></tr></thead><tbody>' +
-    dados.clientes.slice().sort((a,b)=>a.codigo-b.codigo).map(c =>
-      '<tr><td class="mono">'+String(c.codigo).padStart(4,'0')+'</td><td>'+esc(c.nome)+'</td><td class="mono">'+esc(c.doc||'—')+'</td>' +
-      '<td class="mono">'+esc(c.tel||'—')+'</td><td>'+ROTULO_RISCO[c.risco||'bom']+'</td><td class="mono">'+(c.limite?fmtBRL(c.limite):'—')+'</td></tr>').join('') +
+  if(!dados.clientes.length){avisar('Nenhum cliente cadastrado.');return;}
+  imprimir(cabecalhoRel('Relatório de Clientes','total: '+dados.clientes.length)+
+    '<table><thead><tr><th>Cód.</th><th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>Risco</th><th>Limite</th></tr></thead><tbody>'+
+    dados.clientes.slice().sort((a,b)=>a.codigo-b.codigo).map(c=>'<tr><td class="mono">'+String(c.codigo).padStart(4,'0')+'</td><td>'+esc(c.nome)+'</td><td class="mono">'+esc(c.doc||'—')+'</td><td class="mono">'+esc(c.tel||'—')+'</td><td>'+ROTULO_RISCO[c.risco||'bom']+'</td><td class="mono">'+(c.limite?fmtBRL(c.limite):'—')+'</td></tr>').join('')+
     '</tbody></table>');
 }
 function relInadimplencia(){
-  const hoje = hojeISO(), porCliente = {};
-  dados.cheques.forEach(c=>{
-    const s = situacao(c);
-    if(s==='vencido' || s==='devolvido'){
-      porCliente[c.clienteId] ||= {vencido:0, devolvido:0, qt:0};
-      porCliente[c.clienteId][s==='vencido'?'vencido':'devolvido'] += c.valor;
-      porCliente[c.clienteId].qt++;
-    }
-  });
-  const ranking = Object.entries(porCliente).map(([id,v])=>({nome:nomeCliente(id), ...v, total:v.vencido+v.devolvido}))
-    .sort((a,b)=>b.total-a.total);
-  if(!ranking.length){ avisar('Nenhuma pendência: sem vencidos nem devolvidos. 🎉'); return; }
-  imprimir(cabecalhoRel('Relatório de Inadimplência','ranking de devedores') +
-    '<table><thead><tr><th>#</th><th>Cliente</th><th>Qt. cheques</th><th>Vencido</th><th>Devolvido</th><th>Total devido</th></tr></thead><tbody>' +
-    ranking.map((r,i)=>'<tr><td class="mono">'+(i+1)+'º</td><td>'+esc(r.nome)+'</td><td class="mono">'+r.qt+'</td>' +
-      '<td class="mono">'+fmtBRL(r.vencido)+'</td><td class="mono">'+fmtBRL(r.devolvido)+'</td><td class="mono"><b>'+fmtBRL(r.total)+'</b></td></tr>').join('') +
+  const porCliente={};
+  dados.cheques.forEach(c=>{const s=situacao(c);if(s==='vencido'||s==='devolvido'){porCliente[c.clienteId]||={vencido:0,devolvido:0,qt:0};porCliente[c.clienteId][s==='vencido'?'vencido':'devolvido']+=c.valor;porCliente[c.clienteId].qt++;}});
+  const ranking=Object.entries(porCliente).map(([id,v])=>({nome:nomeCliente(id),...v,total:v.vencido+v.devolvido})).sort((a,b)=>b.total-a.total);
+  if(!ranking.length){avisar('Nenhuma pendência: sem vencidos nem devolvidos. 🎉');return;}
+  imprimir(cabecalhoRel('Relatório de Inadimplência','ranking de devedores')+
+    '<table><thead><tr><th>#</th><th>Cliente</th><th>Qt.</th><th>Vencido</th><th>Devolvido</th><th>Total devido</th></tr></thead><tbody>'+
+    ranking.map((r,i)=>'<tr><td class="mono">'+(i+1)+'º</td><td>'+esc(r.nome)+'</td><td class="mono">'+r.qt+'</td><td class="mono">'+fmtBRL(r.vencido)+'</td><td class="mono">'+fmtBRL(r.devolvido)+'</td><td class="mono"><b>'+fmtBRL(r.total)+'</b></td></tr>').join('')+
     '</tbody></table>');
 }
-function relExtratoCliente(){
-  const id = document.getElementById('relCliSel').value;
-  if(!id){ avisar('Escolha um cliente na lista.'); return; }
-  relExtratoClienteId(id);
-}
+function relExtratoCliente(){const id=document.getElementById('relCliSel').value;if(!id){avisar('Escolha um cliente na lista.');return;}relExtratoClienteId(id);}
 function relExtratoClienteId(id){
-  const cli = cliPorId(id);
-  const chs = dados.cheques.filter(x=>x.clienteId===id).sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
-  const total = chs.reduce((s,x)=>s+x.valor,0);
-  imprimir(cabecalhoRel('Extrato — '+esc(cli.nome), (cli.doc||'') ) +
-    '<table><thead><tr><th>Cheque nº</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th>Valor</th></tr></thead><tbody>' +
-    chs.map(c=>'<tr><td class="mono">'+esc(c.numero)+'</td><td class="mono">'+fmtData(c.emissao)+'</td><td class="mono">'+fmtData(c.vencimento)+'</td>' +
-      '<td>'+ROTULO_SIT[situacao(c)]+(c.alinea?' ('+esc(c.alinea.split(' ')[0])+')':'')+'</td><td class="mono">'+fmtBRL(c.valor)+'</td></tr>').join('') +
-    '<tr><td colspan="4"><b>TOTAL MOVIMENTADO</b></td><td class="mono"><b>'+fmtBRL(total)+'</b></td></tr></tbody></table>' +
-    '<p style="margin-top:.5cm;font-size:9pt">💡 Para gerar PDF: na janela de impressão, escolha “Salvar como PDF”.</p>');
+  const cli=cliPorId(id),chs=dados.cheques.filter(x=>x.clienteId===id).sort((a,b)=>a.vencimento.localeCompare(b.vencimento)),total=chs.reduce((s,x)=>s+x.valor,0);
+  imprimir(cabecalhoRel('Extrato — '+esc(cli.nome),(cli.doc||''))+
+    '<table><thead><tr><th>Cheque nº</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th>Valor</th></tr></thead><tbody>'+
+    chs.map(c=>'<tr><td class="mono">'+esc(c.numero)+'</td><td class="mono">'+fmtData(c.emissao)+'</td><td class="mono">'+fmtData(c.vencimento)+'</td><td>'+ROTULO_SIT[situacao(c)]+(c.alinea?' ('+esc(c.alinea.split(' ')[0])+')':'')+'</td><td class="mono">'+fmtBRL(c.valor)+'</td></tr>').join('')+
+    '<tr><td colspan="4"><b>TOTAL MOVIMENTADO</b></td><td class="mono"><b>'+fmtBRL(total)+'</b></td></tr></tbody></table>');
 }
 function relChequesPeriodo(){
-  const lista = chequesFiltrados();
-  if(!lista.length){ avisar('Nenhum cheque com os filtros atuais (ajuste na tela Cheques).'); return; }
-  const total = lista.reduce((s,c)=>s+c.valor,0);
-  imprimir(cabecalhoRel('Cheques por período', lista.length+' cheque(s) · total '+fmtBRL(total)) +
-    '<table><thead><tr><th>Nº</th><th>Cliente</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th>Valor</th></tr></thead><tbody>' +
-    lista.map(c=>'<tr><td class="mono">'+esc(c.numero)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="mono">'+fmtData(c.emissao)+'</td>' +
-      '<td class="mono">'+fmtData(c.vencimento)+'</td><td>'+ROTULO_SIT[situacao(c)]+'</td><td class="mono">'+fmtBRL(c.valor)+'</td></tr>').join('') +
+  const lista=chequesFiltrados();if(!lista.length){avisar('Nenhum cheque com os filtros atuais.');return;}
+  const total=lista.reduce((s,c)=>s+c.valor,0);
+  imprimir(cabecalhoRel('Cheques por período',lista.length+' cheque(s) · total '+fmtBRL(total))+
+    '<table><thead><tr><th>Nº</th><th>Cliente</th><th>Emissão</th><th>Vencimento</th><th>Situação</th><th>Valor</th></tr></thead><tbody>'+
+    lista.map(c=>'<tr><td class="mono">'+esc(c.numero)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="mono">'+fmtData(c.emissao)+'</td><td class="mono">'+fmtData(c.vencimento)+'</td><td>'+ROTULO_SIT[situacao(c)]+'</td><td class="mono">'+fmtBRL(c.valor)+'</td></tr>').join('')+
     '</tbody></table>');
 }
 
 /* ============================================================
-   EXPORTAÇÃO EXCEL (CSV pt-BR, abre direto no Excel)
+   EXPORTAÇÃO CSV
    ============================================================ */
-function baixarArquivo(nome, conteudo, tipo){
-  const blob = new Blob([conteudo], {type:tipo});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = nome;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
-}
-function csv(linhas){ return '\ufeff' + linhas.map(l => l.map(c => '"'+String(c??'').replace(/"/g,'""')+'"').join(';')).join('\r\n'); }
+function baixarArquivo(nome,conteudo,tipo){const blob=new Blob([conteudo],{type:tipo}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+function csv(linhas){return '\ufeff'+linhas.map(l=>l.map(c=>'"'+String(c??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');}
 function exportarClientesCSV(){
-  if(!dados.clientes.length){ avisar('Nenhum cliente para exportar.'); return; }
-  const linhas = [['Código','Nome','CPF/CNPJ','Telefone','E-mail','Endereço','Risco','Limite','Observações']];
-  dados.clientes.forEach(c=>linhas.push([c.codigo, c.nome, c.doc, c.tel, c.email, c.endereco, ROTULO_RISCO[c.risco||'bom'], String(c.limite||0).replace('.',','), c.obs]));
-  baixarArquivo('navi-clientes.csv', csv(linhas), 'text/csv;charset=utf-8'); avisar('Planilha de clientes baixada ✔');
+  if(!dados.clientes.length){avisar('Nenhum cliente para exportar.');return;}
+  const linhas=[['Código','Nome','CPF/CNPJ','Telefone','E-mail','Endereço','Risco','Limite','Observações']];
+  dados.clientes.forEach(c=>linhas.push([c.codigo,c.nome,c.doc,c.tel,c.email,c.endereco,ROTULO_RISCO[c.risco||'bom'],String(c.limite||0).replace('.',','),c.obs]));
+  baixarArquivo('navi-clientes.csv',csv(linhas),'text/csv;charset=utf-8');avisar('Planilha baixada ✔');
 }
 function exportarChequesCSV(){
-  if(!dados.cheques.length){ avisar('Nenhum cheque para exportar.'); return; }
-  const linhas = [['Nº','Cliente','Valor','Emissão','Vencimento','Situação','Alínea','Banco','Agência','Conta','Emitente','CPF emitente','Prorrogações','Observações']];
-  chequesFiltrados().forEach(c=>linhas.push([c.numero, nomeCliente(c.clienteId), String(c.valor).replace('.',','), fmtData(c.emissao), fmtData(c.vencimento),
-    ROTULO_SIT[situacao(c)], c.alinea||'', c.banco, c.agencia, c.conta, c.emitente, c.cpfEmitente, (c.prorrogacoes||[]).length, c.obs]));
-  baixarArquivo('navi-cheques.csv', csv(linhas), 'text/csv;charset=utf-8'); avisar('Planilha de cheques baixada ✔');
+  if(!dados.cheques.length){avisar('Nenhum cheque para exportar.');return;}
+  const linhas=[['Nº','Cliente','Valor','Emissão','Vencimento','Situação','Alínea','Banco','Agência','Conta','Emitente','CPF emitente','Prorrogações','Observações']];
+  chequesFiltrados().forEach(c=>linhas.push([c.numero,nomeCliente(c.clienteId),String(c.valor).replace('.',','),fmtData(c.emissao),fmtData(c.vencimento),ROTULO_SIT[situacao(c)],c.alinea||'',c.banco,c.agencia,c.conta,c.emitente,c.cpfEmitente,(c.prorrogacoes||[]).length,c.obs]));
+  baixarArquivo('navi-cheques.csv',csv(linhas),'text/csv;charset=utf-8');avisar('Planilha baixada ✔');
 }
 
 /* ============================================================
-   BACKUP — 1 arquivo único (navi-backup-AAAA-MM-DD.json)
+   BACKUP
    ============================================================ */
-function fazerBackup(){
-  dados.ultimoBackup = new Date().toISOString();
-  salvar();
-  baixarArquivo('navi-backup-'+hojeISO()+'.json', JSON.stringify(dados, null, 1), 'application/json');
-  renderBackup(); faixaLembreteBackup(); avisar('Backup baixado: guarde o arquivo em local seguro ✔');
-}
+function fazerBackup(){dados.ultimoBackup=new Date().toISOString();salvar();baixarArquivo('navi-backup-'+hojeISO()+'.json',JSON.stringify(dados,null,1),'application/json');renderBackup();faixaLembreteBackup();avisar('Backup baixado ✔ — guarde em local seguro!');}
 function restaurarBackup(input){
-  const arq = input.files[0]; input.value=''; if(!arq) return;
+  const arq=input.files[0];input.value='';if(!arq) return;
   pedirSenha(()=>{
-    const leitor = new FileReader();
-    leitor.onload = ev => {
-      try{
-        const d = JSON.parse(ev.target.result);
-        if(!Array.isArray(d.clientes) || !Array.isArray(d.cheques)) throw 0;
-        if(!confirm('Restaurar este backup?\nClientes: '+d.clientes.length+' · Cheques: '+d.cheques.length+'\n\n⚠ Os dados atuais serão SUBSTITUÍDOS.')) return;
-        d.senha ||= '1234'; dados = d; salvar();
-        renderBackup(); renderPainel(); irPara('painel'); avisar('Backup restaurado ✔');
-      }catch(e){ avisar('Arquivo inválido. Use um backup gerado pelo NAVI (.json).'); }
-    };
-    leitor.readAsText(arq);
+    const leitor=new FileReader();
+    leitor.onload=ev=>{
+      try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.clientes)||!Array.isArray(d.cheques)) throw 0;if(!confirm('Restaurar este backup?\nClientes: '+d.clientes.length+' · Cheques: '+d.cheques.length+'\n\n⚠ Os dados atuais serão SUBSTITUÍDOS.')) return;d.senha||='1234';d.lembretes||=[];dados=d;salvar();renderBackup();renderPainel();irPara('painel');avisar('Backup restaurado ✔');}
+      catch(e){avisar('Arquivo inválido. Use um backup gerado pelo NAVI (.json)');}
+    };leitor.readAsText(arq);
   });
 }
-function renderBackup(){
-  const u = dados.ultimoBackup;
-  document.getElementById('txtUltimoBackup').textContent = u ? new Date(u).toLocaleString('pt-BR') : 'nunca';
-}
+function renderBackup(){const u=dados.ultimoBackup;document.getElementById('txtUltimoBackup').textContent=u?new Date(u).toLocaleString('pt-BR'):'nunca';}
 function faixaLembreteBackup(){
-  const f = document.getElementById('faixaBackup');
-  const u = dados.ultimoBackup;
-  const dias = u ? Math.floor((Date.now()-new Date(u).getTime())/86400000) : null;
-  const temDados = dados.clientes.length || dados.cheques.length;
-  if(temDados && (dias===null || dias>=7)){
-    f.innerHTML = '<div class="faixa-aviso">💾 '+(dias===null?'Você ainda não fez nenhum backup.':'Seu último backup foi há '+dias+' dia(s).') +
-      ' <button class="bt mini" onclick="fazerBackup()">Fazer backup agora</button></div>';
-  } else f.innerHTML = '';
+  const f=document.getElementById('faixaBackup'),u=dados.ultimoBackup,temDados=dados.clientes.length||dados.cheques.length;
+  if(!temDados){f.innerHTML='';return;}
+  const horas=u?((Date.now()-new Date(u).getTime())/3600000):9999;
+  if(horas>=12){
+    const tempoTxt=!u?'Você nunca fez backup':horas<24?'Último backup há '+Math.floor(horas)+'h':'Último backup há '+Math.floor(horas/24)+' dia(s)';
+    const nivelCor=horas>=24?'var(--carimbo)':horas>=12?'var(--ambar)':'var(--verde)';
+    f.innerHTML='<div class="aviso-backup-urgente"><div class="icob">⏰</div><div class="txtb">'+
+      '<strong>'+tempoTxt+' — faça backup agora!</strong>'+
+      '<span>Seus dados estão apenas no navegador. Se o cache for limpo, tudo será perdido. Leva menos de 5 segundos.</span>'+
+      '</div><button class="bt mini" style="background:'+nivelCor+';flex-shrink:0" onclick="fazerBackup()">💾 Backup agora</button></div>';
+  }else{
+    f.innerHTML='<div class="faixa-aviso" style="background:#E8F5EE;border-color:#A8D5B8;color:#1A5C2E">✅ Backup em dia! Último: '+new Date(u).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' de '+new Date(u).toLocaleDateString('pt-BR')+'.</div>';
+    setTimeout(()=>{const el=document.getElementById('faixaBackup');if(el&&el.innerHTML.includes('Backup em dia'))el.innerHTML='';},5000);
+  }
 }
-function apagarTudo(){
-  pedirSenha(()=>{
-    if(!confirm('APAGAR TODOS os clientes e cheques? Esta ação não tem volta.')) return;
-    if(!confirm('Tem certeza absoluta? Faça um backup antes, se ainda não fez.')) return;
-    dados = {senha:dados.senha, clientes:[], cheques:[], ultimoBackup:null, proxCodigo:1};
-    salvar(); renderPainel(); renderBackup(); irPara('painel'); avisar('Dados apagados.');
-  });
-}
+function apagarTudo(){pedirSenha(()=>{if(!confirm('APAGAR TODOS os dados? Esta ação não tem volta.')) return;if(!confirm('Tem certeza absoluta?')) return;dados={senha:dados.senha,clientes:[],cheques:[],lembretes:[],ultimoBackup:null,proxCodigo:1};salvar();renderPainel();renderBackup();irPara('painel');avisar('Dados apagados.');});}
 
 /* ============================================================
-   F9 CALENDÁRIO · F10 CALCULADORA · ATALHOS · BUSCA GLOBAL
+   CALCULADORA
    ============================================================ */
-let calRef = new Date();
-function abrirCalendario(ref){
-  calRef = ref || new Date();
-  const ano = calRef.getFullYear(), mes = calRef.getMonth();
-  const nomeMes = calRef.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  const primeiro = new Date(ano,mes,1).getDay(), qtDias = new Date(ano,mes+1,0).getDate();
-  const hj = new Date();
-  let dias = '';
-  for(let i=0;i<primeiro;i++) dias += '<div></div>';
-  for(let d=1;d<=qtDias;d++){
-    const ehHoje = d===hj.getDate() && mes===hj.getMonth() && ano===hj.getFullYear();
-    dias += '<div class="dia'+(ehHoje?' hoje':'')+'">'+d+'</div>';
-  }
-  abrirModal(cabecalhoModal('📅 Calendário') + '<div class="modal-corpo">' +
-    '<div class="cal-cab"><button class="bt claro mini" onclick="mudarMes(-1)">‹</button><b>'+nomeMes+'</b><button class="bt claro mini" onclick="mudarMes(1)">›</button></div>' +
-    '<div class="cal-grade">'+['D','S','T','Q','Q','S','S'].map(x=>'<div class="dia-sem">'+x+'</div>').join('')+dias+'</div></div>', true);
-}
-function mudarMes(n){ calRef.setMonth(calRef.getMonth()+n); abrirCalendario(calRef); }
-
-let calcExp = '';
+let calcExp='';
 function abrirCalculadora(){
-  calcExp = '';
-  const teclas = ['7','8','9','÷','4','5','6','×','1','2','3','−','0',',','C','+'];
-  abrirModal(cabecalhoModal('🧮 Calculadora') + '<div class="modal-corpo"><div class="calc">' +
-    '<div class="visor" id="calcVisor">0</div>' +
-    teclas.map(t=>'<button class="'+('÷×−+'.includes(t)||t==='C'?'op':'')+'" onclick="calcTecla(\''+t+'\')">'+t+'</button>').join('') +
-    '<button class="ig" style="grid-column:1/-1" onclick="calcIgual()">=</button>' +
-    '</div></div>', true);
+  calcExp='';
+  const teclas=['7','8','9','÷','4','5','6','×','1','2','3','−','0',',','C','+'];
+  abrirModal(cabecalhoModal('🧮 Calculadora')+'<div class="modal-corpo"><div class="calc">'+
+    '<div class="visor" id="calcVisor">0</div>'+
+    teclas.map(t=>'<button class="'+('÷×−+'.includes(t)||t==='C'?'op':'')+'" onclick="calcTecla(\''+t+'\')">'+t+'</button>').join('')+
+    '<button class="ig" style="grid-column:1/-1" onclick="calcIgual()">=</button>'+
+    '</div></div>',true);
 }
-function calcTecla(t){
-  if(t==='C') calcExp = '';
-  else calcExp += t;
-  document.getElementById('calcVisor').textContent = calcExp || '0';
-}
-function calcIgual(){
-  try{
-    const exp = calcExp.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/,/g,'.');
-    if(!/^[0-9+\-*/. ()]+$/.test(exp)) throw 0;
-    const r = Function('"use strict";return ('+exp+')')();
-    calcExp = String(Math.round(r*100)/100).replace('.',',');
-    document.getElementById('calcVisor').textContent = calcExp;
-  }catch(e){ document.getElementById('calcVisor').textContent = 'Erro'; calcExp=''; }
-}
+function calcTecla(t){if(t==='C')calcExp='';else calcExp+=t;document.getElementById('calcVisor').textContent=calcExp||'0';}
+function calcIgual(){try{const exp=calcExp.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/,/g,'.');if(!/^[0-9+\-*/. ()]+$/.test(exp))throw 0;const r=Function('"use strict";return ('+exp+')')();calcExp=String(Math.round(r*100)/100).replace('.',',');document.getElementById('calcVisor').textContent=calcExp;}catch(e){document.getElementById('calcVisor').textContent='Erro';calcExp='';}}
 
-/* ---------- busca global (nome, CPF ou nº de cheque) ---------- */
-document.getElementById('buscaGlobal').addEventListener('keydown', function(e){
+/* ============================================================
+   BUSCA GLOBAL + ATALHOS
+   ============================================================ */
+document.getElementById('buscaGlobal').addEventListener('keydown',function(e){
   if(e.key!=='Enter') return;
-  const termo = this.value.trim().toLowerCase(); if(!termo) return;
-  const cli = dados.clientes.find(c => (c.nome+' '+(c.doc||'')).toLowerCase().includes(termo));
-  const chq = dados.cheques.find(c => (c.numero+' '+(c.cpfEmitente||'')).toLowerCase().includes(termo));
-  if(chq && !cli){ irPara('cheques'); document.getElementById('filtroChq').value=this.value.trim(); renderCheques(); }
-  else if(cli){ irPara('clientes'); document.getElementById('filtroCli').value=this.value.trim(); renderClientes(); if(!chq) fichaCliente(cli.id); }
-  else { irPara('cheques'); document.getElementById('filtroChq').value=this.value.trim(); renderCheques(); avisar('Nada encontrado com esse termo.'); }
+  const termo=this.value.trim().toLowerCase();if(!termo) return;
+  const cli=dados.clientes.find(c=>(c.nome+' '+(c.doc||'')).toLowerCase().includes(termo));
+  const chq=dados.cheques.find(c=>(c.numero+' '+(c.cpfEmitente||'')).toLowerCase().includes(termo));
+  if(chq&&!cli){irPara('cheques');document.getElementById('filtroChq').value=this.value.trim();renderCheques();}
+  else if(cli){irPara('clientes');document.getElementById('filtroCli').value=this.value.trim();renderClientes();if(!chq)fichaCliente(cli.id);}
+  else{irPara('cheques');document.getElementById('filtroChq').value=this.value.trim();renderCheques();avisar('Nada encontrado com esse termo.');}
 });
 
-/* ---------- atalhos de teclado ---------- */
-document.addEventListener('keydown', e=>{
-  if(e.key==='F9'){ e.preventDefault(); abrirCalendario(); }
-  if(e.key==='F10'){ e.preventDefault(); abrirCalculadora(); }
-  if(e.key==='Escape') fecharModal();
-  if(e.altKey && '12345'.includes(e.key)){
-    e.preventDefault();
-    irPara(['painel','clientes','cheques','relatorios','backup'][Number(e.key)-1]);
-  }
-  if(e.ctrlKey && (e.key==='b'||e.key==='B')){ e.preventDefault(); fazerBackup(); }
-  if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
-    e.preventDefault(); document.getElementById('buscaGlobal').focus();
-  }
+document.addEventListener('keydown',e=>{
+  if(e.key==='F9'){e.preventDefault();abrirCalendarioGrande();}
+  if(e.key==='F10'){e.preventDefault();abrirCalculadora();}
+  if(e.key==='Escape')fecharModal();
+  if(e.altKey&&'123456'.includes(e.key)){e.preventDefault();irPara(['painel','clientes','cheques','relatorios','backup','lembretes'][Number(e.key)-1]);}
+  if(e.ctrlKey&&(e.key==='b'||e.key==='B')){e.preventDefault();fazerBackup();}
+  if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.getElementById('buscaGlobal').focus();}
 });
 
-/* ---------- inicialização ---------- */
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
 renderPainel();
 faixaLembreteBackup();
-setTimeout(alertaAbertura, 400);
+atualizarBadgeLembretes();
+setTimeout(alertaAbertura,400);
+setTimeout(verificarAlertasLembrete,1500);
+
+// Aviso cache: mostrar sempre que tiver dados cadastrados
+if(dados.clientes.length||dados.cheques.length){
+  document.getElementById('avisoCache').style.display='flex';
+}
+
+// Scroll suave para âncoras do manual
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a[href^="#"]');
+  if(!a) return;
+  e.preventDefault();
+  const el=document.getElementById(a.getAttribute('href').slice(1));
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+});
+
+// Verificar backup a cada 30 minutos também
+setInterval(faixaLembreteBackup, 30*60*1000);
 </script>
 </body>
 </html>
