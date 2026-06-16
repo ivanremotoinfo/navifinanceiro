@@ -59,7 +59,7 @@
 [data-tema="escuro"] .feriado-label{background:#2A3A32;color:#7ABA98}
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{font-size:16px}
+html{font-size:19px}
 body{font-family:var(--sem);background:var(--papel);color:var(--tinta);min-height:100vh}
 button{font-family:inherit;cursor:pointer}
 input,select,textarea{font-family:inherit;font-size:1rem}
@@ -84,13 +84,13 @@ input,select,textarea{font-family:inherit;font-size:1rem}
 /* ===== Layout ===== */
 .app{display:flex;min-height:calc(100vh - 56px)}
 nav.lateral{width:195px;background:var(--branco);border-right:1px solid var(--linha);padding:.7rem .45rem;flex-shrink:0}
-nav.lateral button{display:flex;align-items:center;gap:.55rem;width:100%;padding:.65rem .75rem;border:none;background:none;border-radius:10px;font-size:.95rem;color:var(--tinta);text-align:left;margin-bottom:.1rem;transition:.15s}
-nav.lateral button .tecla{margin-left:auto;font-family:var(--mono);font-size:.6rem;color:var(--cinza);border:1px solid var(--linha);border-radius:4px;padding:0 .28rem}
+nav.lateral button{display:flex;align-items:center;gap:.55rem;width:100%;padding:.68rem .78rem;border:none;background:none;border-radius:10px;font-size:1rem;color:var(--tinta);text-align:left;margin-bottom:.1rem;transition:.15s}
+nav.lateral button .tecla{margin-left:auto;font-family:var(--mono);font-size:.65rem;color:var(--cinza);border:1px solid var(--linha);border-radius:4px;padding:0 .28rem}
 nav.lateral button:hover{background:var(--verde-glass)}
 nav.lateral button.ativo{background:var(--verde);color:#fff;box-shadow:0 2px 8px rgba(30,92,70,.3)}
 nav.lateral button.ativo .tecla{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.35)}
 nav.lateral .sep{height:1px;background:var(--linha);margin:.4rem .5rem}
-nav.lateral .sec-titulo{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);padding:.3rem .75rem .1rem;font-weight:700}
+nav.lateral .sec-titulo{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);padding:.3rem .75rem .1rem;font-weight:700}
 
 main{flex:1;padding:1.1rem;max-width:1080px;margin:0 auto;width:100%}
 .tela{display:none}
@@ -101,48 +101,48 @@ h2.titulo{font-size:1.4rem;margin-bottom:1rem;display:flex;align-items:center;ga
 h2.titulo .acoes{margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap}
 
 /* ===== Botões ===== */
-.bt{border:none;border-radius:9px;padding:.58rem 1rem;font-size:.95rem;font-weight:600;background:var(--verde);color:#fff;display:inline-flex;align-items:center;gap:.4rem;transition:.15s}
+.bt{border:none;border-radius:9px;padding:.58rem 1rem;font-size:1rem;font-weight:600;background:var(--verde);color:#fff;display:inline-flex;align-items:center;gap:.4rem;transition:.15s}
 .bt:hover{background:var(--verde-claro);transform:translateY(-1px)}
 .bt.claro{background:var(--branco);color:var(--tinta);border:1px solid var(--linha)}
 .bt.claro:hover{background:var(--papel)}
 .bt.perigo{background:var(--carimbo)}
 .bt.perigo:hover{background:#c94035}
-.bt.mini{padding:.38rem .7rem;font-size:.85rem;border-radius:7px}
+.bt.mini{padding:.42rem .8rem;font-size:.9rem;border-radius:7px}
 .bt.ambar{background:var(--ambar);color:#fff}
 
 /* ===== Cartões / painel ===== */
 .cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.75rem;margin-bottom:1.1rem}
 .cartao{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:.85rem .95rem;box-shadow:var(--sombra);transition:.2s}
 .cartao:hover{box-shadow:var(--sombra-md);transform:translateY(-1px)}
-.cartao .rotulo{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:.28rem;font-weight:600}
-.cartao .valor{font-family:var(--mono);font-size:1.35rem;font-weight:700}
+.cartao .rotulo{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:.28rem;font-weight:600}
+.cartao .valor{font-family:var(--mono);font-size:1.45rem;font-weight:700}
 .cartao.vd .valor{color:var(--verde)}
 .cartao.vm .valor{color:var(--carimbo)}
 .cartao.am .valor{color:var(--ambar)}
 .cartao.az .valor{color:var(--azul)}
 
 .painel-bloco{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem;box-shadow:var(--sombra);margin-bottom:1.1rem}
-.painel-bloco h3{font-size:.72rem;margin-bottom:.8rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.painel-bloco h3{font-size:.8rem;margin-bottom:.8rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
 
 /* Gráfico de barras */
 .grafico{display:flex;align-items:flex-end;gap:.5rem;height:130px;padding-top:.5rem}
 .grafico .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.25rem;height:100%}
 .grafico .barra{width:100%;max-width:50px;background:linear-gradient(180deg,#3C9670,#1E5C46);border-radius:5px 5px 0 0;min-height:3px;transition:.4s}
-.grafico .mes{font-size:.63rem;color:var(--cinza);font-family:var(--mono)}
-.grafico .qt{font-size:.62rem;font-family:var(--mono);color:var(--verde);font-weight:700}
+.grafico .mes{font-size:.72rem;color:var(--cinza);font-family:var(--mono)}
+.grafico .qt{font-size:.72rem;font-family:var(--mono);color:var(--verde);font-weight:700}
 
 /* ===== Tabelas ===== */
 .tabela-rolagem{overflow-x:auto;background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra)}
 table{width:100%;border-collapse:collapse}
-th{background:var(--papel);text-align:left;padding:.55rem .7rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza);border-bottom:1px solid var(--linha);white-space:nowrap;font-weight:700}
-td{padding:.6rem .7rem;border-bottom:1px solid var(--linha);vertical-align:middle;font-size:.95rem}
+th{background:var(--papel);text-align:left;padding:.58rem .75rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza);border-bottom:1px solid var(--linha);white-space:nowrap;font-weight:700}
+td{padding:.65rem .75rem;border-bottom:1px solid var(--linha);vertical-align:middle;font-size:1rem}
 tr:last-child td{border-bottom:none}
 tbody tr:hover{background:#FAFBF8;transition:.1s}
 td.num{font-family:var(--mono);white-space:nowrap}
 td.acoes-td{white-space:nowrap;text-align:right}
 
 /* ===== Carimbos de status ===== */
-.carimbo{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;border:2px solid;border-radius:4px;padding:.1rem .4rem;transform:rotate(-1.5deg)}
+.carimbo{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;border:2px solid;border-radius:4px;padding:.1rem .4rem;transform:rotate(-1.5deg)}
 .carimbo.carteira{color:var(--verde);border-color:var(--verde)}
 .carimbo.compensado{color:var(--azul);border-color:var(--azul)}
 .carimbo.devolvido{color:var(--carimbo);border-color:var(--carimbo)}
@@ -150,7 +150,7 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .carimbo.prorrogado{color:var(--ambar);border-color:var(--ambar)}
 .carimbo.reto{transform:none}
 
-.selo-risco{display:inline-block;font-size:.68rem;font-weight:700;border-radius:999px;padding:.1rem .5rem;color:#fff}
+.selo-risco{display:inline-block;font-size:.78rem;font-weight:700;border-radius:999px;padding:.12rem .55rem;color:#fff}
 .selo-risco.bom{background:var(--verde)}
 .selo-risco.atencao{background:var(--ambar)}
 .selo-risco.inadimplente{background:var(--carimbo)}
@@ -159,7 +159,7 @@ td.acoes-td{white-space:nowrap;text-align:right}
 /* ===== Formulários ===== */
 .form-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem}
 .campo{display:flex;flex-direction:column;gap:.22rem}
-.campo label{font-size:.75rem;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.05em}
+.campo label{font-size:.82rem;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.05em}
 .campo input,.campo select,.campo textarea{padding:.58rem .7rem;border:1px solid var(--linha);border-radius:9px;background:#fff;outline:none;width:100%;transition:.15s}
 .campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(30,92,70,.12)}
 .campo.cheio{grid-column:1/-1}
@@ -173,7 +173,7 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .modal.estreito{max-width:400px}
 .modal.largo{max-width:820px}
 .modal-cab{background:linear-gradient(135deg,var(--verde),var(--verde-claro));color:#fff;padding:.8rem 1.1rem;display:flex;align-items:center;gap:.6rem}
-.modal-cab h3{font-size:.98rem;flex:1;font-weight:700}
+.modal-cab h3{font-size:1.05rem;flex:1;font-weight:700}
 .modal-cab .fechar{background:none;border:none;color:#fff;font-size:1.3rem;line-height:1;opacity:.8;transition:.15s}
 .modal-cab .fechar:hover{opacity:1;transform:scale(1.15)}
 .modal-corpo{padding:1.1rem}
@@ -188,9 +188,9 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .ficha-cab .info .doc{font-family:var(--mono);color:var(--cinza);font-size:.82rem}
 
 /* ===== Alertas / avisos ===== */
-.faixa-aviso{background:#FFF6E3;border:1px solid #EBD9A8;color:#7A5B12;border-radius:var(--raio);padding:.65rem 1rem;margin-bottom:.9rem;font-size:.85rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.faixa-aviso{background:#FFF6E3;border:1px solid #EBD9A8;color:#7A5B12;border-radius:var(--raio);padding:.68rem 1rem;margin-bottom:.9rem;font-size:.9rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
 .faixa-aviso.vermelha{background:#FBEAE8;border-color:#E5B5AF;color:#7C2C23}
-.aviso-flutuante{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.58rem 1.1rem;border-radius:999px;font-size:.83rem;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
+.aviso-flutuante{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.62rem 1.2rem;border-radius:999px;font-size:.9rem;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
 .aviso-flutuante.mostrar{opacity:1}
 .vazio{text-align:center;color:var(--cinza);padding:2rem 1rem;font-size:.9rem}
 
@@ -205,7 +205,7 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .lembrete-ico{font-size:1.4rem;flex-shrink:0}
 .lembrete-info{flex:1}
 .lembrete-titulo{font-weight:700;font-size:.95rem;margin-bottom:.1rem}
-.lembrete-meta{font-size:.77rem;color:var(--cinza);font-family:var(--mono);display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.lembrete-meta{font-size:.82rem;color:var(--cinza);font-family:var(--mono);display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
 .lembrete-meta .badge-hora{background:var(--verde-glass);color:var(--verde);border-radius:5px;padding:.05rem .35rem;font-weight:700}
 .lembrete-acoes{display:flex;gap:.3rem}
 
@@ -246,6 +246,34 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .calc button:hover{background:var(--verde-glass)}
 .calc button.op{background:var(--papel);font-weight:700}
 .calc button.ig{background:var(--verde);color:#fff;border-color:var(--verde)}
+
+/* ===== Cards de aviso do painel inferior ===== */
+.painel-avisos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:.85rem;margin-bottom:1.2rem}
+.painel-aviso-card{display:flex;gap:.85rem;background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1rem 1.1rem;box-shadow:var(--sombra);align-items:flex-start;border-left-width:4px}
+.pac-ico{font-size:1.7rem;flex-shrink:0;line-height:1;margin-top:.1rem}
+.pac-corpo h4{font-size:.92rem;font-weight:800;margin-bottom:.35rem;line-height:1.3}
+.pac-corpo p{font-size:.86rem;color:var(--cinza);line-height:1.65}
+.pac-corpo kbd{font-family:var(--mono);font-size:.78rem;background:var(--papel);border:1px solid var(--linha);border-radius:4px;padding:.05rem .35rem;box-shadow:0 1px 0 var(--linha)}
+.pac-corpo code{font-family:var(--mono);font-size:.82rem;background:var(--papel);border-radius:4px;padding:.05rem .3rem}
+.painel-aviso-cache{border-left-color:var(--carimbo)}
+.painel-aviso-cache .pac-corpo h4{color:var(--carimbo)}
+.painel-aviso-chrome{border-left-color:#1A73E8}
+.painel-aviso-chrome .pac-corpo h4{color:#1A73E8}
+.painel-aviso-backup{border-left-color:var(--verde)}
+.painel-aviso-backup .pac-corpo h4{color:var(--verde)}
+.painel-aviso-navegador{border-left-color:var(--ambar)}
+.painel-aviso-navegador .pac-corpo h4{color:#8B6000}
+.painel-aviso-offline{border-left-color:var(--azul)}
+.painel-aviso-offline .pac-corpo h4{color:var(--azul)}
+.painel-aviso-senha{border-left-color:#7B3F9E}
+.painel-aviso-senha .pac-corpo h4{color:#7B3F9E}
+.painel-aviso-celular{border-left-color:#2E8B57}
+.painel-aviso-celular .pac-corpo h4{color:#2E8B57}
+.painel-aviso-atalhos{border-left-color:var(--cinza)}
+.painel-aviso-atalhos .pac-corpo h4{color:var(--tinta)}
+[data-tema="escuro"] .painel-aviso-card{background:var(--branco)}
+[data-tema="escuro"] .pac-corpo p{color:var(--cinza)}
+[data-tema="escuro"] .painel-aviso-navegador .pac-corpo h4{color:var(--ambar)}
 
 /* ===== Tela Sobre ===== */
 .sobre-hero{background:linear-gradient(135deg,#1E5C46,#0E3328);border-radius:var(--raio);padding:2rem;color:#fff;margin-bottom:1.1rem;position:relative;overflow:hidden}
@@ -323,8 +351,8 @@ td.acoes-td{white-space:nowrap;text-align:right}
 /* ===== Responsivo ===== */
 nav.inferior{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--linha);z-index:60;padding:.25rem .2rem calc(.25rem + env(safe-area-inset-bottom))}
 nav.inferior .trilho{display:flex;justify-content:space-around}
-nav.inferior button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.08rem;font-size:.68rem;color:var(--cinza);padding:.3rem .4rem;border-radius:8px}
-nav.inferior button .ico{font-size:1.25rem}
+nav.inferior button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.08rem;font-size:.76rem;color:var(--cinza);padding:.3rem .4rem;border-radius:8px}
+nav.inferior button .ico{font-size:1.35rem}
 nav.inferior button.ativo{color:var(--verde);font-weight:700}
 
 @media (max-width:760px){
@@ -413,6 +441,84 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <div class="tabela-rolagem" style="box-shadow:none;border:none"><table><thead>
           <tr><th>Vencimento</th><th>Cliente</th><th>Cheque nº</th><th>Valor</th><th></th></tr>
         </thead><tbody id="tbProximos"></tbody></table></div>
+      </div>
+
+      <!-- ===== AVISOS DO PAINEL ===== -->
+      <div id="avisosPainelInferior"></div>
+
+      <div style="margin-top:.5rem">
+        <h3 style="font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);font-weight:700;margin-bottom:.75rem">💡 Informações importantes do sistema</h3>
+        <div class="painel-avisos-grid">
+
+          <div class="painel-aviso-card painel-aviso-cache">
+            <div class="pac-ico">🗑️</div>
+            <div class="pac-corpo">
+              <h4>Limpeza de cache apaga seus dados!</h4>
+              <p>O NAVI guarda tudo no armazenamento local do navegador (<b>localStorage</b>). Limpar cache, histórico ou dados do navegador <b>apaga permanentemente</b> todos os clientes, cheques e lembretes — sem possibilidade de recuperação. Sempre faça backup antes de qualquer manutenção no navegador ou computador.</p>
+              <button class="bt mini" style="margin-top:.5rem" onclick="fazerBackup()">💾 Fazer backup agora</button>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-chrome">
+            <div class="pac-ico">🌐</div>
+            <div class="pac-corpo">
+              <h4>Use o Google Chrome para melhor experiência</h4>
+              <p>O NAVI foi desenvolvido e testado no <b>Google Chrome</b>. Funciona também no Edge e Firefox, mas recomendamos o Chrome para garantir total compatibilidade com todos os recursos: alertas sonoros, impressão de relatórios, exportação de arquivos e calendário.</p>
+              <a class="bt mini" style="margin-top:.5rem;display:inline-flex;text-decoration:none" href="https://www.google.com/chrome/" target="_blank">⬇ Baixar o Chrome</a>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-backup">
+            <div class="pac-ico">💾</div>
+            <div class="pac-corpo">
+              <h4>Rotina de backup recomendada</h4>
+              <p>Faça backup <b>todo dia</b> antes de fechar o sistema. Guarde o arquivo <code>.json</code> em pelo menos dois lugares: um pen drive físico e uma nuvem (Google Drive, OneDrive ou WhatsApp). O atalho <kbd>Ctrl+B</kbd> faz o backup em qualquer tela em menos de 3 segundos.</p>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-navegador">
+            <div class="pac-ico">🖥️</div>
+            <div class="pac-corpo">
+              <h4>Cada navegador tem seu próprio banco de dados</h4>
+              <p>Se você abrir o NAVI no Chrome, os dados <b>não aparecem</b> no Firefox ou Edge — e vice-versa. Sempre use o mesmo navegador no mesmo computador. Se precisar migrar para outro navegador ou computador, use a função de backup e restauração.</p>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-offline">
+            <div class="pac-ico">📴</div>
+            <div class="pac-corpo">
+              <h4>Funciona 100% offline</h4>
+              <p>O NAVI não precisa de internet para funcionar. Todos os dados ficam no seu computador. A única função que requer conexão é o acesso às <b>Ferramentas ADV</b> (suporte.adv.br) e o carregamento da fonte Inter do Google Fonts — que não afeta o funcionamento do sistema.</p>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-senha">
+            <div class="pac-ico">🔐</div>
+            <div class="pac-corpo">
+              <h4>Não esqueça a senha do sistema</h4>
+              <p>A senha padrão é <b>1234</b>. Se você alterou e esqueceu, não há recuperação automática. Anote a senha em local seguro. A senha protege exclusão de clientes, edição e restauração de backup — não criptografa os dados em si.</p>
+              <button class="bt claro mini" style="margin-top:.5rem" onclick="trocarSenha()">🔐 Trocar senha</button>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-celular">
+            <div class="pac-ico">📱</div>
+            <div class="pac-corpo">
+              <h4>Funciona no celular</h4>
+              <p>O NAVI é responsivo e funciona em smartphones. No celular, use a barra de navegação na parte inferior da tela. Para acessar pelo celular, basta abrir o arquivo HTML no navegador do aparelho — mas atenção: os dados do celular são separados dos dados do computador.</p>
+            </div>
+          </div>
+
+          <div class="painel-aviso-card painel-aviso-atalhos">
+            <div class="pac-ico">⌨️</div>
+            <div class="pac-corpo">
+              <h4>Atalhos de teclado poupam tempo</h4>
+              <p>Use <kbd>Alt+1</kbd> a <kbd>Alt+6</kbd> para trocar de tela, <kbd>/</kbd> para busca rápida, <kbd>F9</kbd> para o calendário, <kbd>F10</kbd> para a calculadora e <kbd>Ctrl+B</kbd> para backup instantâneo. Consulte o <b>Manual</b> (botão 📖 no topo) para a lista completa.</p>
+              <button class="bt claro mini" style="margin-top:.5rem" onclick="irPara('manual')">📖 Ver manual completo</button>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -891,6 +997,7 @@ function irPara(tela){
   if(tela==='relatorios') prepararRelatorios();
   if(tela==='backup') renderBackup();
   if(tela==='lembretes') renderLembretes();
+  faixaLembreteBackup();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('nav [data-tela]').forEach(b=>b.addEventListener('click',()=>irPara(b.dataset.tela)));
@@ -1544,20 +1651,36 @@ function restaurarBackup(input){
   });
 }
 function renderBackup(){const u=dados.ultimoBackup;document.getElementById('txtUltimoBackup').textContent=u?new Date(u).toLocaleString('pt-BR'):'nunca';}
+
 function faixaLembreteBackup(){
-  const f=document.getElementById('faixaBackup'),u=dados.ultimoBackup,temDados=dados.clientes.length||dados.cheques.length;
+  const f=document.getElementById('faixaBackup');
+  const u=dados.ultimoBackup;
+  const temDados=dados.clientes.length||dados.cheques.length;
   if(!temDados){f.innerHTML='';return;}
-  const horas=u?((Date.now()-new Date(u).getTime())/3600000):9999;
-  if(horas>=12){
-    const tempoTxt=!u?'Você nunca fez backup':horas<24?'Último backup há '+Math.floor(horas)+'h':'Último backup há '+Math.floor(horas/24)+' dia(s)';
-    const nivelCor=horas>=24?'var(--carimbo)':horas>=12?'var(--ambar)':'var(--verde)';
+
+  const horas=u ? (Date.now()-new Date(u).getTime())/3600000 : 9999;
+
+  if(!u){
+    // nunca fez backup
+    f.innerHTML='<div class="aviso-backup-urgente"><div class="icob">🔴</div><div class="txtb">'+
+      '<strong>Nenhum backup realizado ainda!</strong>'+
+      '<span>Seus dados existem apenas neste navegador. Se o cache for limpo, tudo será perdido para sempre. Faça o primeiro backup agora!</span>'+
+      '</div><button class="bt mini" style="background:var(--carimbo);flex-shrink:0;white-space:nowrap" onclick="fazerBackup()">💾 Fazer backup</button></div>';
+  } else if(horas>=24){
+    const dias=Math.floor(horas/24);
+    f.innerHTML='<div class="aviso-backup-urgente"><div class="icob">🔴</div><div class="txtb">'+
+      '<strong>Backup atrasado há '+dias+' dia(s)! Faça agora.</strong>'+
+      '<span>Último backup: '+new Date(u).toLocaleString('pt-BR')+'. Dados sem backup podem ser perdidos caso o cache seja limpo.</span>'+
+      '</div><button class="bt mini" style="background:var(--carimbo);flex-shrink:0;white-space:nowrap" onclick="fazerBackup()">💾 Fazer backup</button></div>';
+  } else if(horas>=12){
     f.innerHTML='<div class="aviso-backup-urgente"><div class="icob">⏰</div><div class="txtb">'+
-      '<strong>'+tempoTxt+' — faça backup agora!</strong>'+
-      '<span>Seus dados estão apenas no navegador. Se o cache for limpo, tudo será perdido. Leva menos de 5 segundos.</span>'+
-      '</div><button class="bt mini" style="background:'+nivelCor+';flex-shrink:0" onclick="fazerBackup()">💾 Backup agora</button></div>';
-  }else{
-    f.innerHTML='<div class="faixa-aviso" style="background:#E8F5EE;border-color:#A8D5B8;color:#1A5C2E">✅ Backup em dia! Último: '+new Date(u).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' de '+new Date(u).toLocaleDateString('pt-BR')+'.</div>';
-    setTimeout(()=>{const el=document.getElementById('faixaBackup');if(el&&el.innerHTML.includes('Backup em dia'))el.innerHTML='';},5000);
+      '<strong>Backup há '+Math.floor(horas)+'h — recomendamos atualizar!</strong>'+
+      '<span>Último backup: '+new Date(u).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' de '+new Date(u).toLocaleDateString('pt-BR')+'. Leva menos de 5 segundos.</span>'+
+      '</div><button class="bt mini" style="background:var(--ambar);flex-shrink:0;white-space:nowrap" onclick="fazerBackup()">💾 Fazer backup</button></div>';
+  } else {
+    // backup recente: mostrar confirmação verde por 5s depois some
+    f.innerHTML='<div class="faixa-aviso" style="background:#E8F5EE;border-color:#A8D5B8;color:#1A5C2E;margin-bottom:1rem">✅ Backup em dia! Feito às '+new Date(u).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' de '+new Date(u).toLocaleDateString('pt-BR')+'.</div>';
+    setTimeout(()=>{ const el=document.getElementById('faixaBackup'); if(el&&el.innerHTML.includes('Backup em dia')) el.innerHTML=''; },6000);
   }
 }
 function apagarTudo(){pedirSenha(()=>{if(!confirm('APAGAR TODOS os dados? Esta ação não tem volta.')) return;if(!confirm('Tem certeza absoluta?')) return;dados={senha:dados.senha,clientes:[],cheques:[],lembretes:[],ultimoBackup:null,proxCodigo:1};salvar();renderPainel();renderBackup();irPara('painel');avisar('Dados apagados.');});}
