@@ -408,7 +408,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
     <div class="sep"></div>
     <div class="sec-titulo">Sistema</div>
     <button data-tela="relatorios">📄 Relatórios <span class="tecla">Alt+4</span></button>
-    <button data-tela="backup">💾 Backup <span class="tecla">Alt+5</span></button>
+    <button data-tela="backup">⚙️ Configurações <span class="tecla">Alt+5</span></button>
     <button onclick="abrirCalculadora()">🧮 Calculadora <span class="tecla">F10</span></button>
     <button data-tela="sobre">ℹ️ Sobre o NAVI</button>
     <button data-tela="manual">📖 Manual</button>
@@ -431,23 +431,28 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
     <!-- ===== PAINEL ===== -->
     <section class="tela ativa" id="tela-painel">
       <h2 class="titulo">📊 Painel
-        <span class="acoes"><button class="bt claro mini" onclick="renderPainel()">↻ Atualizar</button></span>
+        <span class="acoes">
+          <button class="bt claro mini" onclick="imprimirPainel()">🖨 Imprimir</button>
+          <button class="bt claro mini" onclick="renderPainel()">↻ Atualizar</button>
+        </span>
       </h2>
-      <div id="avisosPainel"></div>
-      <div class="cartoes" id="cartoesPainel"></div>
-      <div class="painel-bloco">
-        <h3>Entradas por mês — compensados (últimos 6 meses)</h3>
-        <div class="grafico" id="graficoMeses"></div>
-      </div>
-      <div class="painel-bloco">
-        <h3>Vencendo nos próximos 7 dias</h3>
-        <div class="tabela-rolagem" style="box-shadow:none;border:none"><table><thead>
-          <tr><th>Vencimento</th><th>Cliente</th><th>Cheque nº</th><th>Valor</th><th></th></tr>
-        </thead><tbody id="tbProximos"></tbody></table></div>
-      </div>
+      <div id="painelImprimivel">
+        <div id="avisosPainel"></div>
+        <div class="cartoes" id="cartoesPainel"></div>
+        <div class="painel-bloco">
+          <h3>Entradas por mês — compensados (últimos 6 meses)</h3>
+          <div class="grafico" id="graficoMeses"></div>
+        </div>
+        <div class="painel-bloco">
+          <h3>Vencendo nos próximos 7 dias</h3>
+          <div class="tabela-rolagem" style="box-shadow:none;border:none"><table><thead>
+            <tr><th>Vencimento</th><th>Cliente</th><th>Cheque nº</th><th>Valor</th><th></th></tr>
+          </thead><tbody id="tbProximos"></tbody></table></div>
+        </div>
 
-      <!-- ===== AVISOS DO PAINEL ===== -->
-      <div id="avisosPainelInferior"></div>
+        <!-- ===== AVISOS DO PAINEL ===== -->
+        <div id="avisosPainelInferior"></div>
+      </div>
 
       <div style="margin-top:.5rem">
         <h3 style="font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);font-weight:700;margin-bottom:.75rem">💡 Informações importantes do sistema</h3>
@@ -622,10 +627,11 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
 
     <!-- ===== BACKUP ===== -->
     <section class="tela" id="tela-backup">
-      <h2 class="titulo">💾 Backup e Configurações</h2>
+      <h2 class="titulo">⚙️ Configurações</h2>
       <div class="painel-bloco">
         <h3>Backup — 1 arquivo com tudo</h3>
-        <p style="font-size:.88rem;margin-bottom:.8rem">Todos os dados do NAVI (clientes, cheques, lembretes e senha) cabem em <b>um único arquivo</b>. Guarde num pen drive ou nuvem.</p>
+        <p style="font-size:.88rem;margin-bottom:.4rem">Todos os dados do NAVI (clientes, cheques, lembretes e senha) cabem em <b>um único arquivo</b>. Guarde num pen drive ou nuvem.</p>
+        <p style="font-size:.83rem;color:var(--cinza);margin-bottom:1rem">💡 Atalho rápido: os botões <b>💾 Backup</b> e <b>📤 Restaurar</b> também ficam disponíveis no topo do sistema, em qualquer tela.</p>
         <p style="font-size:.83rem;color:var(--cinza);margin-bottom:1rem">Último backup: <b id="txtUltimoBackup">nunca</b></p>
         <div style="display:flex;gap:.6rem;flex-wrap:wrap">
           <button class="bt" onclick="fazerBackup()">💾 Fazer backup agora</button>
@@ -667,7 +673,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <div class="func-ico">📊</div>
           <div class="func-info">
             <h4>Painel de controle</h4>
-            <p>Visão geral do financeiro em tempo real: valores a receber, cheques vencidos, previsão dos próximos 7 dias e gráfico de entradas mensais.</p>
+            <p>Visão geral do financeiro em tempo real: valores a receber, cheques vencidos, previsão dos próximos 7 dias e gráfico de entradas mensais. Pode ser impresso ou salvo em PDF com um clique no botão 🖨 Imprimir.</p>
           </div>
         </div>
         <div class="func-card">
@@ -681,7 +687,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <div class="func-ico">🏦</div>
           <div class="func-info">
             <h4>Controle de cheques</h4>
-            <p>Lançamento, acompanhamento e histórico completo de cheques: compensar, prorrogar, devolver com alínea do Banco Central e gerar recibos.</p>
+            <p>Lançamento, acompanhamento e histórico completo de cheques: compensar, prorrogar, devolver com alínea do Banco Central e gerar recibos. Consultas combináveis por cliente, CPF, período e situação, com validações automáticas de datas, valor e número duplicado.</p>
           </div>
         </div>
         <div class="func-card">
@@ -715,8 +721,8 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <div class="func-card">
           <div class="func-ico">💾</div>
           <div class="func-info">
-            <h4>Backup em 1 arquivo</h4>
-            <p>Todo o sistema — clientes, cheques, lembretes, fotos e senha — em um único arquivo .json. Restaure em qualquer computador em segundos.</p>
+            <h4>Backup em 1 clique, direto do topo</h4>
+            <p>Todo o sistema — clientes, cheques, lembretes, fotos e senha — em um único arquivo .json. Os botões <b>💾 Backup</b> e <b>📤 Restaurar</b> ficam sempre visíveis no topo da tela, em qualquer menu. Restaure em qualquer computador em segundos.</p>
           </div>
         </div>
         <div class="func-card">
@@ -791,7 +797,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li><b>Cadastre seus clientes</b> primeiro (menu Clientes → ＋ Novo cliente). Sem clientes cadastrados, não é possível lançar cheques.</li>
           <li><b>Lance os cheques</b> vinculados a cada cliente (menu Cheques → ＋ Novo cheque).</li>
           <li><b>Acompanhe no Painel</b> os valores a receber, vencidos e a vencer.</li>
-          <li><b>Faça o primeiro backup</b> imediatamente após cadastrar os dados (menu Backup → Fazer backup agora).</li>
+          <li><b>Faça o primeiro backup</b> imediatamente após cadastrar os dados (botão 💾 Backup, no topo do sistema).</li>
         </ol>
         <div class="dica"><strong>💡 Dica</strong>O sistema funciona 100% offline, sem necessidade de internet. Você pode abrir este arquivo HTML em qualquer computador com navegador.</div>
         <div class="atencao"><strong>⚠️ Atenção</strong>Use sempre o mesmo navegador no mesmo computador para garantir que os dados estejam disponíveis. Cada navegador tem seu próprio armazenamento separado.</div>
@@ -829,8 +835,11 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li>Acesse o menu <b>Cheques</b> (Alt+3).</li>
           <li>Clique em <b>＋ Novo cheque</b>.</li>
           <li>Selecione o cliente, informe o número do cheque, valor, banco, datas de emissão e vencimento.</li>
+          <li>Se o cheque já foi pago, preencha <b>Data do pagamento</b> — o sistema marca como "Compensado" automaticamente.</li>
+          <li>Se já houver uma prorrogação combinada, preencha <b>Prorrogação (nova data de venc.)</b> — o histórico é registrado automaticamente.</li>
           <li>Clique em <b>Salvar cheque</b>.</li>
         </ol>
+        <div class="dica"><strong>💡 Validações automáticas</strong>O sistema impede salvar um cheque com vencimento anterior à emissão, valor zerado ou negativo, pagamento anterior à emissão, ou número de cheque já cadastrado (duplicado).</div>
         <h4>Situações do cheque</h4>
         <ul>
           <li><b>Em carteira (verde):</b> cheque recebido, aguardando vencimento.</li>
@@ -840,11 +849,13 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li><b>Devolvido (vermelho):</b> cheque rejeitado pelo banco com alínea registrada.</li>
         </ul>
         <h4>Prorrogar um cheque</h4>
-        <p>Abra o cheque → clique em <b>📅 Prorrogar</b> → informe o novo vencimento e o motivo. O sistema guarda o histórico completo de todas as prorrogações.</p>
+        <p>Abra o cheque → clique em <b>📅 Prorrogar</b> → informe o novo vencimento e o motivo. O sistema guarda o histórico completo de todas as prorrogações. Também é possível prorrogar diretamente pelo formulário de cadastro/edição, no campo <b>Prorrogação</b>.</p>
         <h4>Registrar devolução</h4>
         <p>Abra o cheque → clique em <b>↩ Devolver</b> → selecione a alínea do Banco Central correspondente ao motivo da devolução.</p>
         <h4>Emitir recibo</h4>
         <p>Abra qualquer cheque → clique em <b>🖨 Recibo</b>. O navegador abrirá a janela de impressão. Escolha "Salvar como PDF" para criar um arquivo.</p>
+        <h4>Consultar e filtrar cheques</h4>
+        <p>Na tela de Cheques você pode combinar filtros livremente: <b>Pesquisar</b> (nº do cheque, nome do cliente ou CPF — tanto do emitente quanto do cadastrado no fichário), <b>Cliente</b> (select), <b>Situação</b>, e período por <b>Emissão</b> ou <b>Vencimento</b>. O botão <b>📋 Prorrogados</b> lista direto todos os cheques prorrogados.</p>
         <div class="atencao"><strong>⚠️ Limite de crédito</strong>Se o cliente tiver limite de crédito cadastrado, o sistema avisa quando um novo cheque ultrapassaria esse limite, mas permite o lançamento com confirmação.</div>
       </div>
 
@@ -872,11 +883,13 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li><b>Relatório de Clientes:</b> lista completa com CPF, telefone, risco e limite.</li>
           <li><b>Inadimplência:</b> ranking dos maiores devedores com valores vencidos e devolvidos.</li>
           <li><b>Extrato por cliente:</b> selecione um cliente e veja todos os cheques dele com totais.</li>
-          <li><b>Cheques por período:</b> use os filtros na tela de Cheques antes de gerar — o relatório usa exatamente os filtros ativos.</li>
+          <li><b>Cheques por período:</b> use os filtros na tela de Cheques antes de gerar (período, cliente, situação ou CPF) — o relatório usa exatamente os filtros ativos.</li>
         </ul>
         <p>Todos os relatórios abrem a janela de impressão do navegador. Para <b>gerar PDF</b>, escolha "Salvar como PDF" na impressora.</p>
+        <h4>Imprimir o Painel</h4>
+        <p>Na tela <b>Painel</b>, clique em <b>🖨 Imprimir</b> para gerar um resumo financeiro pronto para impressão ou PDF — os cartões, o gráfico e a lista de vencimentos próximos. O bloco de avisos "💡 Informações importantes do sistema" não entra na impressão.</p>
         <h4>Exportar para Excel</h4>
-        <p>Nas telas de Clientes e Cheques, o botão <b>⬇ Excel</b> baixa um arquivo .csv que abre diretamente no Excel, LibreOffice Calc e Google Sheets.</p>
+        <p>Nas telas de Clientes e Cheques, o botão <b>⬇ Excel</b> baixa um arquivo .csv que abre diretamente no Excel, LibreOffice Calc e Google Sheets — também respeitando os filtros aplicados na tela de Cheques.</p>
       </div>
 
       <div class="manual-secao" id="man-backup">
@@ -884,15 +897,13 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <div class="perigo"><strong>🔴 Risco real de perda de dados</strong>O NAVI guarda tudo no navegador (localStorage). Limpar cache, reinstalar o navegador, formatar o computador ou usar um navegador diferente resultará em <b>perda total e permanente</b> de todos os dados. Não há recuperação possível sem um arquivo de backup.</div>
         <h4>Como fazer backup</h4>
         <ol>
-          <li>Acesse o menu <b>Backup</b> (Alt+5).</li>
-          <li>Clique em <b>💾 Fazer backup agora</b>.</li>
+          <li>Clique no botão <b>💾 Backup</b>, disponível no topo do sistema em qualquer tela (ou em <b>⚙️ Configurações</b>, Alt+5).</li>
           <li>O navegador baixará um arquivo chamado <code>navi-backup-AAAA-MM-DD.json</code>.</li>
           <li>Guarde este arquivo em um <b>pen drive, Google Drive, OneDrive ou WhatsApp</b> (mande para si mesmo).</li>
         </ol>
         <h4>Como restaurar backup</h4>
         <ol>
-          <li>Acesse o menu <b>Backup</b>.</li>
-          <li>Clique em <b>📂 Restaurar backup</b>.</li>
+          <li>Clique no botão <b>📤 Restaurar</b>, disponível no topo do sistema (ou em <b>⚙️ Configurações</b>).</li>
           <li>Selecione o arquivo .json do backup.</li>
           <li>Digite a senha para confirmar.</li>
           <li>Todos os dados serão restaurados imediatamente.</li>
@@ -909,7 +920,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <div class="atalho-item"><kbd>Alt+2</kbd><span>Ir para Clientes</span></div>
           <div class="atalho-item"><kbd>Alt+3</kbd><span>Ir para Cheques</span></div>
           <div class="atalho-item"><kbd>Alt+4</kbd><span>Ir para Relatórios</span></div>
-          <div class="atalho-item"><kbd>Alt+5</kbd><span>Ir para Backup</span></div>
+          <div class="atalho-item"><kbd>Alt+5</kbd><span>Ir para Configurações</span></div>
           <div class="atalho-item"><kbd>Alt+6</kbd><span>Ir para Lembretes</span></div>
           <div class="atalho-item"><kbd>F9</kbd><span>Abrir Calendário</span></div>
           <div class="atalho-item"><kbd>F10</kbd><span>Abrir Calculadora</span></div>
@@ -929,7 +940,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <h4>Esqueci a senha, o que faço?</h4>
         <p>A senha inicial é <b>1234</b>. Se você a alterou e esqueceu, infelizmente não há recuperação automática — os dados ficam protegidos. Contate o suporte técnico em <a href="https://suporte.adv.br" target="_blank" style="color:var(--verde)">suporte.adv.br</a>.</p>
         <h4>Por que meus dados sumiram?</h4>
-        <p>Provavelmente o cache do navegador foi limpo, ou você está usando um navegador diferente do habitual, ou abriu o arquivo NAVI de um local diferente. Se você tem um arquivo de backup .json, restaure-o pelo menu Backup.</p>
+        <p>Provavelmente o cache do navegador foi limpo, ou você está usando um navegador diferente do habitual, ou abriu o arquivo NAVI de um local diferente. Se você tem um arquivo de backup .json, restaure-o pelo botão 📤 Restaurar no topo do sistema.</p>
         <h4>Como gerar PDF de um relatório?</h4>
         <p>Na janela de impressão que o navegador abre, selecione <b>"Salvar como PDF"</b> no campo de impressora (funciona no Chrome, Edge e Firefox).</p>
         <h4>Posso usar sem internet?</h4>
@@ -1613,6 +1624,11 @@ function alertaAbertura(){
    ============================================================ */
 function imprimir(html){document.getElementById('areaImpressao').innerHTML=html;setTimeout(()=>window.print(),80);}
 function cabecalhoRel(titulo,sub){return '<h1>'+titulo+'</h1><div class="sub">NAVI · '+new Date().toLocaleString('pt-BR')+(sub?' · '+sub:'')+'</div>';}
+function imprimirPainel(){
+  let corpo=document.getElementById('painelImprimivel').innerHTML;
+  corpo=corpo.replace(/<button[\s\S]*?<\/button>/g,'');
+  imprimir(cabecalhoRel('Painel — Resumo','NAVI')+corpo);
+}
 function prepararRelatorios(){
   document.getElementById('relCliSel').innerHTML='<option value="">— escolha o cliente —</option>'+
     dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(c=>'<option value="'+c.id+'">'+esc(c.nome)+'</option>').join('');
