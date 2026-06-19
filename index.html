@@ -219,6 +219,8 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .alerta-lembrete h4{font-size:1rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
 .alerta-lembrete p{font-size:.88rem;color:var(--cinza);margin-bottom:.7rem}
 .alerta-lembrete .acoes{display:flex;gap:.4rem}
+.alerta-lembrete.alerta-backup{top:200px;border-color:var(--ambar)}
+[data-tema="escuro"] .alerta-lembrete.alerta-backup{background:#1A2620}
 
 /* ===== CALENDÁRIO GRANDE ===== */
 .cal-grande{background:var(--branco);border-radius:var(--raio);overflow:hidden}
@@ -393,6 +395,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
 </header>
 
 <div id="alertaLembrete" style="display:none" class="alerta-lembrete"></div>
+<div id="alertaBackup12h" style="display:none" class="alerta-lembrete alerta-backup"></div>
 
 <div class="app">
   <!-- ===== MENU LATERAL ===== -->
@@ -908,7 +911,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li>Digite a senha para confirmar.</li>
           <li>Todos os dados serão restaurados imediatamente.</li>
         </ol>
-        <div class="dica"><strong>💡 Frequência recomendada</strong>Faça backup a cada vez que encerrar o sistema, ou no mínimo uma vez por dia quando houver movimento. O sistema avisa automaticamente quando o backup está há mais de 12 horas sem ser feito.</div>
+        <div class="dica"><strong>💡 Frequência recomendada</strong>Faça backup a cada vez que encerrar o sistema, ou no mínimo uma vez por dia quando houver movimento. O sistema avisa automaticamente quando o backup está há mais de 12 horas sem ser feito — com uma faixa no topo da tela e um pop-up flutuante com botão de backup direto.</div>
         <h4>Atalho rápido</h4>
         <p>Use <b>Ctrl+B</b> para acionar o backup imediatamente de qualquer tela.</p>
       </div>
@@ -1708,6 +1711,7 @@ function faixaLembreteBackup(){
   if(!temDados){f.innerHTML='';return;}
 
   const horas=u ? (Date.now()-new Date(u).getTime())/3600000 : 9999;
+  checarPopupBackup12h(u,horas,temDados);
 
   if(!u){
     // nunca fez backup
@@ -1732,6 +1736,23 @@ function faixaLembreteBackup(){
     setTimeout(()=>{ const el=document.getElementById('faixaBackup'); if(el&&el.innerHTML.includes('Backup em dia')) el.innerHTML=''; },6000);
   }
 }
+function checarPopupBackup12h(u,horas,temDados){
+  if(!temDados||horas<12) return;
+  const marca=u||'nunca';
+  if(localStorage.getItem('NAVI_POPUP_BACKUP_VISTO')===marca) return;
+  localStorage.setItem('NAVI_POPUP_BACKUP_VISTO',marca);
+  const el=document.getElementById('alertaBackup12h');
+  const txt=u?'Já se passaram mais de '+Math.floor(horas)+' horas desde o último backup ('+new Date(u).toLocaleString('pt-BR')+').':'Você ainda não fez nenhum backup neste sistema.';
+  el.innerHTML='<h4>⏰ Backup atrasado!</h4>'+
+    '<p>'+txt+' Leva menos de 5 segundos — não arrisque perder clientes, cheques e lembretes.</p>'+
+    '<div class="acoes">'+
+    '<button class="bt mini" onclick="fazerBackupPopup()">💾 Fazer backup agora</button>'+
+    '<button class="bt claro mini" onclick="fecharPopupBackup12h()">Depois</button>'+
+    '</div>';
+  el.style.display='block';
+}
+function fecharPopupBackup12h(){ document.getElementById('alertaBackup12h').style.display='none'; }
+function fazerBackupPopup(){ fecharPopupBackup12h(); fazerBackup(); }
 function apagarTudo(){pedirSenha(()=>{if(!confirm('APAGAR TODOS os dados? Esta ação não tem volta.')) return;if(!confirm('Tem certeza absoluta?')) return;dados={senha:dados.senha,clientes:[],cheques:[],lembretes:[],ultimoBackup:null,proxCodigo:1};salvar();renderPainel();renderBackup();irPara('painel');avisar('Dados apagados.');});}
 
 /* ============================================================
