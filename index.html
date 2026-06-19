@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NAVI — Clientes, Cheques e Financeiro</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1E5C46">
+<link rel="icon" href="navi-icone-192.png">
+<link rel="apple-touch-icon" href="navi-icone-192.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 :root{
@@ -192,6 +196,14 @@ td.acoes-td{white-space:nowrap;text-align:right}
 .faixa-aviso.vermelha{background:#FBEAE8;border-color:#E5B5AF;color:#7C2C23}
 .aviso-flutuante{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.62rem 1.2rem;border-radius:999px;font-size:.9rem;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
 .aviso-flutuante.mostrar{opacity:1}
+.aviso-acao{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:.55rem .6rem .55rem 1.1rem;border-radius:999px;font-size:.88rem;z-index:301;box-shadow:0 4px 16px rgba(0,0,0,.25);display:none;align-items:center;gap:.6rem;white-space:nowrap}
+.aviso-acao.mostrar{display:flex}
+.aviso-acao button{background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:999px;padding:.4rem .9rem;font-size:.82rem;font-weight:600;cursor:pointer}
+.aviso-acao button:hover{background:rgba(255,255,255,.32)}
+.lixeira-item,.auditoria-item{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.55rem .2rem;border-bottom:1px solid var(--linha);font-size:.86rem}
+.auditoria-item{display:block;max-height:none}
+.lixeira-item:last-child,.auditoria-item:last-child{border-bottom:none}
+#listaAuditoria{max-height:280px;overflow-y:auto}
 .vazio{text-align:center;color:var(--cinza);padding:2rem 1rem;font-size:.9rem}
 
 /* ===== LEMBRETES ===== */
@@ -299,6 +311,9 @@ td.acoes-td{white-space:nowrap;text-align:right}
 /* ===== Aviso backup 12h ===== */
 .aviso-backup-urgente{background:linear-gradient(135deg,#FFF6E0,#FFF0CC);border:2px solid var(--ambar);border-radius:var(--raio);padding:.85rem 1.1rem;margin-bottom:1rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;animation:pulseBorder 2.5s ease-in-out infinite}
 @keyframes pulseBorder{0%,100%{border-color:var(--ambar)}50%{border-color:#E0A010}}
+@keyframes pulseVermelho{0%,100%{box-shadow:0 0 0 0 rgba(179,55,43,.45)}50%{box-shadow:0 0 0 6px rgba(179,55,43,0)}}
+.faixa-aviso.vermelha{animation:pulseVermelho 2s ease-in-out infinite}
+.cartao.vm.vencido-destaque{animation:pulseVermelho 2s ease-in-out infinite}
 .aviso-backup-urgente .icob{font-size:1.4rem;flex-shrink:0}
 .aviso-backup-urgente .txtb{flex:1;min-width:160px}
 .aviso-backup-urgente .txtb strong{display:block;font-size:.88rem;color:#7A5000;margin-bottom:.1rem}
@@ -538,6 +553,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       <h2 class="titulo">👥 Clientes
         <span class="acoes">
           <button class="bt claro mini" onclick="exportarClientesCSV()">⬇ Excel</button>
+          <button class="bt claro mini" onclick="abrirImportarClientes()">📋 Importar</button>
           <button class="bt mini" onclick="novoCliente()">＋ Novo cliente</button>
         </span>
       </h2>
@@ -561,6 +577,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
       <h2 class="titulo">🏦 Cheques
         <span class="acoes">
           <button class="bt claro mini" onclick="exportarChequesCSV()">⬇ Excel</button>
+          <button class="bt claro mini" onclick="novoLoteCheques()">📦 Lançar em lote</button>
           <button class="bt mini" onclick="novoCheque()">＋ Novo cheque</button>
         </span>
       </h2>
@@ -646,6 +663,20 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <h3>Senha de operações sensíveis</h3>
         <p style="font-size:.88rem;margin-bottom:.8rem">Pedida ao alterar/excluir clientes e restaurar backup. Senha inicial: <b>1234</b>.</p>
         <button class="bt claro" onclick="trocarSenha()">🔐 Trocar senha</button>
+      </div>
+      <div class="painel-bloco">
+        <h3>🔔 Notificações do navegador</h3>
+        <p style="font-size:.88rem;margin-bottom:.5rem">Avisa sobre lembretes e backup atrasado mesmo com o NAVI em segundo plano (precisa manter a aba aberta).</p>
+        <p style="font-size:.83rem;color:var(--cinza);margin-bottom:.7rem">Status: <b id="statusNotificacao">verificando…</b></p>
+        <button class="bt claro" onclick="pedirPermissaoNotificacao()">🔔 Ativar notificações</button>
+      </div>
+      <div class="painel-bloco">
+        <h3>🗑️ Lixeira <span style="font-weight:400;font-size:.78rem;color:var(--cinza)">(itens excluídos ficam disponíveis por até 1 hora)</span></h3>
+        <div id="listaLixeira"></div>
+      </div>
+      <div class="painel-bloco">
+        <h3>📜 Histórico de alterações <span style="font-weight:400;font-size:.78rem;color:var(--cinza)">(últimas 200)</span></h3>
+        <div id="listaAuditoria"></div>
       </div>
       <div class="painel-bloco">
         <h3>Zona de risco</h3>
@@ -788,6 +819,8 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li><a href="#man-lembretes">🔔 Lembretes</a></li>
           <li><a href="#man-relatorios">📄 Relatórios</a></li>
           <li><a href="#man-backup">💾 Backup</a></li>
+          <li><a href="#man-config">⚙️ Lixeira, notificações e histórico</a></li>
+          <li><a href="#man-pwa">📱 Instalar como aplicativo</a></li>
           <li><a href="#man-atalhos">⌨️ Atalhos</a></li>
           <li><a href="#man-faq">❓ Perguntas frequentes</a></li>
         </ul>
@@ -828,7 +861,10 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         </ul>
         <div class="dica"><strong>💡 Dica</strong>Use o campo de busca para encontrar clientes por nome, código ou CPF/CNPJ rapidamente. O atalho <b>/</b> posiciona o cursor na busca global.</div>
         <h4>Editar ou excluir clientes</h4>
-        <p>Use os botões ✏ e 🗑 na linha do cliente. Editar e excluir pedem a senha de segurança. Ao excluir um cliente, os cheques cadastrados dele permanecem no sistema sem vínculo.</p>
+        <p>Use os botões ✏ e 🗑 na linha do cliente. Editar e excluir pedem a senha de segurança. Ao excluir um cliente, os cheques cadastrados dele permanecem no sistema sem vínculo. Se excluir por engano, dá pra desfazer — veja a dica abaixo.</p>
+        <div class="dica"><strong>🗑️ Desfazer exclusão</strong>Depois de excluir um cliente ou cheque, aparece um aviso com o botão <b>Desfazer</b> por alguns segundos. Se perder esse momento, vá em <b>⚙️ Configurações → Lixeira</b>: o item fica disponível para restaurar por até <b>1 hora</b> após a exclusão.</div>
+        <h4>Importar vários clientes de uma vez</h4>
+        <p>Clique em <b>📋 Importar</b>. Copie as colunas do Excel/planilha (Nome, CPF/CNPJ, Telefone, E-mail, Endereço, nesta ordem) e cole na caixa de texto — uma linha por cliente. Só o nome é obrigatório. Útil para migrar uma base de clientes existente de uma só vez.</p>
       </div>
 
       <div class="manual-secao" id="man-cheques">
@@ -851,6 +887,10 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
           <li><b>Compensado (azul):</b> cheque depositado e aprovado pelo banco.</li>
           <li><b>Devolvido (vermelho):</b> cheque rejeitado pelo banco com alínea registrada.</li>
         </ul>
+        <h4>Lançar vários cheques de uma vez (jogo de cheques)</h4>
+        <p>Quando um cliente entrega vários cheques parcelados, clique em <b>📦 Lançar em lote</b>. Informe cliente, quantidade, valor de cada cheque, número inicial e data do 1º vencimento — o sistema gera os números em sequência e os vencimentos mensais (ou no intervalo que você escolher) automaticamente.</p>
+        <h4>Cobrar um cheque vencido pelo WhatsApp</h4>
+        <p>Abra o cheque → clique em <b>📲 Cobrar via WhatsApp</b>. Abre o WhatsApp Web/app já com uma mensagem pronta para o telefone cadastrado do cliente, citando número, valor e vencimento do cheque. Exige que o cliente tenha telefone cadastrado.</p>
         <h4>Prorrogar um cheque</h4>
         <p>Abra o cheque → clique em <b>📅 Prorrogar</b> → informe o novo vencimento e o motivo. O sistema guarda o histórico completo de todas as prorrogações. Também é possível prorrogar diretamente pelo formulário de cadastro/edição, no campo <b>Prorrogação</b>.</p>
         <h4>Registrar devolução</h4>
@@ -916,6 +956,28 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <p>Use <b>Ctrl+B</b> para acionar o backup imediatamente de qualquer tela.</p>
       </div>
 
+      <div class="manual-secao" id="man-config">
+        <h3>⚙️ Lixeira, notificações e histórico</h3>
+        <h4>🗑️ Lixeira (desfazer exclusão)</h4>
+        <p>Toda vez que você exclui um cliente ou um cheque, ele não some na hora — fica guardado na <b>Lixeira</b> por <b>1 hora</b>, em <b>⚙️ Configurações</b>. Basta clicar em <b>↩ Restaurar</b> para trazer de volta. Depois de 1 hora, o item é removido definitivamente.</p>
+        <h4>🔔 Notificações do navegador</h4>
+        <p>Em <b>⚙️ Configurações</b>, clique em <b>🔔 Ativar notificações</b> e autorize quando o navegador perguntar. A partir daí, lembretes e avisos de backup atrasado também aparecem como notificação do sistema operacional, mesmo com o NAVI em outra aba (a aba precisa continuar aberta).</p>
+        <h4>📜 Histórico de alterações</h4>
+        <p>Em <b>⚙️ Configurações</b> fica registrado um histórico com data e hora de cadastros, edições, exclusões, compensações, prorrogações, devoluções e restaurações de backup — as últimas 200 ações. Útil para conferir o que foi feito e quando.</p>
+      </div>
+
+      <div class="manual-secao" id="man-pwa">
+        <h3>📱 Instalar como aplicativo</h3>
+        <p>O NAVI pode ser instalado como um aplicativo (ícone na tela inicial do celular ou no computador, abrindo em tela cheia, sem barra do navegador). Para isso funcionar, o sistema precisa estar <b>hospedado num endereço da internet</b> (ex.: GitHub Pages) — não funciona abrindo o arquivo direto do computador.</p>
+        <ol>
+          <li>Hospede este arquivo (salvo como <code>index.html</code>), <code>manifest.json</code>, <code>sw.js</code> e os ícones na mesma pasta do seu site/GitHub Pages.</li>
+          <li>Acesse o endereço pelo navegador (Chrome, Edge ou navegador do celular).</li>
+          <li>No celular: toque no menu do navegador → <b>"Adicionar à tela inicial"</b> ou <b>"Instalar app"</b>.</li>
+          <li>No computador: clique no ícone de instalação que aparece na barra de endereço do Chrome/Edge.</li>
+        </ol>
+        <div class="dica"><strong>💡 Funciona offline também</strong>Depois de instalado uma vez com internet, o NAVI continua abrindo e funcionando mesmo sem conexão — os dados continuam salvos localmente, como sempre.</div>
+      </div>
+
       <div class="manual-secao" id="man-atalhos">
         <h3>⌨️ Atalhos de teclado</h3>
         <div class="atalhos-grade">
@@ -965,6 +1027,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
 <div class="veu" id="veu"><div class="modal" id="modalCaixa"></div></div>
 <div id="areaImpressao"></div>
 <div class="aviso-flutuante" id="avisoFlutuante"></div>
+<div class="aviso-acao" id="avisoAcao"><span id="avisoAcaoTxt"></span><button id="avisoAcaoBt"></button></div>
 
 <script>
 /* ============================================================
@@ -976,9 +1039,9 @@ let dados = carregar();
 function carregar(){
   try{
     const b = localStorage.getItem(CHAVE) || localStorage.getItem('NAVI_DADOS_V1');
-    if(b){ const d=JSON.parse(b); d.clientes||=[];d.cheques||=[];d.senha||='1234';d.lembretes||=[];return d; }
+    if(b){ const d=JSON.parse(b); d.clientes||=[];d.cheques||=[];d.senha||='1234';d.lembretes||=[];d.lixeira||=[];d.auditoria||=[];return d; }
   }catch(e){}
-  return{senha:'1234',clientes:[],cheques:[],lembretes:[],ultimoBackup:null,proxCodigo:1};
+  return{senha:'1234',clientes:[],cheques:[],lembretes:[],lixeira:[],auditoria:[],ultimoBackup:null,proxCodigo:1};
 }
 function salvar(){ localStorage.setItem(CHAVE,JSON.stringify(dados)); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -1015,7 +1078,7 @@ function irPara(tela){
   if(tela==='clientes') renderClientes();
   if(tela==='cheques') renderCheques();
   if(tela==='relatorios') prepararRelatorios();
-  if(tela==='backup') renderBackup();
+  if(tela==='backup'){ renderBackup(); renderLixeira(); renderAuditoria(); renderStatusNotificacao(); }
   if(tela==='lembretes') renderLembretes();
   faixaLembreteBackup();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1056,6 +1119,88 @@ function avisar(msg){
   a.textContent=msg; a.classList.add('mostrar');
   clearTimeout(a._t); a._t=setTimeout(()=>a.classList.remove('mostrar'),2800);
 }
+function avisarComAcao(msg,label,fn){
+  const a=document.getElementById('avisoAcao');
+  document.getElementById('avisoAcaoTxt').textContent=msg;
+  const bt=document.getElementById('avisoAcaoBt');
+  bt.textContent=label;
+  bt.onclick=()=>{ a.classList.remove('mostrar'); fn(); };
+  a.classList.add('mostrar');
+  clearTimeout(a._t2); a._t2=setTimeout(()=>a.classList.remove('mostrar'),8000);
+}
+
+/* ===== Auditoria (histórico de alterações) ===== */
+function registrarAuditoria(msg){
+  dados.auditoria||=[];
+  dados.auditoria.unshift({ts:Date.now(),msg});
+  if(dados.auditoria.length>200) dados.auditoria.length=200;
+}
+function renderAuditoria(){
+  const el=document.getElementById('listaAuditoria'); if(!el) return;
+  const lista=dados.auditoria||[];
+  if(!lista.length){el.innerHTML='<p style="font-size:.83rem;color:var(--cinza)">Nenhuma alteração registrada ainda.</p>';return;}
+  el.innerHTML=lista.map(x=>'<div class="auditoria-item"><small style="color:var(--cinza)">'+new Date(x.ts).toLocaleString('pt-BR')+'</small> — '+esc(x.msg)+'</div>').join('');
+}
+
+/* ===== Lixeira temporária (1h para desfazer exclusões) ===== */
+const LIXEIRA_MS=60*60*1000;
+function moverParaLixeira(tipo,obj){
+  dados.lixeira||=[];
+  const idLix=uid();
+  dados.lixeira.push({id:idLix,tipo,dado:JSON.parse(JSON.stringify(obj)),removidoEm:Date.now()});
+  salvar();
+  return idLix;
+}
+function limparLixeiraExpirada(){
+  if(!dados.lixeira||!dados.lixeira.length) return;
+  const limite=Date.now()-LIXEIRA_MS;
+  const antes=dados.lixeira.length;
+  dados.lixeira=dados.lixeira.filter(x=>x.removidoEm>=limite);
+  if(dados.lixeira.length!==antes) salvar();
+}
+function restaurarDaLixeira(idLix){
+  const item=(dados.lixeira||[]).find(x=>x.id===idLix); if(!item) return;
+  if(item.tipo==='cliente'){
+    if(!dados.clientes.find(x=>x.id===item.dado.id)) dados.clientes.push(item.dado);
+    renderClientes();
+  } else if(item.tipo==='cheque'){
+    if(!dados.cheques.find(x=>x.id===item.dado.id)) dados.cheques.push(item.dado);
+    renderCheques();
+  }
+  dados.lixeira=dados.lixeira.filter(x=>x.id!==idLix);
+  registrarAuditoria((item.tipo==='cliente'?'Cliente':'Cheque')+' restaurado da lixeira: '+(item.tipo==='cliente'?item.dado.nome:('nº '+item.dado.numero)));
+  salvar();renderPainel();renderLixeira();avisar('Restaurado ✔');
+}
+function renderLixeira(){
+  const el=document.getElementById('listaLixeira'); if(!el) return;
+  limparLixeiraExpirada();
+  const lista=(dados.lixeira||[]).slice().sort((a,b)=>b.removidoEm-a.removidoEm);
+  if(!lista.length){el.innerHTML='<p style="font-size:.83rem;color:var(--cinza)">Lixeira vazia.</p>';return;}
+  el.innerHTML=lista.map(x=>{
+    const nome=x.tipo==='cliente'?x.dado.nome:('Cheque nº '+x.dado.numero+' · '+fmtBRL(x.dado.valor));
+    const restamMin=Math.max(0,Math.ceil((LIXEIRA_MS-(Date.now()-x.removidoEm))/60000));
+    return '<div class="lixeira-item"><div><b>'+(x.tipo==='cliente'?'👤 ':'🏦 ')+esc(nome)+'</b><br><small style="color:var(--cinza)">Expira em '+restamMin+' min</small></div><button class="bt mini" onclick="restaurarDaLixeira(\''+x.id+'\')">↩ Restaurar</button></div>';
+  }).join('');
+}
+
+/* ===== Notificações do navegador ===== */
+function pedirPermissaoNotificacao(){
+  if(!('Notification' in window)){avisar('Seu navegador não suporta notificações.');return;}
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){avisar('Notificações ativadas ✔');renderStatusNotificacao();}
+    else{avisar('Notificações não autorizadas pelo navegador.');renderStatusNotificacao();}
+  });
+}
+function notificarNavegador(titulo,corpo){
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  try{ new Notification(titulo,{body:corpo}); }catch(e){}
+}
+function renderStatusNotificacao(){
+  const el=document.getElementById('statusNotificacao'); if(!el) return;
+  if(!('Notification' in window)){el.textContent='Não suportado neste navegador.';return;}
+  const p=Notification.permission;
+  el.textContent=p==='granted'?'✅ Ativadas neste navegador.':p==='denied'?'🚫 Bloqueadas — ative manualmente nas configurações do navegador.':'Ainda não ativadas.';
+}
 
 /* ===== Senha ===== */
 function pedirSenha(aoConfirmar){
@@ -1073,7 +1218,7 @@ function trocarSenha(){
       '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="confirmarNovaSenha()">Salvar</button></div>',true);
   });
 }
-function confirmarNovaSenha(){ const n=document.getElementById('novaSenha').value.trim(); if(n.length<3){avisar('Mínimo 3 caracteres.');return;} dados.senha=n;salvar();fecharModal();avisar('Senha alterada ✔'); }
+function confirmarNovaSenha(){ const n=document.getElementById('novaSenha').value.trim(); if(n.length<3){avisar('Mínimo 3 caracteres.');return;} dados.senha=n;registrarAuditoria('Senha alterada');salvar();fecharModal();avisar('Senha alterada ✔'); }
 
 /* ============================================================
    FERIADOS NACIONAIS BRASILEIROS
@@ -1240,6 +1385,7 @@ function verificarAlertasLembrete(){
 
 function dispararAlertaLembrete(l){
   tocarBeep();
+  notificarNavegador(TIPOS_LEMBRETE[l.tipo]+' Lembrete: '+l.titulo,(l.hora?'Às '+l.hora+' · ':'')+fmtData(l.data));
   const el=document.getElementById('alertaLembrete');
   el.style.display='block';
   el.innerHTML='<h4>'+TIPOS_LEMBRETE[l.tipo]+' Lembrete!</h4>'+
@@ -1367,6 +1513,39 @@ function renderClientes(){
 }
 
 function novoCliente(){ formCliente(null); }
+function abrirImportarClientes(){
+  abrirModal(cabecalhoModal('📋 Importar clientes')+
+    '<div class="modal-corpo">'+
+    '<p style="font-size:.83rem;color:var(--cinza);margin-bottom:.6rem">Cole abaixo os dados copiados do Excel/planilha (Ctrl+C lá, Ctrl+V aqui). Uma linha por cliente, nesta ordem: <b>Nome, CPF/CNPJ, Telefone, E-mail, Endereço</b> — só o Nome é obrigatório, o resto pode ficar em branco.</p>'+
+    '<textarea id="impTexto" rows="10" style="width:100%;font-family:var(--mono);font-size:.85rem" placeholder="Maria Silva	123.456.789-00	(71) 99999-0000"></textarea>'+
+    '<div id="impPrevia" style="margin-top:.6rem;font-size:.82rem;color:var(--cinza)"></div>'+
+    '</div><div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="confirmarImportarClientes()">Importar</button></div>',false,true);
+  document.getElementById('impTexto').addEventListener('input',atualizarPreviaImportacao);
+}
+function _linhasImportacao(){
+  const txt=document.getElementById('impTexto').value;
+  return txt.split('\n').map(l=>l.trim()).filter(Boolean);
+}
+function atualizarPreviaImportacao(){
+  const linhas=_linhasImportacao();
+  document.getElementById('impPrevia').textContent=linhas.length?linhas.length+' linha(s) detectada(s).':'';
+}
+function confirmarImportarClientes(){
+  const linhas=_linhasImportacao();
+  if(!linhas.length){avisar('Cole ao menos uma linha de dados.');return;}
+  if(linhas.length>500){avisar('Limite de 500 linhas por importação. Divida em lotes menores.');return;}
+  let novos=0,ignorados=0;
+  dados.proxCodigo||=1;
+  linhas.forEach(l=>{
+    const partes=l.split(/\t|;/).map(p=>p.trim());
+    const nome=partes[0];
+    if(!nome){ignorados++;return;}
+    dados.clientes.push({id:uid(),codigo:dados.proxCodigo++,criado:hojeISO(),nome,doc:partes[1]||'',tel:partes[2]||'',email:partes[3]||'',endereco:partes[4]||'',limite:0,risco:'bom',obs:'',foto:''});
+    novos++;
+  });
+  registrarAuditoria(novos+' cliente(s) importado(s) via colagem de planilha');
+  salvar();fecharModal();renderClientes();avisar(novos+' cliente(s) importado(s)'+(ignorados?' · '+ignorados+' linha(s) ignorada(s)':'')+' ✔');
+}
 function editarClienteProtegido(id){ pedirSenha(()=>formCliente(id)); }
 function formCliente(id){
   const c=id?cliPorId(id):{nome:'',doc:'',tel:'',email:'',endereco:'',limite:'',risco:'bom',obs:'',foto:''};
@@ -1402,15 +1581,19 @@ function salvarCliente(id){
   const nome=document.getElementById('fNome').value.trim();
   if(!nome){avisar('Informe o nome do cliente.');return;}
   const campos={nome,doc:document.getElementById('fDoc').value.trim(),tel:document.getElementById('fTel').value.trim(),email:document.getElementById('fEmail').value.trim(),endereco:document.getElementById('fEnd').value.trim(),limite:moedaParaNumero(document.getElementById('fLimite').value),risco:document.getElementById('fRisco').value,obs:document.getElementById('fObs').value.trim(),foto:window._fotoTemp||''};
-  if(id){Object.assign(cliPorId(id),campos);}
-  else{dados.proxCodigo||=1;dados.clientes.push(Object.assign({id:uid(),codigo:dados.proxCodigo++,criado:hojeISO()},campos));}
+  if(id){Object.assign(cliPorId(id),campos);registrarAuditoria('Cliente editado: '+nome);}
+  else{dados.proxCodigo||=1;dados.clientes.push(Object.assign({id:uid(),codigo:dados.proxCodigo++,criado:hojeISO()},campos));registrarAuditoria('Cliente cadastrado: '+nome);}
   salvar();fecharModal();renderClientes();avisar('Cliente salvo ✔');
 }
 function excluirCliente(id){
   pedirSenha(()=>{
     const c=cliPorId(id);const qt=dados.cheques.filter(x=>x.clienteId===id).length;
     if(!confirm('Excluir o cliente "'+c.nome+'"?'+(qt?'\nOs '+qt+' cheque(s) continuarão sem cliente vinculado.':''))) return;
-    dados.clientes=dados.clientes.filter(x=>x.id!==id);salvar();renderClientes();avisar('Cliente excluído.');
+    dados.clientes=dados.clientes.filter(x=>x.id!==id);
+    const idLix=moverParaLixeira('cliente',c);
+    registrarAuditoria('Cliente excluído: '+c.nome);
+    salvar();renderClientes();renderLixeira();
+    avisarComAcao('Cliente excluído.','Desfazer',()=>restaurarDaLixeira(idLix));
   });
 }
 function fichaCliente(id){
@@ -1510,8 +1693,8 @@ function salvarCheque(id){
   }
   const campos={clienteId,numero,valor,emissao,vencimento,banco:document.getElementById('qBanco').value.trim(),agencia:document.getElementById('qAg').value.trim(),conta:document.getElementById('qConta').value.trim(),emitente:document.getElementById('qEmit').value.trim(),cpfEmitente:document.getElementById('qCpf').value.trim(),obs:document.getElementById('qObs').value.trim()};
   let registro;
-  if(id){registro=dados.cheques.find(x=>x.id===id);Object.assign(registro,campos);}
-  else{registro=Object.assign({id:uid(),status:'carteira',prorrogacoes:[],criado:hojeISO()},campos);dados.cheques.push(registro);}
+  if(id){registro=dados.cheques.find(x=>x.id===id);Object.assign(registro,campos);registrarAuditoria('Cheque editado: nº '+numero);}
+  else{registro=Object.assign({id:uid(),status:'carteira',prorrogacoes:[],criado:hojeISO()},campos);dados.cheques.push(registro);registrarAuditoria('Cheque cadastrado: nº '+numero+' · '+fmtBRL(valor));}
   if(prorrogPara){
     registro.prorrogacoes||=[];
     registro.prorrogacoes.push({de:vencimento,para:prorrogPara,motivo:'Lançado no cadastro',data:hojeISO()});
@@ -1519,6 +1702,51 @@ function salvarCheque(id){
   }
   if(pagamento){ registro.status='compensado'; registro.recebidoEm=pagamento; }
   salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque salvo ✔');
+}
+function novoLoteCheques(){
+  if(!dados.clientes.length){avisar('Cadastre um cliente antes de lançar cheques.');irPara('clientes');return;}
+  const ops=dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(x=>'<option value="'+x.id+'">'+esc(x.nome)+(x.risco==='bloqueado'?' 🚫':'')+'</option>').join('');
+  abrirModal(cabecalhoModal('📦 Lançar cheques em lote')+
+    '<div class="modal-corpo"><div class="form-grade">'+
+    '<div class="campo cheio"><label>Cliente *</label><select id="ltCli"><option value="">— selecione —</option>'+ops+'</select></div>'+
+    '<div class="campo"><label>Quantidade de cheques *</label><input type="number" id="ltQtd" min="2" max="60" value="6"></div>'+
+    '<div class="campo"><label>Valor de cada cheque (R$) *</label><input id="ltValor" inputmode="decimal"></div>'+
+    '<div class="campo"><label>Número inicial *</label><input id="ltNumIni" placeholder="Ex.: 1001"></div>'+
+    '<div class="campo"><label>Emissão *</label><input type="date" id="ltEmis" value="'+hojeISO()+'"></div>'+
+    '<div class="campo"><label>1º vencimento *</label><input type="date" id="ltVenc1" value="'+somaDias(hojeISO(),30)+'"></div>'+
+    '<div class="campo"><label>Intervalo entre vencimentos (dias)</label><input type="number" id="ltIntervalo" value="30" min="1"></div>'+
+    '<div class="campo"><label>Banco</label><input id="ltBanco"></div>'+
+    '<div class="campo"><label>Agência</label><input id="ltAg"></div>'+
+    '<div class="campo"><label>Conta</label><input id="ltConta"></div>'+
+    '<div class="campo"><label>Emitente</label><input id="ltEmit"></div>'+
+    '<div class="campo"><label>CPF do emitente</label><input id="ltCpf"></div>'+
+    '<div class="campo cheio"><label>Observações</label><input id="ltObs"></div>'+
+    '</div><p style="font-size:.8rem;color:var(--cinza);margin-top:.5rem">💡 Os números serão gerados em sequência a partir do número inicial (ex.: 1001, 1002, 1003…). Os vencimentos serão mensais (ou no intervalo escolhido) a partir do 1º vencimento.</p></div>'+
+    '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="confirmarLoteCheques()">Lançar lote</button></div>');
+}
+function confirmarLoteCheques(){
+  const clienteId=document.getElementById('ltCli').value;
+  const qtd=parseInt(document.getElementById('ltQtd').value)||0;
+  const valor=moedaParaNumero(document.getElementById('ltValor').value);
+  const numIniTxt=document.getElementById('ltNumIni').value.trim();
+  const emissao=document.getElementById('ltEmis').value;
+  const venc1=document.getElementById('ltVenc1').value;
+  const intervalo=parseInt(document.getElementById('ltIntervalo').value)||30;
+  if(!clienteId||!qtd||qtd<2||qtd>60||!valor||valor<=0||!numIniTxt||!emissao||!venc1){avisar('Preencha cliente, quantidade (2 a 60), valor, número inicial e datas.');return;}
+  if(venc1<emissao){avisar('O 1º vencimento não pode ser anterior à emissão.');return;}
+  const numerico=/^\d+$/.test(numIniTxt);
+  const comuns={clienteId,banco:document.getElementById('ltBanco').value.trim(),agencia:document.getElementById('ltAg').value.trim(),conta:document.getElementById('ltConta').value.trim(),emitente:document.getElementById('ltEmit').value.trim(),cpfEmitente:document.getElementById('ltCpf').value.trim(),obs:document.getElementById('ltObs').value.trim()};
+  const gerados=[];
+  for(let i=0;i<qtd;i++){
+    const numero=numerico?String(parseInt(numIniTxt)+i):(numIniTxt+'-'+(i+1));
+    if(dados.cheques.find(x=>x.numero.trim().toLowerCase()===numero.toLowerCase())){avisar('O número "'+numero+'" já existe. Ajuste o número inicial.');return;}
+    gerados.push(Object.assign({id:uid(),status:'carteira',prorrogacoes:[],criado:hojeISO(),numero,valor,emissao,vencimento:somaDias(venc1,intervalo*i)},comuns));
+  }
+  const cli=cliPorId(clienteId);
+  if(cli&&cli.risco==='bloqueado'&&!confirm('⚠ Este cliente está BLOQUEADO. Lançar mesmo assim?')) return;
+  gerados.forEach(c=>dados.cheques.push(c));
+  registrarAuditoria(qtd+' cheques lançados em lote para '+(cli?cli.nome:'cliente')+' (nº '+gerados[0].numero+' a '+gerados[gerados.length-1].numero+')');
+  salvar();fecharModal();renderCheques();renderPainel();avisar(qtd+' cheques lançados ✔');
 }
 function detalheCheque(id){
   const c=dados.cheques.find(x=>x.id===id); if(!c) return;
@@ -1541,10 +1769,22 @@ function detalheCheque(id){
       '<button class="bt claro mini" onclick="prorrogarCheque(\''+id+'\')">📅 Prorrogar</button>'+
       '<button class="bt perigo mini" onclick="devolverCheque(\''+id+'\')">↩ Devolver</button>':'')+
     '<button class="bt claro mini" onclick="reciboCheque(\''+id+'\')">🖨 Recibo</button>'+
+    (c.status!=='compensado'?'<button class="bt claro mini" style="background:#25D366;color:#fff;border-color:#25D366" onclick="whatsappCheque(\''+id+'\')">📲 Cobrar via WhatsApp</button>':'')+
     '<button class="bt claro mini" onclick="formCheque(\''+id+'\')">✏ Editar</button>'+
     '<button class="bt claro mini" onclick="excluirCheque(\''+id+'\')">🗑 Excluir</button></div>');
 }
-function compensarCheque(id){const c=dados.cheques.find(x=>x.id===id);c.status='compensado';c.recebidoEm=hojeISO();salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque compensado ✔');}
+function whatsappCheque(id){
+  const c=dados.cheques.find(x=>x.id===id); if(!c) return;
+  const cli=cliPorId(c.clienteId);
+  if(!cli||!cli.tel){avisar('Este cliente não tem telefone cadastrado. Edite o cliente para adicionar.');return;}
+  let tel=cli.tel.replace(/\D/g,'');
+  if(tel.length>0&&tel.length<=11) tel='55'+tel;
+  if(tel.length<12){avisar('Telefone do cliente parece incompleto. Confira o cadastro.');return;}
+  const venceu=situacao(c)==='vencido';
+  const msg='Olá, '+cli.nome+'! Tudo bem? Estou entrando em contato sobre o cheque nº '+c.numero+', no valor de '+fmtBRL(c.valor)+', com vencimento em '+fmtData(c.vencimento)+(venceu?' (já vencido)':'')+'. Poderia me confirmar a situação do pagamento? Qualquer dúvida, estou à disposição.';
+  window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(msg),'_blank');
+}
+function compensarCheque(id){const c=dados.cheques.find(x=>x.id===id);c.status='compensado';c.recebidoEm=hojeISO();registrarAuditoria('Cheque compensado: nº '+c.numero);salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque compensado ✔');}
 function prorrogarCheque(id){
   const c=dados.cheques.find(x=>x.id===id);
   abrirModal(cabecalhoModal('📅 Prorrogar cheque nº '+esc(c.numero))+
@@ -1558,7 +1798,7 @@ function confirmarProrrogacao(id){
   const c=dados.cheques.find(x=>x.id===id),novo=document.getElementById('pNovo').value;
   if(!novo||novo<=c.vencimento){avisar('Informe uma data posterior ao vencimento atual.');return;}
   c.prorrogacoes||=[];c.prorrogacoes.push({de:c.vencimento,para:novo,motivo:document.getElementById('pMotivo').value.trim(),data:hojeISO()});
-  c.vencimento=novo;c.status='carteira';salvar();renderCheques();renderPainel();detalheCheque(id);avisar('Cheque prorrogado ✔');
+  c.vencimento=novo;c.status='carteira';registrarAuditoria('Cheque prorrogado: nº '+c.numero+' para '+fmtData(novo));salvar();renderCheques();renderPainel();detalheCheque(id);avisar('Cheque prorrogado ✔');
 }
 function devolverCheque(id){
   const c=dados.cheques.find(x=>x.id===id);
@@ -1567,8 +1807,8 @@ function devolverCheque(id){
     '<select id="dAlinea">'+ALINEAS.map(a=>'<option>'+a+'</option>').join('')+'</select></div></div>'+
     '<div class="modal-pe"><button class="bt claro" onclick="detalheCheque(\''+id+'\')">Voltar</button><button class="bt perigo" onclick="confirmarDevolucao(\''+id+'\')">Registrar devolução</button></div>',true);
 }
-function confirmarDevolucao(id){const c=dados.cheques.find(x=>x.id===id);c.status='devolvido';c.alinea=document.getElementById('dAlinea').value;salvar();renderCheques();renderPainel();fecharModal();avisar('Devolução registrada.');}
-function excluirCheque(id){pedirSenha(()=>{if(!confirm('Excluir este cheque definitivamente?')) return;dados.cheques=dados.cheques.filter(x=>x.id!==id);salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque excluído.');});}
+function confirmarDevolucao(id){const c=dados.cheques.find(x=>x.id===id);c.status='devolvido';c.alinea=document.getElementById('dAlinea').value;registrarAuditoria('Cheque devolvido: nº '+c.numero+' ('+c.alinea+')');salvar();renderCheques();renderPainel();fecharModal();avisar('Devolução registrada.');}
+function excluirCheque(id){pedirSenha(()=>{if(!confirm('Excluir este cheque?')) return;const c=dados.cheques.find(x=>x.id===id);dados.cheques=dados.cheques.filter(x=>x.id!==id);const idLix=moverParaLixeira('cheque',c);registrarAuditoria('Cheque excluído: nº '+c.numero);salvar();fecharModal();renderCheques();renderPainel();renderLixeira();avisarComAcao('Cheque excluído.','Desfazer',()=>restaurarDaLixeira(idLix));});}
 function reciboCheque(id){
   const c=dados.cheques.find(x=>x.id===id),cli=cliPorId(c.clienteId);
   imprimir('<div class="recibo"><h1>RECIBO DE CHEQUE RECEBIDO</h1><div class="sub">NAVI · emitido em '+new Date().toLocaleString('pt-BR')+'</div>'+
@@ -1591,7 +1831,7 @@ function renderPainel(){
   const recebidoTot=soma(dados.cheques.filter(c=>c.status==='compensado')),devolvidoTot=soma(dados.cheques.filter(c=>c.status==='devolvido'));
   document.getElementById('cartoesPainel').innerHTML=
     '<div class="cartao vd"><div class="rotulo">A receber (carteira)</div><div class="valor">'+fmtBRL(aReceber)+'</div></div>'+
-    '<div class="cartao vm"><div class="rotulo">Vencido ('+vencidos.length+')</div><div class="valor">'+fmtBRL(soma(vencidos))+'</div></div>'+
+    '<div class="cartao vm'+(vencidos.length?' vencido-destaque':'')+'"><div class="rotulo">Vencido ('+vencidos.length+')</div><div class="valor">'+fmtBRL(soma(vencidos))+'</div></div>'+
     '<div class="cartao am"><div class="rotulo">A vencer em 7 dias ('+aVencer7.length+')</div><div class="valor">'+fmtBRL(soma(aVencer7))+'</div></div>'+
     '<div class="cartao az"><div class="rotulo">Recebido total</div><div class="valor">'+fmtBRL(recebidoTot)+'</div></div>'+
     '<div class="cartao vm"><div class="rotulo">Devolvidos total</div><div class="valor">'+fmtBRL(devolvidoTot)+'</div></div>';
@@ -1697,7 +1937,7 @@ function restaurarBackup(input){
   pedirSenha(()=>{
     const leitor=new FileReader();
     leitor.onload=ev=>{
-      try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.clientes)||!Array.isArray(d.cheques)) throw 0;if(!confirm('Restaurar este backup?\nClientes: '+d.clientes.length+' · Cheques: '+d.cheques.length+'\n\n⚠ Os dados atuais serão SUBSTITUÍDOS.')) return;d.senha||='1234';d.lembretes||=[];dados=d;salvar();renderBackup();renderPainel();irPara('painel');avisar('Backup restaurado ✔');}
+      try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.clientes)||!Array.isArray(d.cheques)) throw 0;if(!confirm('Restaurar este backup?\nClientes: '+d.clientes.length+' · Cheques: '+d.cheques.length+'\n\n⚠ Os dados atuais serão SUBSTITUÍDOS.')) return;d.senha||='1234';d.lembretes||=[];d.lixeira||=[];d.auditoria||=[];dados=d;registrarAuditoria('Backup restaurado a partir de arquivo ('+d.clientes.length+' clientes, '+d.cheques.length+' cheques)');salvar();renderBackup();renderPainel();irPara('painel');avisar('Backup restaurado ✔');}
       catch(e){avisar('Arquivo inválido. Use um backup gerado pelo NAVI (.json)');}
     };leitor.readAsText(arq);
   });
@@ -1741,8 +1981,9 @@ function checarPopupBackup12h(u,horas,temDados){
   const marca=u||'nunca';
   if(localStorage.getItem('NAVI_POPUP_BACKUP_VISTO')===marca) return;
   localStorage.setItem('NAVI_POPUP_BACKUP_VISTO',marca);
-  const el=document.getElementById('alertaBackup12h');
   const txt=u?'Já se passaram mais de '+Math.floor(horas)+' horas desde o último backup ('+new Date(u).toLocaleString('pt-BR')+').':'Você ainda não fez nenhum backup neste sistema.';
+  notificarNavegador('⏰ Backup atrasado — NAVI',txt);
+  const el=document.getElementById('alertaBackup12h');
   el.innerHTML='<h4>⏰ Backup atrasado!</h4>'+
     '<p>'+txt+' Leva menos de 5 segundos — não arrisque perder clientes, cheques e lembretes.</p>'+
     '<div class="acoes">'+
@@ -1753,7 +1994,7 @@ function checarPopupBackup12h(u,horas,temDados){
 }
 function fecharPopupBackup12h(){ document.getElementById('alertaBackup12h').style.display='none'; }
 function fazerBackupPopup(){ fecharPopupBackup12h(); fazerBackup(); }
-function apagarTudo(){pedirSenha(()=>{if(!confirm('APAGAR TODOS os dados? Esta ação não tem volta.')) return;if(!confirm('Tem certeza absoluta?')) return;dados={senha:dados.senha,clientes:[],cheques:[],lembretes:[],ultimoBackup:null,proxCodigo:1};salvar();renderPainel();renderBackup();irPara('painel');avisar('Dados apagados.');});}
+function apagarTudo(){pedirSenha(()=>{if(!confirm('APAGAR TODOS os dados? Esta ação não tem volta.')) return;if(!confirm('Tem certeza absoluta?')) return;dados={senha:dados.senha,clientes:[],cheques:[],lembretes:[],lixeira:[],auditoria:[],ultimoBackup:null,proxCodigo:1};salvar();renderPainel();renderBackup();irPara('painel');avisar('Dados apagados.');});}
 
 /* ============================================================
    CALCULADORA
@@ -1818,6 +2059,14 @@ document.addEventListener('click',e=>{
 
 // Verificar backup a cada 30 minutos também
 setInterval(faixaLembreteBackup, 30*60*1000);
+setInterval(()=>{ limparLixeiraExpirada(); renderLixeira(); }, 60000);
+
+// PWA: registra o service worker só quando o arquivo está hospedado (http/https), nunca ao abrir direto do computador (file://)
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{ /* sw.js não encontrado na mesma pasta — sem problema, app continua funcionando normalmente */ });
+  });
+}
 </script>
 </body>
 </html>
