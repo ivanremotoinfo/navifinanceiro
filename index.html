@@ -383,6 +383,9 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
     <button class="bt claro mini badge-lembrete" id="btLembretes" onclick="irPara('lembretes')" title="Lembretes e Agenda (Alt+6)">
       🔔 <span class="cnt" id="cntLembretes" style="display:none">0</span>
     </button>
+    <button class="bt claro mini" onclick="fazerBackup()" title="Baixar backup agora (Ctrl+B)">💾 Backup</button>
+    <button class="bt claro mini" onclick="document.getElementById('arqRestaurarTopo').click()" title="Restaurar a partir de um arquivo de backup (.json)">📤 Restaurar</button>
+    <input type="file" id="arqRestaurarTopo" accept=".json" style="display:none" onchange="restaurarBackup(this)">
     <button class="bt claro mini" id="botaoTema" onclick="alternarTema()" title="Alternar modo escuro">🌙</button>
     <button class="bt claro mini" onclick="irPara('sobre')" title="Sobre o sistema">ℹ️</button>
     <button class="bt claro mini" onclick="irPara('manual')" title="Manual de instruções">📖</button>
@@ -554,8 +557,10 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         </span>
       </h2>
       <div class="filtros">
-        <div class="campo" style="flex:1;min-width:180px"><label>Pesquisar</label>
+        <div class="campo" style="flex:1;min-width:180px"><label>Pesquisar (nº, cliente ou CPF)</label>
           <input id="filtroChq" type="search" placeholder="Nº cheque, cliente ou CPF" oninput="renderCheques()"></div>
+        <div class="campo"><label>Cliente</label>
+          <select id="filtroChqCliente" onchange="renderCheques()"><option value="">Todos</option></select></div>
         <div class="campo"><label>Situação</label>
           <select id="filtroChqStatus" onchange="renderCheques()">
             <option value="">Todas</option><option value="carteira">Em carteira</option>
@@ -569,6 +574,7 @@ nav.inferior button.ativo{color:var(--verde);font-weight:700}
         <div class="campo"><label>De</label><input type="date" id="filtroChqDe"></div>
         <div class="campo"><label>Até</label><input type="date" id="filtroChqAte"></div>
         <button class="bt mini" onclick="renderCheques()">Filtrar</button>
+        <button class="bt claro mini" onclick="listarProrrogados()">📋 Prorrogados</button>
         <button class="bt claro mini" onclick="limparFiltrosCheques()">Limpar</button>
       </div>
       <div class="tabela-rolagem"><table><thead>
@@ -1422,18 +1428,29 @@ function fichaCliente(id){
    ============================================================ */
 function chequesFiltrados(){
   const filtro=(document.getElementById('filtroChq').value||'').toLowerCase();
+  const cliSel=document.getElementById('filtroChqCliente').value;
   const st=document.getElementById('filtroChqStatus').value;
   const campo=document.getElementById('filtroChqCampoData').value;
   const de=document.getElementById('filtroChqDe').value, ate=document.getElementById('filtroChqAte').value;
   let lista=dados.cheques.slice().sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
-  if(filtro) lista=lista.filter(c=>(c.numero+' '+nomeCliente(c.clienteId)+' '+(c.cpfEmitente||'')+' '+(c.emitente||'')).toLowerCase().includes(filtro));
+  if(filtro) lista=lista.filter(c=>{const cli=cliPorId(c.clienteId);return (c.numero+' '+nomeCliente(c.clienteId)+' '+(c.cpfEmitente||'')+' '+(c.emitente||'')+' '+(cli&&cli.doc||'')).toLowerCase().includes(filtro);});
+  if(cliSel) lista=lista.filter(c=>c.clienteId===cliSel);
   if(st) lista=lista.filter(c=>situacao(c)===st);
   if(de) lista=lista.filter(c=>(c[campo]||'')>=de);
   if(ate) lista=lista.filter(c=>(c[campo]||'')<=ate);
   return lista;
 }
-function limparFiltrosCheques(){['filtroChq','filtroChqDe','filtroChqAte'].forEach(i=>document.getElementById(i).value='');document.getElementById('filtroChqStatus').value='';renderCheques();}
+function limparFiltrosCheques(){['filtroChq','filtroChqDe','filtroChqAte'].forEach(i=>document.getElementById(i).value='');document.getElementById('filtroChqStatus').value='';document.getElementById('filtroChqCliente').value='';renderCheques();}
+function listarProrrogados(){limparFiltrosCheques();document.getElementById('filtroChqStatus').value='prorrogado';renderCheques();}
+function popularSelectClientes(elId,manterSelecao){
+  const el=document.getElementById(elId); if(!el) return;
+  const atual=manterSelecao?el.value:'';
+  el.innerHTML='<option value="">'+(elId==='filtroChqCliente'?'Todos':'— escolha o cliente —')+'</option>'+
+    dados.clientes.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(c=>'<option value="'+c.id+'">'+esc(c.nome)+'</option>').join('');
+  if(atual) el.value=atual;
+}
 function renderCheques(){
+  popularSelectClientes('filtroChqCliente',true);
   const corpo=document.getElementById('tbCheques'),lista=chequesFiltrados();
   if(!lista.length){corpo.innerHTML='<tr><td colspan="7" class="vazio">Nenhum cheque encontrado.</td></tr>';return;}
   corpo.innerHTML=lista.map(c=>'<tr><td class="num">'+esc(c.numero)+'</td><td>'+esc(nomeCliente(c.clienteId))+'</td><td class="num"><b>'+fmtBRL(c.valor)+'</b></td><td class="num">'+fmtData(c.emissao)+'</td><td class="num">'+fmtData(c.vencimento)+'</td><td>'+carimbo(c)+'</td><td class="acoes-td"><button class="bt claro mini" onclick="detalheCheque(\''+c.id+'\')">Abrir</button></td></tr>').join('');
@@ -1455,13 +1472,22 @@ function formCheque(id){
     '<div class="campo"><label>CPF do emitente</label><input id="qCpf" value="'+esc(c.cpfEmitente)+'"></div>'+
     '<div class="campo"><label>Emissão *</label><input type="date" id="qEmis" value="'+c.emissao+'"></div>'+
     '<div class="campo"><label>Vencimento *</label><input type="date" id="qVenc" value="'+c.vencimento+'"></div>'+
+    '<div class="campo"><label>Data do pagamento</label><input type="date" id="qPagamento" value="'+(c.status==='compensado'?(c.recebidoEm||''):'')+'"></div>'+
+    '<div class="campo"><label>Prorrogação (nova data de venc.)</label><input type="date" id="qProrrog" value=""></div>'+
     '<div class="campo cheio"><label>Observações</label><textarea id="qObs" rows="2">'+esc(c.obs)+'</textarea></div>'+
     '</div></div>'+
     '<div class="modal-pe"><button class="bt claro" onclick="fecharModal()">Cancelar</button><button class="bt" onclick="salvarCheque(\''+(id||'')+'\')">Salvar cheque</button></div>');
 }
 function salvarCheque(id){
   const clienteId=document.getElementById('qCli').value,numero=document.getElementById('qNum').value.trim(),valor=moedaParaNumero(document.getElementById('qValor').value),emissao=document.getElementById('qEmis').value,vencimento=document.getElementById('qVenc').value;
+  const pagamento=document.getElementById('qPagamento').value,prorrogPara=document.getElementById('qProrrog').value;
   if(!clienteId||!numero||!valor||!emissao||!vencimento){avisar('Preencha cliente, nº, valor e datas.');return;}
+  if(valor<=0){avisar('O valor do cheque deve ser maior que zero.');return;}
+  if(vencimento<emissao){avisar('A data de vencimento não pode ser anterior à data de emissão.');return;}
+  if(pagamento&&pagamento<emissao){avisar('A data de pagamento não pode ser anterior à data de emissão.');return;}
+  if(prorrogPara&&prorrogPara<=vencimento){avisar('A nova data de prorrogação deve ser posterior ao vencimento atual.');return;}
+  const duplicado=dados.cheques.find(x=>x.numero.trim().toLowerCase()===numero.toLowerCase()&&x.id!==id);
+  if(duplicado){avisar('Já existe um cheque cadastrado com o número "'+numero+'".');return;}
   const cli=cliPorId(clienteId);
   if(cli&&cli.risco==='bloqueado'&&!confirm('⚠ Este cliente está BLOQUEADO. Lançar mesmo assim?')) return;
   if(cli&&cli.limite){
@@ -1469,9 +1495,16 @@ function salvarCheque(id){
     if(aberto+valor>cli.limite&&!confirm('⚠ Limite ultrapassado. Lançar mesmo assim?')) return;
   }
   const campos={clienteId,numero,valor,emissao,vencimento,banco:document.getElementById('qBanco').value.trim(),agencia:document.getElementById('qAg').value.trim(),conta:document.getElementById('qConta').value.trim(),emitente:document.getElementById('qEmit').value.trim(),cpfEmitente:document.getElementById('qCpf').value.trim(),obs:document.getElementById('qObs').value.trim()};
-  if(id){Object.assign(dados.cheques.find(x=>x.id===id),campos);}
-  else{dados.cheques.push(Object.assign({id:uid(),status:'carteira',prorrogacoes:[],criado:hojeISO()},campos));}
-  salvar();fecharModal();renderCheques();avisar('Cheque salvo ✔');
+  let registro;
+  if(id){registro=dados.cheques.find(x=>x.id===id);Object.assign(registro,campos);}
+  else{registro=Object.assign({id:uid(),status:'carteira',prorrogacoes:[],criado:hojeISO()},campos);dados.cheques.push(registro);}
+  if(prorrogPara){
+    registro.prorrogacoes||=[];
+    registro.prorrogacoes.push({de:vencimento,para:prorrogPara,motivo:'Lançado no cadastro',data:hojeISO()});
+    registro.vencimento=prorrogPara;
+  }
+  if(pagamento){ registro.status='compensado'; registro.recebidoEm=pagamento; }
+  salvar();fecharModal();renderCheques();renderPainel();avisar('Cheque salvo ✔');
 }
 function detalheCheque(id){
   const c=dados.cheques.find(x=>x.id===id); if(!c) return;
