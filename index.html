@@ -2007,7 +2007,7 @@ function abrirCalculadora(){
     '<div class="visor" id="calcVisor">0</div>'+
     teclas.map(t=>'<button class="'+('÷×−+'.includes(t)||t==='C'?'op':'')+'" onclick="calcTecla(\''+t+'\')">'+t+'</button>').join('')+
     '<button class="ig" style="grid-column:1/-1" onclick="calcIgual()">=</button>'+
-    '</div></div>',true);
+    '</div><p style="font-size:.74rem;color:var(--cinza);text-align:center;margin-top:.5rem">⌨️ Também funciona com o teclado físico (números, + − × ÷, Enter, Backspace, C)</p></div>',true);
 }
 function calcTecla(t){if(t==='C')calcExp='';else calcExp+=t;document.getElementById('calcVisor').textContent=calcExp||'0';}
 function calcIgual(){try{const exp=calcExp.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/,/g,'.');if(!/^[0-9+\-*/. ()]+$/.test(exp))throw 0;const r=Function('"use strict";return ('+exp+')')();calcExp=String(Math.round(r*100)/100).replace('.',',');document.getElementById('calcVisor').textContent=calcExp;}catch(e){document.getElementById('calcVisor').textContent='Erro';calcExp='';}}
@@ -2026,6 +2026,18 @@ document.getElementById('buscaGlobal').addEventListener('keydown',function(e){
 });
 
 document.addEventListener('keydown',e=>{
+  const calcAberta=document.getElementById('calcVisor');
+  if(calcAberta&&!e.altKey&&!e.ctrlKey&&!e.metaKey){
+    if(/^[0-9]$/.test(e.key)){e.preventDefault();calcTecla(e.key);return;}
+    if(e.key==='.'||e.key===','){e.preventDefault();calcTecla(',');return;}
+    if(e.key==='+'){e.preventDefault();calcTecla('+');return;}
+    if(e.key==='-'){e.preventDefault();calcTecla('−');return;}
+    if(e.key==='*'){e.preventDefault();calcTecla('×');return;}
+    if(e.key==='/'){e.preventDefault();calcTecla('÷');return;}
+    if(e.key==='Enter'||e.key==='='){e.preventDefault();calcIgual();return;}
+    if(e.key==='Backspace'){e.preventDefault();calcExp=calcExp.slice(0,-1);document.getElementById('calcVisor').textContent=calcExp||'0';return;}
+    if(e.key==='c'||e.key==='C'){e.preventDefault();calcTecla('C');return;}
+  }
   if(e.key==='F9'){e.preventDefault();abrirCalendarioGrande();}
   if(e.key==='F10'){e.preventDefault();abrirCalculadora();}
   if(e.key==='Escape')fecharModal();
