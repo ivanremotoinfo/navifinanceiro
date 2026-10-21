@@ -1,8 +1,9 @@
-// Service Worker do NAVI — cache simples para uso offline quando instalado como app.
-// Importante: só funciona quando o NAVI está hospedado em http/https (ex.: GitHub Pages).
-// Ao abrir o arquivo direto do computador (file://) o navegador ignora este arquivo e o sistema funciona normalmente.
+// Service Worker do NAVI — versão SOMENTE VISUALIZAÇÃO.
+// Objetivo: trocar o código que o navegador já tem em cache pela versão com bloqueio.
+// Este arquivo mexe APENAS no cache de arquivos (Cache Storage). Ele não tem acesso ao
+// localStorage, então os dados do cliente (clientes, cheques, lembretes) e os backups .json não são afetados.
 
-const CACHE_NOME = 'navi-cache-v1';
+const CACHE_NOME = 'navi-cache-v2-leitura';
 const ARQUIVOS = [
   './',
   './index.html',
@@ -13,29 +14,45 @@ const ARQUIVOS = [
 
 self.addEventListener('install', (evento) => {
   evento.waitUntil(
-    caches.open(CACHE_NOME).then((cache) => cache.addAll(ARQUIVOS)).catch(() => {})
+    caches.open(CACHE_NOME)
+      // cache:'reload' ignora o cache HTTP do navegador e busca a versão nova direto do servidor
+      .then((cache) => cache.addAll(ARQUIVOS.map((u) => new Request(u, { cache: 'reload' }))))
+      .catch(() => {})
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (evento) => {
-  evento.waitUntil(
-    caches.keys().then((nomes) =>
-      Promise.all(nomes.filter((n) => n !== CACHE_NOME).map((n) => caches.delete(n)))
-    )
-  );
-  self.clients.claim();
+  evento.waitUntil((async () => {
+    // apaga os caches antigos do NAVI (ex.: navi-cache-v1) — só caches de arquivos, nunca dados
+    const nomes = await caches.keys();
+    await Promise.all(
+      nomes.filter((n) => /^navi/i.test(n) && n !== CACHE_NOME).map((n) => caches.delete(n))
+    );
+    await self.clients.claim();
+    // abas que ainda estão rodando o código antigo recarregam sozinhas, uma vez, para pegar a versão com bloqueio
+    try {
+      const abas = await self.clients.matchAll({ type: 'window' });
+      abas.forEach((aba) => { try { aba.navigate(aba.url); } catch (e) {} });
+    } catch (e) {}
+  })());
 });
 
 self.addEventListener('fetch', (evento) => {
-  // Estratégia: tenta a rede primeiro (pra sempre pegar a versão mais nova), cai pro cache se estiver offline.
+  const req = evento.request;
+  if (req.method !== 'GET') return;
+  const mesmaOrigem = new URL(req.url).origin === self.location.origin;
+  // Rede primeiro (sempre revalidando, para nunca servir HTML velho); cai para o cache só se estiver offline.
+  const busca = mesmaOrigem ? fetch(req.url, { cache: 'no-cache' }) : fetch(req);
   evento.respondWith(
-    fetch(evento.request)
+    busca
       .then((resposta) => {
-        const copia = resposta.clone();
-        caches.open(CACHE_NOME).then((cache) => cache.put(evento.request, copia)).catch(() => {});
+        if (mesmaOrigem && resposta.ok) {
+          const copia = resposta.clone();
+          caches.open(CACHE_NOME).then((cache) => cache.put(req, copia)).catch(() => {});
+        }
         return resposta;
       })
-      .catch(() => caches.match(evento.request))
+      .catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
   );
 });
